@@ -1,9 +1,4 @@
 A,B = input().split()
-
-re_A = A[::-1]
-re_B = B[::-1]
-
-if re_A > re_B:
-    print(re_A)
-else:
-    print(re_B)
+A = int(A[::-1])
+B = int(B[::-1])
+print(max(A,B))
