@@ -6,6 +6,6 @@ for i in range(1,N+1):
     if i < 100:
         hansu += 1 # 100보다 작으면 모두 한수
     elif N_list[0]-N_list[1] == N_list[1]-N_list[2]:
-        hansu += 1 # x의 각 자리가 등차수열아면 한수
+        hansu += 1 # x의 각 자리가 등차수열이면 한수
         
 print(hansu)
