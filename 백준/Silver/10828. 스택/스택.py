@@ -1,17 +1,18 @@
 import sys
 input = sys.stdin.readline
+
 N = int(input())
+stack =[]
 
-stack = []
-
-for i in range(N):
+for _ in range(N):
     command = input().split()
+
     if command[0] == 'push':
         stack.append(command[1])
     elif command[0] == 'pop':
         if len(stack) == 0:
             print(-1)
-        else:    
+        else:
             print(stack.pop())
     elif command[0] == 'size':
         print(len(stack))
