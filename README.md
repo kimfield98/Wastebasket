@@ -7,3 +7,5 @@
 - 1일(금) [🔎 자세히 보기](https://github.com/kimfield98/JUNGLE/blob/master/sep/0901.md)
 
 - 2일(토) [🔎 자세히 보기](https://github.com/kimfield98/JUNGLE/blob/master/sep/0902.md)
+
+- 3일(일) [🔎 자세히 보기](https://github.com/kimfield98/JUNGLE/blob/master/sep/0903.md)
