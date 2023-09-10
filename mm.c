@@ -23,15 +23,10 @@
  * provide your team information in the following struct.
  ********************************************************/
 team_t team = {
-    /* Team name */
-    "ateam",
-    /* First member's full name */
-    "Harry Bovik",
-    /* First member's email address */
-    "bovik@cs.cmu.edu",
-    /* Second member's full name (leave blank if none) */
+    "team06",
+    "kim chowon",
+    "kimfield98@gmail.com",
     "",
-    /* Second member's email address (leave blank if none) */
     ""
 };
 
