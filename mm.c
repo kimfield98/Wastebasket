@@ -114,6 +114,7 @@ static void *coalesce(void *bp)
 
     // 이전 블록과 다음 블록 모두 할당된 상태라면 병합할 필요 없음
     if (prev_alloc && next_alloc) {
+        next_bp = bp;  // next_bp에 bp위치를 저장
         return bp;
     }
 
@@ -134,15 +135,14 @@ static void *coalesce(void *bp)
 
     // 이전블록과 다음블록 모두 비할당 상태라면 세 개의 가용블록을 병합
     else {
-        size += GET_SIZE(HDRP(PREV_BLKP(bp))) +
-            GET_SIZE(FTRP(NEXT_BLKP(bp)));
+        size += GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp)));
         PUT(HDRP(PREV_BLKP(bp)), PACK(size,0));
         PUT(FTRP(NEXT_BLKP(bp)), PACK(size,0));
         bp = PREV_BLKP(bp);
     }
 
-    // 병합한 결과로 생성된 가용블럭의 포인터를 반환
-    return bp;
+    next_bp = bp;  // next_bp에 bp위치를 저장
+    return bp;  // 병합한 결과로 생성된 가용블럭의 포인터를 반환
 }
 
 // mm_malloc - 메모리 할당 요청(malloc)을 처리
@@ -179,19 +179,25 @@ void *mm_malloc(size_t size)
 }
 
 // find_fit - 메모리 할당을 위한 공간 탐색
-static void *find_fit(size_t asize)
-{
-    void *bp;
+static void *find_fit(size_t asize) {
 
-    // 힙 내의 모든 블록을 순회
-    for (bp = heap_listp; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp)) {
-        // 아직 할당되지 않은 충분한 크기의 블록 탐색
-        if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp)))) {
+    void *bp;
+    
+    // next_bp부터 힙의 끝까지 탐색
+    for (bp=next_bp; GET_SIZE(HDRP(bp))>0; bp=NEXT_BLKP(bp)) {
+        // 아직 할당되지 않은 충분한 크기의 블록이 있는 경우 해당 블록의 포인터를 반환
+        if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
             return bp;
-        }
     }
     
-    // 적합한 블록을 찾지 못했으면 NULL 반환
+    // 만약 적합한 블록을 찾지 못했다면, 힙의 시작부터 next_bp까지 다시 탐색
+    for (bp=heap_listp; bp!=next_bp; bp=NEXT_BLKP(bp)) {
+        // 아직 할당되지 않은 충분한 크기의 블록이 있는 경우 해당 블록의 포인터를 반환
+        if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
+            return bp;
+    }
+
+    // 적합한 크기의 가용블럭을 찾지 못했으면 NULL 반환
     return NULL;
 }
 
