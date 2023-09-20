@@ -5,6 +5,7 @@
 #define MAX_CACHE_SIZE 1049000
 #define MAX_OBJECT_SIZE 102400
 
+// 함수 선언부
 void doit(int fd);
 void parse_uri(char *uri,char *hostname,char *path, char *port);
 void clienterror(int fd, char *cause, char *errnum, char *shortmsg, char *longmsg);
@@ -17,25 +18,27 @@ static const char *user_agent_hdr =
 
 int main(int argc, char ** argv) {
   
-  int listenfd, connfd;
-  socklen_t clientlen;
-  struct sockaddr_storage clientaddr;
-  char port[MAXLINE], hostname[MAXLINE];
+  int listenfd, connfd;  // 소켓 디스크립터 변수 선언
+  socklen_t clientlen;  // 클라이언트 주소의 길이를 저장하는 변수
+  struct sockaddr_storage clientaddr;  // 클라이언트 주소 정보를 저장하는 구조체
+  char port[MAXLINE], hostname[MAXLINE];  // 호스트명과 포트 정보를 저장할 변수
 
   if (argc != 2) {
     fprintf(stderr, "usage: %s <port>\n", argv[0]);
-    exit(1);
+    exit(1);  // 프로그램을 종료하고 오류 메시지 출력
   }
 
+  // 지정한 포트로 소켓 생성 및 바인딩
   listenfd = Open_listenfd(argv[1]);
-
+  
+  // 무한 루프: 클라이언트의 연결을 지속적으로 수락하기 위함
   while (1) {
-    clientlen = sizeof(clientaddr);
-    connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
-    Getnameinfo((SA *)&clientaddr, clientlen, hostname, MAXLINE, port, MAXLINE, 0);
-    printf("Accepted connection from (%s, %s)\n", hostname, port);
-    doit(connfd);
-    Close(connfd);
+    clientlen = sizeof(clientaddr);  // 클라이언트 주소 길이 초기화
+    connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);  // 클라이언트 연결 수락
+    Getnameinfo((SA *)&clientaddr, clientlen, hostname, MAXLINE, port, MAXLINE, 0);  // 클라이언트 주소 정보 얻기
+    printf("Accepted connection from (%s, %s)\n", hostname, port);  // 클라이언트 연결 정보 출력
+    doit(connfd);  // 요청 처리 함수 호출
+    Close(connfd);  // 클라이언트와의 연결 종료
   }
   return 0;
 }
@@ -52,23 +55,27 @@ void doit(int fd)
   char path[MAXLINE], port[MAXLINE];
   rio_t rio, rio2;
 
+  // 클라이언트로부터의 요청을 읽고 파싱
   Rio_readinitb(&rio, fd);
   Rio_readlineb(&rio, buf, MAXLINE);
-  
   sscanf(buf, "%s %s %s", method, uri, version);
 
+  // 지원하지 않는 HTTP 메서드인 경우 501 Not Implemented 에러를 응답
   if (strcasecmp(method, "GET")) {
     clienterror(fd, method, "501", "Not implemented", "Tiny does not implement this method");
     return;
   }
 
+  // URI를 해석하여 호스트, 파일 경로, 포트를 추출
   parse_uri(uri, host, filename, port);
 
+  // HTTP 요청 헤더를 생성
   sprintf(header, "GET %s HTTP/1.0\r\n", filename);
   sprintf(header, "%sUser-Agent: %s", header, user_agent_hdr);
   sprintf(header, "%sConnection: close\r\n", header);
   sprintf(header, "%sProxy-Connection: close\r\n", header);
 
+  // 불필요한 헤더를 걸러내고 나머지 헤더를 요청 헤더에 추가
   while (strcmp(buf, "\r\n")) {
     Rio_readlineb(&rio, buf, MAXLINE);
 
@@ -86,15 +93,16 @@ void doit(int fd)
     }
   }
 
-
+  // 요청 헤더를 출력
   printf("Request-header:\n");
   printf("%s", header);
 
+  // 원격 서버에 연결하고 요청을 전달
   clientfd = Open_clientfd(host, port);
   Rio_readinitb(&rio2, clientfd);
-
   Rio_writen(clientfd, header, strlen(header));
 
+  // 원격 서버로부터의 응답 헤더를 받아 클라이언트에게 전달
   Rio_readlineb(&rio2, buf, MAXLINE);
   sprintf(header, buf);
 
@@ -102,67 +110,87 @@ void doit(int fd)
     Rio_readlineb(&rio2, buf, MAXLINE);
     sprintf(header, "%s%s", header, buf);
   }
-
+  
   printf("response-header:\n");
   printf("%s", header);
-
   Rio_writen(fd, header, strlen(header));
 
+  // 원격 서버로부터의 응답 본문을 받아 클라이언트에게 전달
   size_t n;
   while ((n = Rio_readlineb(&rio2, buf, MAXLINE)) != 0) {
     printf("%d바이트 받음\n", n);
     printf("%s\n", buf);
     Rio_writen(fd, buf, n);
   }
+
+  // 클라이언트와의 연결을 종료
   Close(clientfd);
 }
 
+
+// 클라이언트에게 에러 응답을 보내는 함수
 void clienterror(int fd, char *cause, char *errnum, char *shortmsg, char *longmsg)
 {
   char buf[MAXLINE], body[MAXBUF];
 
+  // HTML 형식의 에러 본문 생성
   sprintf(body, "<html><title>Tiny Error</title>");
   sprintf(body, "%s<body bgcolor=""ffffff"">\r\n", body);
   sprintf(body, "%s%s: %s\r\n", body, errnum, shortmsg);
   sprintf(body, "%s<p>%s: %s\r\n", body, longmsg, cause);
   sprintf(body, "%s<hr><em>The Tiny Web server</em>\r\n", body);
 
+  // HTTP 응답 헤더 생성 및 클라이언트에게 전송
   sprintf(buf, "HTTP/1.0 %s %s\r\n", errnum, shortmsg);
-
   Rio_writen(fd, buf, strlen(buf));
   sprintf(buf, "Content-type: text/html\r\n");
-
   Rio_writen(fd, buf, strlen(buf));
   sprintf(buf, "Content-length: %d\r\n\r\n", (int)strlen(body));
-
   Rio_writen(fd, buf, strlen(buf));
 
+  // HTML 에러 본문을 클라이언트에게 전송
   Rio_writen(fd, body, strlen(body));
 }
 
+// 빈 응답을 클라이언트에게 보내는 함수
 void blank_response(int fd, char *buf)
 {
+  // HTTP 응답 헤더 생성 및 클라이언트에게 전송
   strcpy(buf, "HTTP/1.0 200 OK\r\n\r\n");
   Rio_writen(fd, buf, strlen(buf));
   return;
 }
 
+
+// URI를 파싱하여 호스트명, 파일 경로, 포트를 추출하는 함수
 void parse_uri(char *uri,char *hostname,char *filename,char *port)
 {
+  // URI에서 "//"을 찾아 p1에 포인터 저장
   char *p1 = strstr(uri, "//");
+  // p1을 "//" 이후로 이동
   p1 += 2;
 
+  // p1 이후에서 다음 "/"을 찾아 p2에 포인터 저장
   char *p2 = strstr(p1, "/");
 
+  // p1 이후에서 다음 ":"을 찾아 p3에 포인터 저장
   char *p3 = strstr(p1, ":");  
   
+  // p3가 NULL이 아니면 (포트 정보가 있는 경우)
   if (p3 != NULL) {
+
+    // p3 다음부터 p2까지를 포트로 복사
     strncpy(port, p3 + 1, p2 - p3 - 1);
+    // p1부터 p3 이전까지를 호스트명으로 복사
     strncpy(hostname, p1, p3 - p1);
   }
+  // 포트 정보가 없는 경우
   else {
+    // 기본 포트인 80을 설정
     strcpy(port, "80");
+    // p1부터 p2 이전까지를 호스트명으로 복사
     strncpy(hostname, p1, p2 - p1);
   }
+  // p2부터 끝까지를 파일 경로로 복사
   strcpy(filename, p2);
 }
