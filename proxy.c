@@ -10,6 +10,7 @@ void doit(int fd);
 void parse_uri(char *uri,char *hostname,char *path, char *port);
 void clienterror(int fd, char *cause, char *errnum, char *shortmsg, char *longmsg);
 void blank_response(int fd, char *buf);
+void *thread(void *vargp);
 
 /* You won't lose style points for including this long line in your code */
 static const char *user_agent_hdr =
@@ -18,10 +19,11 @@ static const char *user_agent_hdr =
 
 int main(int argc, char ** argv) {
   
-  int listenfd, connfd;  // 소켓 디스크립터 변수 선언
+  int listenfd, *connfdp;  // 소켓 디스크립터와 클라이언트 소켓 디스크립터 포인터를 선언
   socklen_t clientlen;  // 클라이언트 주소의 길이를 저장하는 변수
   struct sockaddr_storage clientaddr;  // 클라이언트 주소 정보를 저장하는 구조체
   char port[MAXLINE], hostname[MAXLINE];  // 호스트명과 포트 정보를 저장할 변수
+  pthread_t tid;  // pthread 라이브러리를 사용하여 쓰레드 ID를 저장할 변수
 
   if (argc != 2) {
     fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -33,14 +35,29 @@ int main(int argc, char ** argv) {
   
   // 무한 루프: 클라이언트의 연결을 지속적으로 수락하기 위함
   while (1) {
-    clientlen = sizeof(clientaddr);  // 클라이언트 주소 길이 초기화
-    connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);  // 클라이언트 연결 수락
-    Getnameinfo((SA *)&clientaddr, clientlen, hostname, MAXLINE, port, MAXLINE, 0);  // 클라이언트 주소 정보 얻기
-    printf("Accepted connection from (%s, %s)\n", hostname, port);  // 클라이언트 연결 정보 출력
-    doit(connfd);  // 요청 처리 함수 호출
-    Close(connfd);  // 클라이언트와의 연결 종료
+    clientlen = sizeof(clientaddr);  // 클라이언트 주소 길이를 초기화
+    connfdp = Malloc(sizeof(int));  // 클라이언트 소켓 디스크립터를 저장할 메모리를 동적으로 할당
+    *connfdp = Accept(listenfd, (SA *) &clientaddr, &clientlen);  // 클라이언트 연결을 수락하고 소켓 디스크립터를 저장
+    Pthread_create(&tid, NULL, thread, connfdp);  // 클라이언트 연결을 처리하는 쓰레드를 생성
   }
   return 0;
+}
+
+// 쓰레드에서 실행되는 함수 (클라이언트 연결을 처리)
+void * thread(void *vargp){
+  // void 포인터를 int 포인터로 형변환하고 connfd를 얻음
+  int connfp = *((int *)vargp);
+  // 쓰레드를 detach 상태로 만듦
+  // 쓰레드가 종료될 때 자원을 자동으로 회수하도록 하기 위함
+  Pthread_detach(pthread_self());
+  // 클라이언트 소켓 디스크립터를 저장한 메모리를 해제
+  Free(vargp);
+  // 클라이언트 요청을 처리하는 함수를 호출
+  doit(connfp);
+  // 클라이언트와의 연결을 종료
+  Close(connfp);
+  // 쓰레드 함수의 반환 값은 NULL로 설정
+  return NULL;
 }
 
 void doit(int fd)
@@ -110,7 +127,7 @@ void doit(int fd)
     Rio_readlineb(&rio2, buf, MAXLINE);
     sprintf(header, "%s%s", header, buf);
   }
-  
+
   printf("response-header:\n");
   printf("%s", header);
   Rio_writen(fd, header, strlen(header));
