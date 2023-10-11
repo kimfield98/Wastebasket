@@ -1,96 +1,119 @@
-pass tests/userprog/args-none
-pass tests/userprog/args-single
-pass tests/userprog/args-multiple
-pass tests/userprog/args-many
-pass tests/userprog/args-dbl-space
-pass tests/userprog/halt
-pass tests/userprog/exit
-pass tests/userprog/create-normal
-pass tests/userprog/create-empty
-pass tests/userprog/create-null
-pass tests/userprog/create-bad-ptr
-pass tests/userprog/create-long
-pass tests/userprog/create-exists
-pass tests/userprog/create-bound
-pass tests/userprog/open-normal
-pass tests/userprog/open-missing
-pass tests/userprog/open-boundary
-pass tests/userprog/open-empty
-pass tests/userprog/open-null
-pass tests/userprog/open-bad-ptr
-pass tests/userprog/open-twice
-pass tests/userprog/close-normal
-pass tests/userprog/close-twice
-pass tests/userprog/close-bad-fd
-pass tests/userprog/read-normal
-pass tests/userprog/read-bad-ptr
-pass tests/userprog/read-boundary
-pass tests/userprog/read-zero
-pass tests/userprog/read-stdout
-pass tests/userprog/read-bad-fd
-pass tests/userprog/write-normal
-pass tests/userprog/write-bad-ptr
-pass tests/userprog/write-boundary
-pass tests/userprog/write-zero
-pass tests/userprog/write-stdin
-pass tests/userprog/write-bad-fd
-pass tests/userprog/fork-once
-pass tests/userprog/fork-multiple
-pass tests/userprog/fork-recursive
-pass tests/userprog/fork-read
-pass tests/userprog/fork-close
-pass tests/userprog/fork-boundary
-pass tests/userprog/exec-once
-pass tests/userprog/exec-arg
-pass tests/userprog/exec-boundary
-pass tests/userprog/exec-missing
-pass tests/userprog/exec-bad-ptr
-pass tests/userprog/exec-read
-pass tests/userprog/wait-simple
-pass tests/userprog/wait-twice
-pass tests/userprog/wait-killed
-pass tests/userprog/wait-bad-pid
-pass tests/userprog/multi-recurse
-pass tests/userprog/multi-child-fd
-pass tests/userprog/rox-simple
-pass tests/userprog/rox-child
-pass tests/userprog/rox-multichild
-pass tests/userprog/bad-read
-pass tests/userprog/bad-write
-pass tests/userprog/bad-read2
-pass tests/userprog/bad-write2
-pass tests/userprog/bad-jump
-pass tests/userprog/bad-jump2
-pass tests/filesys/base/lg-create
-pass tests/filesys/base/lg-full
-pass tests/filesys/base/lg-random
-pass tests/filesys/base/lg-seq-block
-pass tests/filesys/base/lg-seq-random
-pass tests/filesys/base/sm-create
-pass tests/filesys/base/sm-full
-pass tests/filesys/base/sm-random
-pass tests/filesys/base/sm-seq-block
-pass tests/filesys/base/sm-seq-random
-FAIL tests/filesys/base/syn-read
-pass tests/filesys/base/syn-remove
-FAIL tests/filesys/base/syn-write
-pass tests/userprog/no-vm/multi-oom
-pass tests/threads/alarm-single
-pass tests/threads/alarm-multiple
-pass tests/threads/alarm-simultaneous
-pass tests/threads/alarm-priority
-pass tests/threads/alarm-zero
-pass tests/threads/alarm-negative
-pass tests/threads/priority-change
-pass tests/threads/priority-donate-one
-pass tests/threads/priority-donate-multiple
-pass tests/threads/priority-donate-multiple2
-pass tests/threads/priority-donate-nest
-pass tests/threads/priority-donate-sema
-pass tests/threads/priority-donate-lower
-pass tests/threads/priority-fifo
-pass tests/threads/priority-preempt
-pass tests/threads/priority-sema
-pass tests/threads/priority-condvar
-pass tests/threads/priority-donate-chain
-2 of 95 tests failed.
+## 1차 시도
+
+### `process.c`
+
+프로그램이 새로 시작되는 `**process_create_initd**(const char *file_name)`
+
+`**thread_create**()` 의 함수 인자인 → `**initd**(void *f_name)` 실행
+
+(`process_init()` → `**process_exec**(f_name)` 호출)
+
+- `**process_exec**(void *f_name)`
+    
+    f_name을 새로 생성된 process or thread 내에서 실행하기 위한 함수.
+    f_name은 전체command line, parsing 필요
+    함수 실행 실패 시 -1을 반환.
+    ("Switch the current execution context to the f_name") */
+    
+
+<aside>
+👀 init() 완성하기!
+
+</aside>
+
+```c
+// initd()
+
+#ifdef VM
+    supplemental_page_table_init(&thread_current()->spt);
+#endif
+```
+
+미리 확인해야 할 것
+
+thread 구조체 안에 spt가 있는가? → 기본적으로 있다!
+
+### 1번 과제 _ `supplemental_page_table_init` 구현하기!
+
+```c
+/* Initialize new supplemental page table */
+void
+supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
+}
+```
+
+1. `hash_init()` 를 추가하고 싶은데 그러려면 `include hash.h`를 해줘야 함
+    1. spt가 hash table 이니까 그렇다면 hash init까지 해줘야하지 않을까란 추측으로 코드를 넣음
+2. 인자로 들어오는 `supplemental_page_table` ←에 hash 구조체가 없다! 그래서 추가했다.
+3. 다시 돌아와서 `hash_init()`에 인자를 무엇을 넣어줘야 하는가?
+    1. spt→hash table, ? (docs에 나와있음)
+4. ?에 들어갈 page_hash()와 page_less()
+    1. 그 전에! page 구조체에 h_elem이 있는가? 추가하자
+5. page_hash를 먼저 만들자 (return 값은 hash_int(&hash_pg→va))
+    1. hash_elem을 가져와서 page를 찾는 작업
+6. page_less를 이어서 만들자!
+    1. 가상주소에 잇는 page와 hash_table에 있는 가상주소를 비교하며 매핑 확인하는 작업
+    2. 왜 부등호인가? list 순회하며 자신의 위치를 찾았던 것처럼 같은 작업!
+7. 다 만들었으면 ?에 인자로 각 함수를 추가해주고, 선언도 해주자!
+
+---
+
+```c
+// initd()
+
+#ifdef VM
+    supplemental_page_table_init(&thread_current()->spt);
+#endif
+
+process_init(); // 여기는 별 거 없다
+
+    if (process_exec(f_name) < 0) // process_exec으로 가보자!
+        PANIC("Fail to launch initd\n");
+    NOT_REACHED();
+```
+
+`process_exec` 안에 `load()` → `load_segment()` 를 타고 들어가면 2개가 있는데 다른 공간 말고 VM 공간으로 찾아가자!
+
+```c
+static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes, uint32_t zero_bytes, bool writable) {
+    ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
+    ASSERT(pg_ofs(upage) == 0);
+    ASSERT(ofs % PGSIZE == 0);
+
+    while (read_bytes > 0 || zero_bytes > 0) {
+        /* Do calculate how to fill this page.
+         * We will read PAGE_READ_BYTES bytes from FILE
+         * and zero the final PAGE_ZERO_BYTES bytes. */
+        size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
+        size_t page_zero_bytes = PGSIZE - page_read_bytes;
+
+        /* TODO: Set up aux to pass information to the lazy_load_segment. */
+        void *aux = NULL;
+        if (!vm_alloc_page_with_initializer(VM_ANON, upage, writable, lazy_load_segment, aux))
+            return false;
+*****************************************************바로 위의 저거야 !! lazy 함수 채우기
+
+        /* Advance. */
+        read_bytes -= page_read_bytes;
+        zero_bytes -= page_zero_bytes;
+        upage += PGSIZE;
+    }
+    return true;
+}
+```
+
+해야 할 것
+
+1. `lazy_load_segment`
+2.  /* TODO: Set up aux to pass information to the lazy_load_segment. */ `vm_alloc_page_with_initializer`
+    1. 가지가 갈라지는데 `spt_find_page` 는 나중에 고려*
+3. 다 하면 `load_segment` 가 실행이 문제 없이 된다. → `load()`가 문제 없이 실행 된다는 뜻
+
+---
+
+이제 순서대로 해볼게
+
+<aside>
+👀 잠깐! load()의 역할과 그 안에서 load_segment()를 실행함으로써 thread안의 ELF는 어떻게 변화하는가?→ 정리해서 공유하기
+
+</aside>
