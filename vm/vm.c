@@ -3,6 +3,7 @@
 #include "threads/malloc.h"
 #include "vm/vm.h"
 #include "vm/inspect.h"
+#include "include/threads/mmu.h"
 
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
@@ -108,14 +109,20 @@ vm_evict_frame (void) {
 	return NULL;
 }
 
-/* palloc() and get frame. If there is no available page, evict the page
- * and return it. This always return valid address. That is, if the user pool
- * memory is full, this function evicts the frame to get the available memory
- * space.*/
+/* palloc() 함수를 사용하여 프레임을 얻습니다. 사용 가능한 페이지가 없는 경우,
+   페이지를 대체(evict)하고 해당 페이지를 반환합니다. 항상 유효한 주소를 반환합니다.
+   사용자 풀 메모리가 가득 찬 경우, 이 함수는 사용 가능한 메모리 공간을 얻기 위해
+   프레임을 대체합니다. */
 static struct frame *
 vm_get_frame (void) {
 	struct frame *frame = NULL;
 	/* TODO: Fill this function. */
+
+	frame->kva = palloc_get_page(PAL_USER);
+	frame->page = NULL;
+	if (frame->kva == NULL){
+		PANIC("todo");
+	}
 
 	ASSERT (frame != NULL);
 	ASSERT (frame->page == NULL);
@@ -155,7 +162,8 @@ vm_dealloc_page (struct page *page) {
 /* Claim the page that allocate on VA. */
 bool
 vm_claim_page (void *va UNUSED) {
-	struct page *page = NULL;
+	struct thread* curr = thread_current();
+	struct page *page = spt_find_page(curr->spt,va);
 	/* TODO: Fill this function */
 
 	return vm_do_claim_page (page);
@@ -165,12 +173,14 @@ vm_claim_page (void *va UNUSED) {
 static bool
 vm_do_claim_page (struct page *page) {
 	struct frame *frame = vm_get_frame ();
+	struct thread *curr = thread_current();
 
 	/* Set links */
 	frame->page = page;
 	page->frame = frame;
 
-	/* TODO: Insert page table entry to map page's VA to frame's PA. */
+	/* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
+	pml4_set_page(curr->pml4,page->va,frame->kva,true);
 
 	return swap_in (page, frame->kva);
 }
