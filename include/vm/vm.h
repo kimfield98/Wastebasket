@@ -66,6 +66,7 @@ struct frame {
 	void *kva;
 	struct page *page;
 	struct list_elem f_elem;
+	
 };
 
 /* The function table for page operations.
@@ -88,11 +89,12 @@ struct page_operations {
  * 이 구조체에 대해 특정한 디자인을 강요하고 싶지는 않습니다.
  * 이에 대한 모든 디자인은 여러분에게 달려 있습니다. */
 struct supplemental_page_table {
-	struct hash* hash_table;
+	struct hash* hash_table
 };
 
+
 #include "threads/thread.h"
-void supplemental_page_table_init (struct supplemental_page_table *spt);
+void supplemental_page_table_and_frame_table_init (struct supplemental_page_table *spt);
 bool supplemental_page_table_copy (struct supplemental_page_table *dst,
 		struct supplemental_page_table *src);
 void supplemental_page_table_kill (struct supplemental_page_table *spt);
@@ -112,7 +114,8 @@ bool vm_alloc_page_with_initializer (enum vm_type type, void *upage,
 void vm_dealloc_page (struct page *page);
 bool vm_claim_page (void *va);
 enum vm_type page_get_type (struct page *page);
-unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED);
-bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED);
+unsigned page_hash (const struct hash_elem*e, void *aux);
+bool page_less(const struct hash_elem *a, const struct hash_elem *b, void* aux);
+
 
 #endif  /* VM_VM_H */

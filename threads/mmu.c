@@ -8,6 +8,7 @@
 #include "threads/mmu.h"
 #include "intrinsic.h"
 
+/* pml4 walk 단계 중 pde walk */
 static uint64_t *
 pgdir_walk (uint64_t *pdp, const uint64_t va, int create) {
 	int idx = PDX (va);
@@ -28,6 +29,7 @@ pgdir_walk (uint64_t *pdp, const uint64_t va, int create) {
 	return NULL;
 }
 
+/* pml4 walk 단계 중 pdpe walk */
 static uint64_t *
 pdpe_walk (uint64_t *pdpe, const uint64_t va, int create) {
 	uint64_t *pte = NULL;
@@ -55,11 +57,12 @@ pdpe_walk (uint64_t *pdpe, const uint64_t va, int create) {
 	return pte;
 }
 
-/* 가상 주소 VADDR에 대한 페이지 맵 레벨 4, pml4의 페이지 테이블 항목 주소를 반환합니다.
-   PML4E에 VADDR에 대한 페이지 테이블이 없는 경우 동작은 CREATE에 따라 달라집니다.
-   CREATE가 true인 경우 새로운 페이지 테이블이 생성되고 해당 테이블로의 포인터가 반환됩니다.
-   그렇지 않으면 null 포인터가 반환됩니다. */
+/*페이지 맵 레벨 4, pml4에 있는 가상 주소 VADDR의 '페이지 테이블 엔트리 주소'를 반환합니다. 
+만약 PML4E가 VADDR에 대한 페이지 테이블을 갖고 있지 않는다면, 동작은 CREATE에 따라 다릅니다. 
+CREATE가 true이면 새로운 페이지 테이블이 생성되고 그 안의 포인터가 반환됩니다. 
+그렇지 않으면 null 포인터가 반환됩니다.*/
 
+/* pml4 walk 단계 중 pml4e walk */
 uint64_t *
 pml4e_walk (uint64_t *pml4e, const uint64_t va, int create) {
 	uint64_t *pte = NULL;
@@ -87,9 +90,9 @@ pml4e_walk (uint64_t *pml4e, const uint64_t va, int create) {
 	return pte;
 }
 
-/* 새로운 페이지 맵 레벨 4 (pml4)를 생성합니다. 이 페이지 맵 레벨 4는 커널 가상 주소에 대한 매핑을 갖지만,
-   사용자 가상 주소에 대한 매핑은 갖지 않습니다. 새로운 페이지 디렉토리를 반환하며, 메모리 할당 실패 시
-   null 포인터를 반환합니다. */
+/* 새로운 페이지 맵 레벨 4 (pml4)를 생성하며 
+커널 가상 주소(kva)에 대한 매핑이 있지만 사용자 가상 주소(uva)에 대한 매핑이 없습니다. 
+새로운 페이지 디렉터리를 반환하며 메모리 할당에 실패한 경우 null 포인터를 반환합니다.*/
 uint64_t *
 pml4_create (void) {
 	uint64_t *pml4 = palloc_get_page (0);
@@ -235,9 +238,12 @@ pml4_set_page (uint64_t *pml4, void *upage, void *kpage, bool rw) {
 	return pte != NULL;
 }
 
-/* 사용자 가상 페이지 UPAGE를 페이지 디렉토리 PD에서 "not present"로 표시합니다.
-   이후 페이지에 대한 액세스는 페이지 부재가 발생할 것입니다. 페이지 테이블 항목의 다른 비트는 보존됩니다.
-   UPAGE는 매핑될 필요가 없습니다. */
+
+/*
+* "유저 가상 페이지 UPAGE를 page directory PD에서 'not present'로 표시합니다. 
+* 이후 페이지에 대한 접근은 오류를 발생시킵니다. 페이지 테이블 엔트리의 다른 비트는 보존됩니다. 
+* UPAGE는 매핑되어 있을 필요는 없습니다."
+*/
 void
 pml4_clear_page (uint64_t *pml4, void *upage) {
 	uint64_t *pte;

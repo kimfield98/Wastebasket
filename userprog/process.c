@@ -73,6 +73,7 @@ tid_t process_create_initd(const char *file_name) {
 static void initd(void *f_name) {
 #ifdef VM
     supplemental_page_table_init(&thread_current()->spt);
+    frame_table_init(&thread_current()->ft);
 #endif
 
     process_init();
@@ -562,7 +563,7 @@ static bool load(const char *file_name, struct intr_frame *if_) {
 
 done:
     /* 실행이 끝나고 나면 성공/실패 여부와 무관하게 아래 코드 실행 */
-    file_close(file);
+    // file_close(file);
     return success;
 }
 
@@ -754,30 +755,30 @@ static bool install_page(void *upage, void *kpage, bool writable) {
 ///////////////////////////////// Project 3 ++ /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/* From here, codes will be used after project 3.
- * If you want to implement the function for only project 2, implement it on the
- * upper block. */
+/* 이 부분부터는 프로젝트 3 이후에 사용할 코드입니다.
+ * 만약 프로젝트 2 전용 함수를 구현하려면 이전 블록에 구현하십시오. */
+
 
 static bool lazy_load_segment(struct page *page, void *aux) {
-    /* TODO: Load the segment from the file */
-    /* TODO: This called when the first page fault occurs on address VA. */
-    /* TODO: VA is available when calling this function. */
+    /* TODO: 파일에서 세그먼트를 로드합니다. */
+    /* TODO: 이 함수는 주소 VA에서 처음 페이지 폴트(page fault)가 발생할 때 호출됩니다. */
+    /* TODO: VA는 이 함수를 호출할 때 사용 가능합니다. */
+
 }
 
-/* Loads a segment starting at offset OFS in FILE at address
- * UPAGE.  In total, READ_BYTES + ZERO_BYTES bytes of virtual
- * memory are initialized, as follows:
+/* 파일 내의 OFS 오프셋에서 시작하여 UPAGE 주소에서 세그먼트를 로드합니다.
+ * 총 READ_BYTES + ZERO_BYTES 바이트의 가상 메모리가 다음과 같이 초기화됩니다:
  *
- * - READ_BYTES bytes at UPAGE must be read from FILE
- * starting at offset OFS.
+ * - UPAGE에서 시작하는 READ_BYTES 바이트는 파일 내의 OFS 오프셋에서 읽어와야 합니다.
  *
- * - ZERO_BYTES bytes at UPAGE + READ_BYTES must be zeroed.
+ * - UPAGE + READ_BYTES에서 시작하는 ZERO_BYTES 바이트는 0으로 초기화해야 합니다.
  *
- * The pages initialized by this function must be writable by the
- * user process if WRITABLE is true, read-only otherwise.
+ * 이 함수에 의해 초기화된 페이지는 WRITABLE이 true인 경우 사용자 프로세스에 의해 쓰기 가능해야 하며, 그렇지 않으면 읽기 전용이어야 합니다.
  *
- * Return true if successful, false if a memory allocation error
- * or disk read error occurs. */
+ * 성공하면 true를 반환하고, 메모리 할당 오류 또는 디스크 읽기 오류가 발생하면 false를 반환합니다. */
+
+/*
+ * load는 파일에서 정보를 갖고오고 저장도 하는데, 이 load_segment에서 그 정보를 하위 비트에 저자하여 writeable 한지 등등 저장한다.*/
 static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes, uint32_t zero_bytes, bool writable) {
     ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
     ASSERT(pg_ofs(upage) == 0);
