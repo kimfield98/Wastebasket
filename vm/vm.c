@@ -4,6 +4,7 @@
 #include "vm/vm.h"
 #include "vm/inspect.h"
 #include "include/threads/mmu.h"
+#include "string.h"
 
 static struct list farme_table;
 
@@ -45,7 +46,8 @@ page_get_type (struct page *page) {
 static struct frame *vm_get_victim (void);
 static bool vm_do_claim_page (struct page *page);
 static struct frame *vm_evict_frame (void);
-struct list *frame_table;
+static struct list *f_occ_table;
+static struct list *f_free_table;
 
 /*
 대기중엔 페이지(uninit 상태)를 만들고 초기화 시킨다.
@@ -160,22 +162,31 @@ vm_evict_frame (void) {
 이 함수는 항상 유효한 주소를 반환합니다. 
 즉, 사용자 풀 메모리가 가득 찬 경우, 이 함수는 사용 가능한 메모리 공간을 얻기 위해 프레임을 제거합니다."
 */
+
+
 static struct frame *
 vm_get_frame (void) {
     struct frame *frame = NULL;
     struct thread* curr = thread_current();
     /* TODO: Fill this function. */
 
-    frame->kva = palloc_get_page(PAL_ZERO); //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
+// 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
+	if(list_empty(&f_free_table))
+    	frame->kva = palloc_get_page(PAL_USER | PAL_ZERO); //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
+	else{
+		frame = list_entry(list_pop_front(&f_free_table), struct frame, f_elem);
+		//이 프레임으로 kva 다시 뺀다.
+	}
     if (frame->kva == NULL){ //사용 가능한 페이지가 없는 경우
         struct frame *reframe = vm_evict_frame(); //페이지를 쫒아내고 그 페이지에 상응하는 프레임을 reframe으로 리턴.
         swap_out(reframe->page); // reframe을 물리 메모리에서 스왚 디스크로 swap_out
+		free_in_occ_out(&reframe->f_elem);
         reframe->page = NULL; // 프레임의 page NULL로.
         pml4_clear_page (curr->pml4,reframe->kva); //pml4 맵핑을 끊어야함 => pa와의 맵핑을 끊음.
         return reframe; // 맵핑을 끊은, 이제 빈 프레임 반환
     }
     frame->page = NULL; // 프레임의 page NULL로.
-    list_push_back(&frame_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레암 집어넣음
+    list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
 
     ASSERT (frame != NULL);
     ASSERT (frame->page == NULL);
@@ -190,6 +201,9 @@ vm_stack_growth (void *addr UNUSED) {
 /* 쓰기 보호된 페이지의 오류를 처리합니다. */
 static bool
 vm_handle_wp (struct page *page UNUSED) {
+	// swap_out();
+	list_remove(&page->frame->f_elem); // swap_out 했으므로 frame table 에서 빼줌.
+	// swap_in();
 }
 
 /* Return true on success */
@@ -197,20 +211,22 @@ bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
         bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
     struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
-    struct page *page = NULL;
+    struct page *page = spt_find_page(spt, addr);
     /* TODO: Validate the fault */ // segmentation fault 인지 page fault 인지 검증?
+	ASSERT (is_kernel_vaddr(addr));
     if(user)
         return false;
-    if(not_present){
+    if(not_present){ // frame 자체가 비어있는 경우
         //page fault 로직 처리
-        return vm_do_claim_page (page);
+        return vm_do_claim_page (page); // 프레임 할당하는 함수
     }
-    else{
-        if(write)
-            return true;
-        else{
-            //seg fault 로직 처리
-            // vm_handle_wp 를 불러야 하나?
+    else{ // frame은 채워져 있는 상태(이지만 내 것인지 모를 때?)
+        if(write) // 타입이 file
+            return vm_handle_wp(page);
+        else{ // 타입이 anon
+            // return true;
+			// addr로 page를 찾아서 0을 채워준다.
+			
         } 
     }
 }
@@ -229,7 +245,7 @@ vm_dealloc_page (struct page *page) {
 bool
 vm_claim_page (void *va UNUSED) {
     struct thread* curr = thread_current();
-    struct page *page = spt_find_page(curr->spt,va);
+    struct page *page = spt_find_page(&curr->spt,va);
     /* TODO: Fill this function */
 
     return vm_do_claim_page (page);
@@ -246,7 +262,7 @@ vm_do_claim_page (struct page *page) {
     page->frame = frame;
 
     /* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
-    list_push_back(&frame_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
+    list_push_back(&f_occ_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
     pml4_set_page(curr->pml4,page->va,frame->kva,true); // page 와 물리 메모리 맵핑
 
     return swap_in (page, frame->kva);
@@ -254,9 +270,10 @@ vm_do_claim_page (struct page *page) {
 
 /* Initialize new supplemental page table */
 void
-supplemental_page_table_and_frame_table_init (struct supplemental_page_table *spt) {
+supplemental_page_table_and_f_occ_table_init (struct supplemental_page_table *spt) {
     hash_init(spt->hash_table,page_hash,page_less,NULL);
-    list_init(frame_table);
+    list_init(f_occ_table);
+	list_init(f_free_table);
 }
 
 /* Copy supplemental page table from src to dst */
@@ -272,7 +289,6 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
      수정된 모든 내용을 저장 매체에 기록합니다."*/
 }
 
-1
 /* Returns a hash value for page p. */
 unsigned
 page_hash (const struct hash_elem *p_, void *aux UNUSED) {
@@ -288,4 +304,14 @@ page_less (const struct hash_elem *a_,
   const struct page *b = hash_entry (b_, struct page, h_elem);
 
   return a->va < b->va;
+}
+
+void free_in_occ_out(struct frame *frame){
+		list_remove(&frame->f_elem);
+		list_push_back(&f_free_table,&frame->f_elem);
+}
+
+void occ_in_free_out(struct frame *frame){
+		list_remove(&frame->f_elem); 
+		list_push_back(&f_occ_table,&frame->f_elem);
 }
