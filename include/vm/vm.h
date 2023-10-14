@@ -116,6 +116,8 @@ bool vm_claim_page (void *va);
 enum vm_type page_get_type (struct page *page);
 unsigned page_hash (const struct hash_elem*e, void *aux);
 bool page_less(const struct hash_elem *a, const struct hash_elem *b, void* aux);
+void free_in_occ_out(struct frame *frame);
+void occ_in_free_out(struct frame *frame);
 
 
 #endif  /* VM_VM_H */
