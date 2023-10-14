@@ -5,6 +5,8 @@
 #include "vm/inspect.h"
 #include "include/threads/mmu.h"
 
+static struct list farme_table;
+
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
 void
@@ -66,7 +68,7 @@ struct page *
 spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
 	struct page page;
 	/* TODO: Fill this function. */
-	  struct hash_elem *e;
+	struct hash_elem *e;
 
 	page.va = va;
 	e = hash_find (&spt->hash_table, &page.h_elem);
@@ -117,13 +119,17 @@ static struct frame *
 vm_get_frame (void) {
 	struct frame *frame = NULL;
 	/* TODO: Fill this function. */
-
-	frame->kva = palloc_get_page(PAL_USER);
-	frame->page = NULL;
+	frame->kva = palloc_get_page(PAL_USER | PAL_ZERO);
 	if (frame->kva == NULL){
-		PANIC("todo");
+		struct thread* curr = thread_current();
+		struct frame *refreme = vm_evict_frame();
+		pml4_clear_page(curr->pml4, refreme->kva);
+		swap_out(refreme);
+		refreme->page = NULL;
+		return refreme;
+		// PANIC("todo");
 	}
-
+	frame->page = NULL;
 	ASSERT (frame != NULL);
 	ASSERT (frame->page == NULL);
 	return frame;
@@ -143,10 +149,23 @@ vm_handle_wp (struct page *page UNUSED) {
 bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
-	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
+	struct supplemental_page_table *spt UNUSED = &thread_current()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
 	/* TODO: Your code goes here */
+	/* 1. 페이지 폴트가 발생한 페이지를 찾습니다.(보조 페이지 엔트리를 사용해서 데이터가 들어갈 페이지를 찾는다.)
+			1) 파일 시스템에 있거나
+			2) 스왑슬롯에 있거나
+			3) 또는 단순히 0으로만 이루어져있다.
+	 * 2. 페이지를 저장하기 위해 프레임을 획득합니다.
+	 * 3. 데이터를 파일 시스템이나 스왑에서 읽어오거나, 0으로 초기화하는 방식으로 만들어서 프레임으로 가져옵니다.
+	 * 4. 폴트가 발생한 가상주소에 대한 페이지 테이블 엔트리가 물리 페이지를 가리키도록 지정합니다.*/
+	page = spt_find_page(spt,pg_round_down(addr));
+	if (is_kernel_vaddr(addr)){
+		if (vm_claim_page(addr)){
+
+		};
+	};
 
 	return vm_do_claim_page (page);
 }
@@ -163,7 +182,7 @@ vm_dealloc_page (struct page *page) {
 bool
 vm_claim_page (void *va UNUSED) {
 	struct thread* curr = thread_current();
-	struct page *page = spt_find_page(curr->spt,va);
+	struct page *page = spt_find_page(curr->spt, va);
 	/* TODO: Fill this function */
 
 	return vm_do_claim_page (page);
@@ -180,7 +199,7 @@ vm_do_claim_page (struct page *page) {
 	page->frame = frame;
 
 	/* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
-	pml4_set_page(curr->pml4,page->va,frame->kva,true);
+	pml4_set_page(curr->pml4,page->va,frame->kva,false);
 
 	return swap_in (page, frame->kva);
 }

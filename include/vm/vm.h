@@ -65,6 +65,7 @@ struct page {
 struct frame {
 	void *kva;
 	struct page *page;
+	struct list_elem f_elem;
 };
 
 /* The function table for page operations.
@@ -83,9 +84,9 @@ struct page_operations {
 #define destroy(page) \
 	if ((page)->operations->destroy) (page)->operations->destroy (page)
 
-/* Representation of current process's memory space.
- * We don't want to force you to obey any specific design for this struct.
- * All designs up to you for this. */
+/* 현재 프로세스의 메모리 공간 표현.
+ * 이 구조체에 대해 특정한 디자인을 강요하고 싶지는 않습니다.
+ * 이에 대한 모든 디자인은 여러분에게 달려 있습니다. */
 struct supplemental_page_table {
 	struct hash* hash_table;
 };
@@ -111,5 +112,7 @@ bool vm_alloc_page_with_initializer (enum vm_type type, void *upage,
 void vm_dealloc_page (struct page *page);
 bool vm_claim_page (void *va);
 enum vm_type page_get_type (struct page *page);
+unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED);
+bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED);
 
 #endif  /* VM_VM_H */
