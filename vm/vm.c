@@ -3,11 +3,7 @@
 #include "threads/malloc.h"
 #include "vm/vm.h"
 #include "vm/inspect.h"
-<<<<<<< HEAD
 #include "include/threads/mmu.h"
-=======
-#include "hash.h"
->>>>>>> e1135df ([주석] vm/vm/c)
 
 /*
 4가지 상태 - uninit, anon, file, cache
@@ -47,6 +43,7 @@ page_get_type (struct page *page) {
 static struct frame *vm_get_victim (void);
 static bool vm_do_claim_page (struct page *page);
 static struct frame *vm_evict_frame (void);
+struct list *frame_table;
 
 /*
 대기중엔 페이지(uninit 상태)를 만들고 초기화 시킨다.
@@ -108,7 +105,6 @@ err:
 /* spt에서 va를 찾아 그 페이지를 리턴함. 에러시 리턴 NULL*/
 struct page *
 spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
-<<<<<<< HEAD
 	struct page page;
 	/* TODO: Fill this function. */
 	  struct hash_elem *e;
@@ -116,23 +112,6 @@ spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
 	page.va = va;
 	e = hash_find (&spt->hash_table, &page.h_elem);
 	return e != NULL ? hash_entry (e, struct page, h_elem) : NULL;
-=======
-	// 지성이 방법
-	// struct page *f_page = ((struct page*) ((uint8_t *) &(va) - offsetof(struct page,va)));
-	// // va 를 vtop 로 물리 메모리를 갖고와서 그걸 mapping 된 hash_elem 갖고와서 그걸로 page 갖고옴.
-	// /* TODO: Fill this function. */
-	// if (f_page == NULL){
-	// 	return NULL;
-	// }
-	// return f_page;
-
-	struct page p; // 페이지를 하나 만들어서 
- 	struct hash_elem *e;
-
- 	p.va = va; // 페이지에 가상주소를 할당하고
-  	e = hash_find (&spt->hash_table, &p.h_elem); // 그 가상 주소를 활용하여 페이지를 찾아낸다.
-  	return e != NULL ? hash_entry (e, struct page, h_elem) : NULL;
->>>>>>> e1135df ([주석] vm/vm/c)
 }
 
 /* 페이지를 검증한 다음 spt 테이블에 삽입. */
@@ -141,14 +120,8 @@ spt_insert_page (struct supplemental_page_table *spt UNUSED,
 	struct page *page UNUSED) {
 	int succ = false;
 	/* TODO: Fill this function. */
-<<<<<<< HEAD
 	if (hash_insert(&spt->hash_table, &page->h_elem)==NULL);
 		succ = true;
-=======
-	if(hash_insert(&spt->hash_table,&page->h_elem) != NULL)
-		succ = true;
-
->>>>>>> e1135df ([주석] vm/vm/c)
 	return succ;
 }
 
@@ -169,21 +142,15 @@ vm_get_victim (void) {
 	return victim;
 }
 
-/*인자로 받은 페이지를 쫒아내고 그 페이지에 상응하는 프레임을 리턴함. 에러 시 NULL 리턴*/
+/*정책에 따라 페이지를 쫒아내고 그 페이지에 상응하는 프레임을 리턴함. 에러 시 NULL 리턴*/
 static struct frame *
 vm_evict_frame (void) {
-	struct frame *victim UNUSED = vm_get_victim ();
+	struct frame *victim = vm_get_victim ();
 	/* TODO: swap out the victim and return the evicted frame. */
 
 	return NULL;
 }
 
-<<<<<<< HEAD
-/* palloc() 함수를 사용하여 프레임을 얻습니다. 사용 가능한 페이지가 없는 경우,
-   페이지를 대체(evict)하고 해당 페이지를 반환합니다. 항상 유효한 주소를 반환합니다.
-   사용자 풀 메모리가 가득 찬 경우, 이 함수는 사용 가능한 메모리 공간을 얻기 위해
-   프레임을 대체합니다. */
-=======
 /*
 
 "palloc()을 호출하고 프레임을 얻습니다. 
@@ -191,17 +158,22 @@ vm_evict_frame (void) {
 이 함수는 항상 유효한 주소를 반환합니다. 
 즉, 사용자 풀 메모리가 가득 찬 경우, 이 함수는 사용 가능한 메모리 공간을 얻기 위해 프레임을 제거합니다."
 */
->>>>>>> e1135df ([주석] vm/vm/c)
 static struct frame *
 vm_get_frame (void) {
 	struct frame *frame = NULL;
+	struct thread* curr = thread_current();
 	/* TODO: Fill this function. */
 
-	frame->kva = palloc_get_page(PAL_USER);
-	frame->page = NULL;
-	if (frame->kva == NULL){
-		PANIC("todo");
+	frame->kva = palloc_get_page(PAL_ZERO); //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
+	if (frame->kva == NULL){ //사용 가능한 페이지가 없는 경우
+		struct frame *reframe = vm_evict_frame(); //페이지를 쫒아내고 그 페이지에 상응하는 프레임을 reframe으로 리턴.
+		swap_out(reframe->page); // reframe을 물리 메모리에서 스왚 디스크로 swap_out
+		reframe->page = NULL; // 프레임의 page NULL로.
+		pml4_clear_page (curr->pml4,reframe->kva); //pml4 맵핑을 끊어야함 => pa와의 맵핑을 끊음.
+		return reframe; // 맵핑을 끊은, 이제 빈 프레임 반환
 	}
+	frame->page = NULL; // 프레임의 page NULL로.
+	list_push_back(&frame_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레암 집어넣음
 
 	ASSERT (frame != NULL);
 	ASSERT (frame->page == NULL);
@@ -271,23 +243,18 @@ vm_do_claim_page (struct page *page) {
 	frame->page = page;
 	page->frame = frame;
 
-<<<<<<< HEAD
 	/* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
-	pml4_set_page(curr->pml4,page->va,frame->kva,true);
+	list_push_back(&frame_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
+	pml4_set_page(curr->pml4,page->va,frame->kva,true); // page 와 물리 메모리 맵핑
 
-=======
-	/* TODO: Insert page table entry to map page's VA to frame's PA. */
-/*당신은 먼저 vm_get_frame 함수를 호출함으로써 프레임 하나를 얻습니다. 
-그 이후 당신은 MMU를 세팅해야 하는데, 이는 가상 주소와 물리 주소를 매핑한 정보를 페이지 테이블에 추가해야 한다는 것을 의미합니다.
-위의 함수는 앞에서 말한 연산이 성공적으로 수행되었을 경우에 true를 반환하고 그렇지 않을 경우에 false를 반환합니다.*/
->>>>>>> e1135df ([주석] vm/vm/c)
 	return swap_in (page, frame->kva);
 }
 
 /* Initialize new supplemental page table */
 void
-supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
+supplemental_page_table_and_frame_table_init (struct supplemental_page_table *spt) {
 	hash_init(spt->hash_table,page_hash,page_less,NULL);
+	list_init(frame_table);
 }
 
 /* Copy supplemental page table from src to dst */
@@ -303,7 +270,6 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 	 수정된 모든 내용을 저장 매체에 기록합니다."*/
 }
 
-<<<<<<< HEAD
 /* Returns a hash value for page p. */
 unsigned
 page_hash (const struct hash_elem *p_, void *aux UNUSED) {
@@ -319,15 +285,4 @@ page_less (const struct hash_elem *a_,
   const struct page *b = hash_entry (b_, struct page, h_elem);
 
   return a->va < b->va;
-=======
-unsigned page_hash (const struct hash_elem*e, void *aux){
-	struct page* hash_pg = hash_entry(e, struct page, h_elem);
-	return hash_int(&hash_pg->va);
-}
-
-bool page_less(const struct hash_elem *a, const struct hash_elem *b, void* aux){
-	const struct page *pg_a = hash_entry(a, struct page, h_elem);
-	const struct page *pg_b = hash_entry(b, struct page, h_elem);
-	return pg_a->va < pg_b->b;
->>>>>>> e1135df ([주석] vm/vm/c)
 }
