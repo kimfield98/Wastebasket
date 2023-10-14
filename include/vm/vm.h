@@ -65,6 +65,8 @@ struct page {
 struct frame {
 	void *kva;
 	struct page *page;
+	struct list_elem f_elem;
+	
 };
 
 /* The function table for page operations.
@@ -90,8 +92,9 @@ struct supplemental_page_table {
 	struct hash* hash_table
 };
 
+
 #include "threads/thread.h"
-void supplemental_page_table_init (struct supplemental_page_table *spt);
+void supplemental_page_table_and_frame_table_init (struct supplemental_page_table *spt);
 bool supplemental_page_table_copy (struct supplemental_page_table *dst,
 		struct supplemental_page_table *src);
 void supplemental_page_table_kill (struct supplemental_page_table *spt);
@@ -113,5 +116,6 @@ bool vm_claim_page (void *va);
 enum vm_type page_get_type (struct page *page);
 unsigned page_hash (const struct hash_elem*e, void *aux);
 bool page_less(const struct hash_elem *a, const struct hash_elem *b, void* aux);
+
 
 #endif  /* VM_VM_H */
