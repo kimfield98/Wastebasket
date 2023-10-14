@@ -7,6 +7,12 @@ struct page;
 enum vm_type;
 
 struct file_page {
+	const struct page_operations *operations;
+	void *va;              /* Address in terms of user space */
+	struct frame *frame;   /* Back reference for frame */
+
+	/* Your implementation */
+	struct hash_elem h_elem;
 };
 
 void vm_file_init (void);
