@@ -73,6 +73,7 @@ tid_t process_create_initd(const char *file_name) {
 static void initd(void *f_name) {
 #ifdef VM
     supplemental_page_table_init(&thread_current()->spt);
+    frame_table_init(&thread_current()->ft);
 #endif
 
     process_init();
