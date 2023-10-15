@@ -83,9 +83,9 @@ main (void) {
 	console_init ();
 
 	/* Initialize memory system. */
-	mem_end = palloc_init ();
-	malloc_init ();
-	paging_init (mem_end);
+	mem_end = palloc_init (); // 메모리 크기 결정 -> mem_end
+	malloc_init (); 
+	paging_init (mem_end); //메모리 initialize -> mem_end 크기 대로 메모리 제한
 
 #ifdef USERPROG
 	tss_init ();
