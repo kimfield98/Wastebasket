@@ -1,4 +1,7 @@
-{
+{    "C_Cpp.default.defines": [
+    "USERPROG",
+    "VM"
+    ],
     "files.associations": {
         "*.py": "python",
         "numbers": "c",
