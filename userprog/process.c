@@ -795,7 +795,7 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         if (!vm_alloc_page_with_initializer(VM_ANON, upage, writable, lazy_load_segment, aux))
             return false;
 
-        /* Advance. */
+        /* Advance. */ // 위(vm_alloc_page_with_initializer)에서 만든 빈 프레임에 정보를 담는다.
         read_bytes -= page_read_bytes;
         zero_bytes -= page_zero_bytes;
         upage += PGSIZE;
