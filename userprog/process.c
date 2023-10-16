@@ -732,15 +732,12 @@ static bool setup_stack(struct intr_frame *if_) {
     return success;
 }
 
-/* Adds a mapping from user virtual address UPAGE to kernel
- * virtual address KPAGE to the page table.
- * If WRITABLE is true, the user process may modify the page;
- * otherwise, it is read-only.
- * UPAGE must not already be mapped.
- * KPAGE should probably be a page obtained from the user pool
- * with palloc_get_page().
- * Returns true on success, false if UPAGE is already mapped or
- * if memory allocation fails. */
+/* 사용자 가상 주소 UPAGE에서 커널 가상 주소 KPAGE로의 매핑을 페이지 테이블에 추가합니다.
+ * WRITABLE이 true인 경우 사용자 프로세스가 페이지를 수정할 수 있으며;
+ * 그렇지 않으면 읽기 전용입니다.
+ * UPAGE는 이미 매핑되어 있어서는 안 됩니다.
+ * KPAGE는 아마도 palloc_get_page()를 사용하여 사용자 풀에서 얻은 페이지여야 합니다.
+ * 성공하면 true를 반환하고, UPAGE가 이미 매핑되어 있거나 메모리 할당이 실패하면 false를 반환합니다. */
 static bool install_page(void *upage, void *kpage, bool writable) {
     struct thread *t = thread_current();
 
@@ -762,7 +759,7 @@ static bool lazy_load_segment(struct page *page, void *aux) {
     /* TODO: 파일에서 세그먼트를 로드합니다. */
     /* TODO: 이 함수는 주소 VA에서 처음 페이지 폴트(page fault)가 발생할 때 호출됩니다. */
     /* TODO: VA는 이 함수를 호출할 때 사용 가능합니다. */
-
+    /* 실행 가능한 파일의 페이지들을 초기화하는 함수*/
 }
 
 /* 파일 내의 OFS 오프셋에서 시작하여 UPAGE 주소에서 세그먼트를 로드합니다.
@@ -808,10 +805,18 @@ static bool setup_stack(struct intr_frame *if_) {
     bool success = false;
     void *stack_bottom = (void *)(((uint8_t *)USER_STACK) - PGSIZE);
 
-    /* TODO: Map the stack on stack_bottom and claim the page immediately.
-     * TODO: If success, set the rsp accordingly.
-     * TODO: You should mark the page is stack. */
-    /* TODO: Your code goes here */
+    /* TODO: 스택을 stack_bottom에 매핑하고 페이지를 즉시 할당하십시오.
+     * TODO: 성공하면 rsp를 해당 위치에 맞게 설정하십시오.
+     * TODO: 페이지가 스택임을 표시해야 합니다. */
+    /* TODO: 여기에 코드를 작성하십시오 */
+
+    if (kpage != NULL) {
+        success = install_page(((uint8_t *)USER_STACK) - PGSIZE, kpage, true);
+        if (success)
+            if_->rsp = USER_STACK;
+        else
+            palloc_free_page(kpage);
+    }
 
     return success;
 }
