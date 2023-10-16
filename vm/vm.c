@@ -78,37 +78,33 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
         /* TODO: Insert the page into the spt. */
         //페이지를 spt에 삽입
 
-        struct page *new_page = palloc_get_page(PAL_USER); 
+        struct page *new_page = palloc_get_page(PAL_USER);
+        void* pd_upage = pg_round_down(upage); 
 
         uninit_new(new_page,upage,init,type,NULL,NULL);
 
-        if(VM_TYPE(type) == VM_ANON){
-            anon_initializer(new_page,type,upage);
+        switch (VM_TYPE(type)) {
+            case VM_ANON:
+                uninit_new(new_page, pd_upage, init, type, aux, anon_initializer);
+                break;
+            case VM_FILE:
+                uninit_new(new_page, pd_upage, init, type, aux, file_backed_initializer);
+                break;
+            default:
+                NOT_REACHED();
+                break;
         }
-        else if(VM_TYPE(type) == VM_FILE){
-            file_backed_initializer(new_page,type,upage);
-        }
-        else if(VM_TYPE(type) == VM_PAGE_CACHE){ // page_cache
-            #ifdef EFILESYS
-            page_cache_initializer(new_page,type,upage);
-            #endif
-        }
-        else{
-            goto err;
-        }
-
         spt_insert_page(spt,new_page);
+        return true;
     }
-    else goto err;
-
-    return true;
-err:
-    return false;
-}
+    err:
+        return false;
+    
+    }
 
 /* spt에서 va를 찾아 그 페이지를 리턴함. 에러시 리턴 NULL*/
 struct page *
-spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
+spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED){
     struct page page;
     /* TODO: Fill this function. */
       struct hash_elem *e;
@@ -170,7 +166,7 @@ vm_get_frame (void) {
     struct thread* curr = thread_current();
     /* TODO: Fill this function. */
 
-// 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
+    // 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
 	if(list_empty(&f_free_table))
     	frame->kva = palloc_get_page(PAL_USER | PAL_ZERO); //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
 	else{
@@ -213,9 +209,9 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
     struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
     struct page *page = spt_find_page(spt, addr);
     /* TODO: Validate the fault */ // segmentation fault 인지 page fault 인지 검증?
-	ASSERT (is_kernel_vaddr(addr));
-    if(user)
+	if (is_user_vaddr(addr) || user){
         return false;
+    }
     if(not_present){ // frame 자체가 비어있는 경우
         //page fault 로직 처리
         return vm_do_claim_page (page); // 프레임 할당하는 함수
