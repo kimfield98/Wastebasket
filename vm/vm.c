@@ -4,6 +4,7 @@
 #include "vm/vm.h"
 #include "include/threads/mmu.h"
 #include "string.h"
+#include "hash.h"
 
 static struct list farme_table;
 
@@ -45,8 +46,8 @@ page_get_type (struct page *page) {
 static struct frame *vm_get_victim (void);
 static bool vm_do_claim_page (struct page *page);
 static struct frame *vm_evict_frame (void);
-static struct list *f_occ_table;
-static struct list *f_free_table;
+static struct list f_occ_table;
+static struct list f_free_table;
 
 /*
 대기중엔 페이지(uninit 상태)를 만들고 초기화 시킨다.
@@ -266,9 +267,11 @@ vm_do_claim_page (struct page *page) {
 /* Initialize new supplemental page table */
 void
 supplemental_page_table_and_f_occ_table_init (struct supplemental_page_table *spt) {
+    struct hash h_table;
+    spt->hash_table = &h_table;
     hash_init(spt->hash_table,page_hash,page_less,NULL);
-    list_init(f_occ_table);
-	list_init(f_free_table);
+    list_init(&f_occ_table);
+	list_init(&f_free_table);
 }
 
 /* Copy supplemental page table from src to dst */
