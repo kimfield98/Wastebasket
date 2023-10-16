@@ -1,5 +1,9 @@
-{
+{    "C_Cpp.default.defines": [
+    "USERPROG",
+    "VM"
+    ],
     "files.associations": {
+        "*.py": "python",
         "numbers": "c",
         "*.inc": "c",
         "*.tcc": "c",
@@ -56,6 +60,7 @@
         "interrupt.h": "c",
         "directory.h": "c",
         "list.h": "c",
-        "intrinsic.h": "c"
+        "intrinsic.h": "c",
+        "vm.h": "c"
     }
 }

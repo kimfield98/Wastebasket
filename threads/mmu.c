@@ -144,7 +144,7 @@ pdp_for_each (uint64_t *pdp,
 	return true;
 }
 
-/* Apply FUNC to each available pte entries including kernel's. */
+/* FUNC를 사용 가능한 모든 페이지 테이블 항목(pte)에 대해 적용합니다. 이에는 커널의 항목도 포함됩니다. */
 bool
 pml4_for_each (uint64_t *pml4, pte_for_each_func *func, void *aux) {
 	for (unsigned i = 0; i < PGSIZE / sizeof(uint64_t *); i++) {
@@ -186,7 +186,7 @@ pdpe_destroy (uint64_t *pdpe) {
 	palloc_free_page ((void *) pdpe);
 }
 
-/* Destroys pml4e, freeing all the pages it references. */
+/* pml4e를 파괴하고 해당하는 모든 페이지를 해제합니다. */
 void
 pml4_destroy (uint64_t *pml4) {
 	if (pml4 == NULL)
@@ -200,8 +200,7 @@ pml4_destroy (uint64_t *pml4) {
 	palloc_free_page ((void *) pml4);
 }
 
-/* Loads page directory PD into the CPU's page directory base
- * register. */
+/* 페이지 디렉토리 PD를 CPU의 페이지 디렉토리 베이스 레지스터에 로드합니다. */
 void
 pml4_activate (uint64_t *pml4) {
 	lcr3 (vtop (pml4 ? pml4 : base_pml4));
@@ -221,14 +220,10 @@ pml4_get_page (uint64_t *pml4, const void *uaddr) {
 	return NULL;
 }
 
-/* Adds a mapping in page map level 4 PML4 from user virtual page
- * UPAGE to the physical frame identified by kernel virtual address KPAGE.
- * UPAGE must not already be mapped. KPAGE should probably be a page obtained
- * from the user pool with palloc_get_page().
- * If WRITABLE is true, the new page is read/write;
- * otherwise it is read-only.
- * Returns true if successful, false if memory allocation
- * failed. */
+/* 사용자 가상 페이지 UPAGE에서 커널 가상 주소 KPAGE로 식별된 물리 프레임에 대한 페이지 맵 레벨 4 PML4에 매핑을 추가합니다.
+   UPAGE는 이미 매핑되지 않아야 합니다. KPAGE는 아마도 palloc_get_page()로 사용자 풀에서 얻은 페이지여야 합니다.
+   WRITABLE이 true인 경우, 새 페이지는 읽기/쓰기 가능하며, 그렇지 않으면 읽기 전용입니다.
+   성공하면 true를 반환하고, 메모리 할당 실패 시 false를 반환합니다. */
 bool
 pml4_set_page (uint64_t *pml4, void *upage, void *kpage, bool rw) {
 	ASSERT (pg_ofs (upage) == 0);
@@ -264,18 +259,16 @@ pml4_clear_page (uint64_t *pml4, void *upage) {
 	}
 }
 
-/* Returns true if the PTE for virtual page VPAGE in PML4 is dirty,
- * that is, if the page has been modified since the PTE was
- * installed.
- * Returns false if PML4 contains no PTE for VPAGE. */
+/* PML4의 가상 페이지 VPAGE에 대한 페이지 테이블 항목(PTE)이 dirty(변경되었음)인 경우 true를 반환합니다.
+   즉, PTE가 설치된 이후에 페이지가 수정된 경우입니다.
+   VPAGE에 대한 PTE가 PML4에 없는 경우 false를 반환합니다. */
 bool
 pml4_is_dirty (uint64_t *pml4, const void *vpage) {
 	uint64_t *pte = pml4e_walk (pml4, (uint64_t) vpage, false);
 	return pte != NULL && (*pte & PTE_D) != 0;
 }
 
-/* Set the dirty bit to DIRTY in the PTE for virtual page VPAGE
- * in PML4. */
+/* PML4의 가상 페이지 VPAGE에 대한 페이지 테이블 항목(PTE)의 dirty 비트를 DIRTY로 설정합니다. */
 void
 pml4_set_dirty (uint64_t *pml4, const void *vpage, bool dirty) {
 	uint64_t *pte = pml4e_walk (pml4, (uint64_t) vpage, false);
@@ -290,18 +283,17 @@ pml4_set_dirty (uint64_t *pml4, const void *vpage, bool dirty) {
 	}
 }
 
-/* Returns true if the PTE for virtual page VPAGE in PML4 has been
- * accessed recently, that is, between the time the PTE was
- * installed and the last time it was cleared.  Returns false if
- * PML4 contains no PTE for VPAGE. */
+/* PML4의 가상 페이지 VPAGE에 대한 페이지 테이블 항목(PTE)이 최근에 액세스되었으면(true),
+   즉, PTE가 설치된 시간과 마지막으로 지워진 시간 사이에 액세스된 경우 true를 반환합니다.
+   VPAGE에 대한 PTE가 PML4에 없는 경우 false를 반환합니다. */
 bool
 pml4_is_accessed (uint64_t *pml4, const void *vpage) {
 	uint64_t *pte = pml4e_walk (pml4, (uint64_t) vpage, false);
 	return pte != NULL && (*pte & PTE_A) != 0;
 }
 
-/* Sets the accessed bit to ACCESSED in the PTE for virtual page
-   VPAGE in PD. */
+/* 페이지 디렉토리 PD의 가상 페이지 VPAGE에 대한 페이지 테이블 항목(PTE)의 accessed 비트를
+   ACCESSED로 설정합니다. */
 void
 pml4_set_accessed (uint64_t *pml4, const void *vpage, bool accessed) {
 	uint64_t *pte = pml4e_walk (pml4, (uint64_t) vpage, false);
