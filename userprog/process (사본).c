@@ -826,7 +826,7 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
 static bool setup_stack(struct intr_frame *if_) {
     bool success = false;
     void *stack_bottom = (void *)(((uint8_t *)USER_STACK) - PGSIZE);
-    uint64_t kpage;
+
     /* TODO: 스택을 stack_bottom에 매핑하고 페이지를 즉시 할당하십시오.
      * TODO: 성공하면 rsp를 해당 위치에 맞게 설정하십시오.
      * TODO: 페이지가 스택임을 표시해야 합니다. */

@@ -17,6 +17,7 @@ static const struct page_operations file_ops = {
 /* The initializer of file vm */
 void
 vm_file_init (void) {
+	
 }
 
 /* Initialize the file backed page */
@@ -32,6 +33,7 @@ file_backed_initializer (struct page *page, enum vm_type type, void *kva) {
 static bool
 file_backed_swap_in (struct page *page, void *kva) {
 	struct file_page *file_page UNUSED = &page->file;
+	file_backed_initializer(page,VM_FILE,kva);
 }
 
 /* Swap out the page by writeback contents to the file. */
