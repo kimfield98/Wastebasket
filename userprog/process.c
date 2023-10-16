@@ -72,7 +72,7 @@ tid_t process_create_initd(const char *file_name) {
 /* 최초 발생한 유저 프로세스 initd를 시작시키는 함수 (process_exec 호출) */
 static void initd(void *f_name) {
 #ifdef VM
-    supplemental_page_table_init(&thread_current()->spt);
+    supplemental_page_table_and_f_occ_table_init(&thread_current()->spt);
 #endif
 
     process_init();
@@ -174,7 +174,7 @@ static void __do_fork(void *aux) {
 
     process_activate(current);
 #ifdef VM
-    supplemental_page_table_init(&current->spt);
+    supplemental_page_table_and_f_occ_table_init(&current->spt);
     if (!supplemental_page_table_copy(&current->spt, &parent->spt))
         goto error;
 #else
@@ -792,7 +792,7 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         if (!vm_alloc_page_with_initializer(VM_ANON, upage, writable, lazy_load_segment, aux))
             return false;
 
-        /* Advance. */
+        /* Advance. */ // 위(vm_alloc_page_with_initializer)에서 만든 빈 프레임에 정보를 담는다.
         read_bytes -= page_read_bytes;
         zero_bytes -= page_zero_bytes;
         upage += PGSIZE;

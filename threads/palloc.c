@@ -121,6 +121,7 @@ static void populate_pools(struct area *base_mem, struct area *ext_mem) {
     extern char _end;
     void *free_start = pg_round_up(&_end);
 
+    //user pool 과 kernel pool 을 나누는 과정
     uint64_t total_pages = (base_mem->size + ext_mem->size) / PGSIZE;
     uint64_t user_pages = total_pages / 2 > user_page_limit ? user_page_limit : total_pages / 2;
     uint64_t kern_pages = total_pages - user_pages;
@@ -232,14 +233,16 @@ uint64_t palloc_init(void) {
     /* End of the kernel as recorded by the linker.
        See kernel.lds.S. */
     extern char _end;
-    struct area base_mem = {.size = 0};
-    struct area ext_mem = {.size = 0};
+    struct area base_mem = {.size = 0}; // 물리 메모리 시작
+    struct area ext_mem = {.size = 0};  // 물리 메모리 끝. 이 차는 20mb
 
     resolve_area_info(&base_mem, &ext_mem);
     printf("Pintos booting with: \n");
     printf("\tbase_mem: 0x%llx ~ 0x%llx (Usable: %'llu kB)\n", base_mem.start, base_mem.end, base_mem.size / 1024);
-    printf("\text_mem: 0x%llx ~ 0x%llx (Usable: %'llu kB)\n", ext_mem.start, ext_mem.end, ext_mem.size / 1024);
-    populate_pools(&base_mem, &ext_mem);
+    printf("\text_mem: 0x%llx ~ 0x%llx (Usable: %'llu kB)\n", ext_mem.start, ext_mem.end, ext_mem.size / 1024); 
+    // 위 : 실행 시 -m 20 을 해줘서 핀토스 시스템의 전체 크기를 20MiB 메모리크기로 설정해준 것을 확인. 
+    // ext_mem이 init.c의 mem_end 값이다.
+    populate_pools(&base_mem, &ext_mem); // kva 영역을 커널풀과 유저풀로 분리해줌.
     return ext_mem.end;
 }
 
