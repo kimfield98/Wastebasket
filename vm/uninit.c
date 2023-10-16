@@ -1,12 +1,12 @@
-/* uninit.c: Implementation of uninitialized page.
+
+/* uninit.c: 초기화되지 않은 페이지의 구현.
  *
- * All of the pages are born as uninit page. When the first page fault occurs,
- * the handler chain calls uninit_initialize (page->operations.swap_in).
- * The uninit_initialize function transmutes the page into the specific page
- * object (anon, file, page_cache), by initializing the page object,and calls
- * initialization callback that passed from vm_alloc_page_with_initializer
- * function.
+ * 모든 페이지는 초기에 초기화되지 않은 페이지로 생성됩니다. 첫 번째 페이지 폴트가 발생하면,
+ * 핸들러 체인이 uninit_initialize (page->operations.swap_in) 함수를 호출합니다.
+ * uninit_initialize 함수는 페이지 객체를 특정한 페이지 객체 (anon, file, page_cache)로 변환하고,
+ * 페이지 객체를 초기화하며, vm_alloc_page_with_initializer 함수에서 전달된 초기화 콜백을 호출합니다.
  * */
+
 
 #include "vm/vm.h"
 #include "vm/uninit.h"
@@ -34,9 +34,9 @@ uninit_new (struct page *page, void *va, vm_initializer *init,
 		.va = va,
 		.frame = NULL, /* no frame for now */
 		.uninit = (struct uninit_page) {
-			.init = init,
+			.init = init,	// lazy_load가 들어감
 			.type = type,
-			.aux = aux,
+			.aux = aux, // lazy_load에서 사용해야 하므로 복사해서 나중에 쓰는 느낌?
 			.page_initializer = initializer,
 		}
 	};

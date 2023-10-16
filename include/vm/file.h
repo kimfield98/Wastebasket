@@ -12,7 +12,6 @@ struct file_page {
 	struct frame *frame;   /* Back reference for frame */
 
 	/* Your implementation */
-	struct hash_elem h_elem;
 };
 
 void vm_file_init (void);
