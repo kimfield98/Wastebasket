@@ -87,14 +87,15 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 
         // void* pd_upage = pg_round_down(upage);  // offset을 페이지의 시작 위치로 만들기 위해
         pd_upage->writable = writable;
+        pd_upage->va = upage;
 
         switch (VM_TYPE(type)) {
             case VM_ANON:
                 // 인자로 받은 타입으로 초기화를 해줌 (이같은 경우는 anon_initializer를 인자로 받아 anon으로 초기화)
-                uninit_new(pd_upage, pd_upage->va, init, type, aux, anon_initializer); 
+                uninit_new(pd_upage, upage, init, type, aux, anon_initializer); 
                 break;
             case VM_FILE:
-                uninit_new(pd_upage, pd_upage->va, init, type, aux, file_backed_initializer);
+                uninit_new(pd_upage, upage, init, type, aux, file_backed_initializer);
                 break;
             default:
                 NOT_REACHED();
@@ -170,14 +171,16 @@ vm_evict_frame (void) {
 
 static struct frame *
 vm_get_frame (void) {
-    struct frame *frame = calloc(1, sizeof(struct page));
+    struct frame *frame = NULL;
     struct thread* curr = thread_current();
     // /* TODO: Fill this function. */
 
     // 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
-	if(list_empty(&f_free_table))
-    	frame->kva = palloc_get_page(PAL_USER | PAL_ZERO); //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
-	else{
+	if(list_empty(&f_free_table)){
+        frame->kva = pg_round_down(calloc(1,sizeof(struct page)));
+        //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
+    }
+    else{
 		frame = list_entry(list_pop_front(&f_free_table), struct frame, f_elem);
 		//이 프레임으로 kva 다시 뺀다.
 	}
@@ -270,6 +273,7 @@ vm_do_claim_page (struct page *page) {
     /* Set links */
     frame->page = page;
     page->frame = frame;
+    
 
     /* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
     list_push_back(&f_occ_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
