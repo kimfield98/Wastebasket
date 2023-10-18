@@ -843,7 +843,7 @@ static bool setup_stack(struct intr_frame *if_) {
     if (success){
         success = vm_claim_page(stack_bottom);
         if (success){
-            if_->rsp = stack_bottom;
+            if_->rsp = USER_STACK;
         }
     }
 
