@@ -90,10 +90,10 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
         switch (VM_TYPE(type)) {
             case VM_ANON:
                 // 인자로 받은 타입으로 초기화를 해줌 (이같은 경우는 anon_initializer를 인자로 받아 anon으로 초기화)
-                uninit_new(pd_upage, pd_upage->va, init, type, aux, anon_initializer); 
+                uninit_new(pd_upage, upage, init, type, aux, anon_initializer); 
                 break;
             case VM_FILE:
-                uninit_new(pd_upage, pd_upage->va, init, type, aux, file_backed_initializer);
+                uninit_new(pd_upage, upage, init, type, aux, file_backed_initializer);
                 break;
             default:
                 NOT_REACHED();
@@ -169,7 +169,7 @@ vm_evict_frame (void) {
 
 static struct frame *
 vm_get_frame (void) {
-    struct frame *frame = calloc(1, sizeof(struct page));
+    struct frame *frame = calloc(1,sizeof(struct page));
     struct thread* curr = thread_current();
     // /* TODO: Fill this function. */
 
@@ -214,7 +214,7 @@ vm_handle_wp (struct page *page UNUSED) {
 bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
         bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
-
+    ASSERT(false);
     struct supplemental_page_table *spt = &thread_current ()->spt;
     struct page *page = spt_find_page(spt, addr);
     /* TODO: Validate the fault */ // segmentation fault 인지 page fault 인지 검증?

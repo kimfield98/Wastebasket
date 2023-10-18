@@ -61,6 +61,9 @@
         "directory.h": "c",
         "list.h": "c",
         "intrinsic.h": "c",
-        "vm.h": "c"
+        "vm.h": "c",
+        "chrono": "c",
+        "list": "c",
+        "stop_token": "c"
     }
 }
