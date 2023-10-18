@@ -2,7 +2,7 @@
 #define VM_VM_H
 #include <stdbool.h>
 #include "threads/palloc.h"
-#include "hash.h"
+#include <hash.h>
 
 enum vm_type {
 	/* page not initialized */
@@ -90,7 +90,7 @@ struct page_operations {
  * 이 구조체에 대해 특정한 디자인을 강요하고 싶지는 않습니다.
  * 이에 대한 모든 디자인은 여러분에게 달려 있습니다. */
 struct supplemental_page_table {
-	struct hash* hash_table
+	struct hash hash_table;
 };
 
 
