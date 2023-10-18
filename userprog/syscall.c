@@ -12,6 +12,8 @@
 #include "userprog/process.h" // 관련 파일 헤더들 전부 연결
 #include <stdio.h>
 #include <syscall-nr.h>
+#include <vm/vm.h>
+
 
 /* 시스템콜 핸들러 함수 프로토타입 */
 void syscall_entry(void);
@@ -167,9 +169,13 @@ bool pointer_validity_check(void *addr) {
     if (is_kernel_vaddr(addr))
         return false;
 
+    addr = pg_round_down(addr);
+
     /* 제공된 주소가 Unmapped일 경우 */
-    if (pml4_get_page(thread_current()->pml4, addr) == NULL)
-        return false; // pml4만 확인하는 함수 (나머지 레벨의 page table 들도 검사해야하는데, 우선 이렇게)
+    if (spt_find_page(&thread_current()->spt, addr) == NULL){
+        return false; // pml4만 확인하는 함수 (나머지 레벨의 page table 들도 검사해야하는데, 우선 이렇게 )
+    }
+       
 
     /* 다 통과했으니 */
     return true;
@@ -182,9 +188,9 @@ bool buffer_validity_check(void *buffer, unsigned size) {
     if (!pointer_validity_check(buffer))
         return false;
 
-    /* buffer의 마지막 주소를 확인 */
-    if (!pointer_validity_check(buffer + size - 1)) // GPT한데 코드를 확인받아보니, buffer+size가 딱 페이지의 끝일 경우 0으로 돌아가기 때문에 -1을 추천
-        return false;
+    // /* buffer의 마지막 주소를 확인 */
+    // if (!pointer_validity_check(buffer + size - 1)) // GPT한데 코드를 확인받아보니, buffer+size가 딱 페이지의 끝일 경우 0으로 돌아가기 때문에 -1을 추천
+    //     return false;
 
     /* 각각의 페이지 크기 (PintOS는 4KB) */
     const size_t PAGE_SIZE = 4096;
@@ -403,10 +409,11 @@ int read(int fd, void *buffer, unsigned size) {
         return -1; // exit(-1)을 하려다가, 공식 문서에 적힌대로 우선 -1로 바꾼 상태
     }
 
-    
+    #ifdef VM
     // 커널 풀에서 writable이 0이라도 read write 가 일어나므로, 오로지 read 만 일어날 수 있게 하기 위해 처리
     if(spt_find_page(&thread_current()->spt,buffer)->writable == 0)
         exit(-1);
+    #endif
 
     read_count = file_read(file, buffer, size); // file_read는 size를 (off_t*) 형태로 바라는 것 같은데, 에러가 떠서 일단 일반 사이즈로 넣음
 

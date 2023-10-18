@@ -321,15 +321,16 @@ void process_exit(void) {
     //     cnt++;
     // }
 
+
+    /* 페이지 테이블 메모리 반환 및 pml4 리셋 */
+    palloc_free_page(table);
+    process_cleanup();
+    
     /* 부모의 wait() 대기 ; 부모가 wait을 해줘야 죽을 수 있음 (한계) */
     if (curr->parent_is) {
         sema_up(&curr->wait_sema);
         sema_down(&curr->free_sema);
     }
-
-    /* 페이지 테이블 메모리 반환 및 pml4 리셋 */
-    palloc_free_page(table);
-    process_cleanup();
 }
 
 /* 현재 프로세스의 페이지 테이블 매핑을 초기화하고, 커널 페이지 테이블만 남기는 함수 */
@@ -463,7 +464,7 @@ static bool load(const char *file_name, struct intr_frame *if_) {
     process_activate(t); // 현재 스레드의 pml4를 활성화하고, 스택포인터를 현재 스레드의 커널 스택 위치로 이동
 
     /* Command Line으로 주어진 내용을 파싱/토큰화 */
-    char *argv[100] = {0}; // 배열 전체를 0으로 Initialize
+    char *argv[128] = {0}; // 배열 전체를 0으로 Initialize
     int argc = 0;
     char *token, *save_ptr;
 
@@ -559,7 +560,7 @@ static bool load(const char *file_name, struct intr_frame *if_) {
 
 done:
     /* 실행이 끝나고 나면 성공/실패 여부와 무관하게 아래 코드 실행 */
-    // file_close(file);
+    if(!success) file_close(file);// close 제한 추가
     return success;
 }
 
@@ -763,6 +764,7 @@ static bool lazy_load_segment(struct page *page, void *aux) {
     uint32_t read_bytes = aux_info->read_bytes;
     uint32_t zero_bytes = aux_info->zero_bytes;
     off_t ofs = aux_info->ofs;
+    bool writable = aux_info->writable;
 
     file_seek(file,ofs);
 
@@ -775,8 +777,6 @@ static bool lazy_load_segment(struct page *page, void *aux) {
     memset(page->frame->kva + read_bytes, 0, zero_bytes);
     free(aux); 
     return true;
-
-
 }
 
 /* 파일 내의 OFS 오프셋에서 시작하여 UPAGE 주소에서 세그먼트를 로드합니다.
@@ -795,7 +795,7 @@ static bool lazy_load_segment(struct page *page, void *aux) {
 static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes, uint32_t zero_bytes, bool writable) {
     ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
     ASSERT(pg_ofs(upage) == 0);
-    ASSERT(pg_ofs(ofs) == 0);
+    ASSERT(pg_ofs(ofs) == 0); // 오프셋 초기화
     ASSERT(ofs % PGSIZE == 0);
     
 
@@ -812,6 +812,8 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         aux_info->zero_bytes = page_zero_bytes;
         aux_info->file = file;
         aux_info->ofs = ofs;
+        aux_info->upage = pg_round_down(upage);
+        aux_info->writable = writable;
 
         if (!vm_alloc_page_with_initializer(VM_ANON, upage, writable, lazy_load_segment, aux_info))
             return false;
@@ -820,7 +822,7 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         read_bytes -= page_read_bytes;
         zero_bytes -= page_zero_bytes;
         upage += PGSIZE;
-        ofs += page_read_bytes;
+        ofs += page_read_bytes; // 오프셋을 계속 갱신 함
     }
 
     return true;
@@ -829,9 +831,9 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
 
 /* Create a PAGE of stack at the USER_STACK. Return true on success. */
 static bool setup_stack(struct intr_frame *if_) {
+    struct thread* t  = thread_current();
     bool success = false;
     void *stack_bottom = (void *)(((uint8_t *)USER_STACK) - PGSIZE);
-    uint64_t kpage;
     /* TODO: 스택을 stack_bottom에 매핑하고 페이지를 즉시 할당하십시오.
      * TODO: 성공하면 rsp를 해당 위치에 맞게 설정하십시오.
      * TODO: 페이지가 스택임을 표시해야 합니다. */
