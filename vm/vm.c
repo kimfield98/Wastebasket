@@ -226,6 +226,9 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
     addr = pg_round_down(addr);
     struct supplemental_page_table *spt = &thread_current ()->spt;
     struct page *page = spt_find_page(spt, addr);
+    if(page == NULL){
+		return false;
+	}
     /* TODO: Validate the fault */ // segmentation fault 인지 page fault 인지 검증?
 	if (!is_user_vaddr(addr)){
         return false;
@@ -263,8 +266,11 @@ vm_claim_page (void *va UNUSED) {
     struct page *page = spt_find_page(&curr->spt, va);
     /* TODO: Fill this function */
     if(!page){
-        vm_alloc_page(VM_ANON,va,true);
-        page = spt_find_page(&curr->spt, va); //못찾
+        return false;
+        // vm_alloc_page(VM_ANON,va,true);
+        // page = spt_find_page(&curr->spt, va); 
+        // page fault 가 일어나기 전에는 vm_alloc으로 할당해 줘야 하지만
+        // handler 가 호출 할 때는 do claim page에서는 spt_find 를 했는데도 없으면 만들면 안된다.
     }
 
     return vm_do_claim_page (page);

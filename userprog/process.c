@@ -321,15 +321,16 @@ void process_exit(void) {
     //     cnt++;
     // }
 
+
+    /* 페이지 테이블 메모리 반환 및 pml4 리셋 */
+    palloc_free_page(table);
+    process_cleanup();
+    
     /* 부모의 wait() 대기 ; 부모가 wait을 해줘야 죽을 수 있음 (한계) */
     if (curr->parent_is) {
         sema_up(&curr->wait_sema);
         sema_down(&curr->free_sema);
     }
-
-    /* 페이지 테이블 메모리 반환 및 pml4 리셋 */
-    palloc_free_page(table);
-    process_cleanup();
 }
 
 /* 현재 프로세스의 페이지 테이블 매핑을 초기화하고, 커널 페이지 테이블만 남기는 함수 */
@@ -833,7 +834,6 @@ static bool setup_stack(struct intr_frame *if_) {
     struct thread* t  = thread_current();
     bool success = false;
     void *stack_bottom = (void *)(((uint8_t *)USER_STACK) - PGSIZE);
-    uint64_t *kpage;
     /* TODO: 스택을 stack_bottom에 매핑하고 페이지를 즉시 할당하십시오.
      * TODO: 성공하면 rsp를 해당 위치에 맞게 설정하십시오.
      * TODO: 페이지가 스택임을 표시해야 합니다. */
@@ -845,8 +845,6 @@ static bool setup_stack(struct intr_frame *if_) {
         if (success){
             if_->rsp = USER_STACK;
         }
-        else    
-            palloc_free_page(kpage);
     }
 
     return success;
