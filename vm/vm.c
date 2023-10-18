@@ -2,7 +2,6 @@
 
 #include "threads/malloc.h"
 #include "vm/vm.h"
-#include "vm/inspect.h"
 #include "include/threads/mmu.h"
 #include "string.h"
 #include "hash.h"
