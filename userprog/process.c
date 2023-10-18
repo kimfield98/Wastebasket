@@ -762,14 +762,21 @@ static bool lazy_load_segment(struct page *page, void *aux) {
     /* 실행 가능한 파일의 페이지들을 초기화하는 함수*/
     struct aux_info *aux_info = (struct aux_info *)aux;
 
-    file_seek(&aux_info->file,&aux_info->ofs);
+    struct file *file = aux_info->file;
+    uint32_t read_bytes = aux_info->read_bytes;
+    uint32_t zero_bytes = aux_info->zero_bytes;
+    off_t ofs = aux_info->ofs;
+
+    file_seek(file,ofs);
 
     /* Load this page. */
-    if (file_read(&aux_info->file, page->frame->kva, &aux_info->read_bytes) != (int)&aux_info->read_bytes) {
+    if (file_read(file, page->frame->kva, read_bytes) != (int)read_bytes) {
         palloc_free_page(page->frame->kva);
+        free(aux); 
         return false;
     }
-    memset(page->frame->kva + aux_info->read_bytes, 0, &aux_info->zero_bytes);
+    memset(page->frame->kva + read_bytes, 0, zero_bytes);
+    free(aux); 
     return true;
 
 
