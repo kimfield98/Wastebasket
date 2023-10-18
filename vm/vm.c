@@ -86,6 +86,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 
         // void* pd_upage = pg_round_down(upage);  // offset을 페이지의 시작 위치로 만들기 위해
         pd_upage->writable = writable;
+        pd_upage->va = upage;
 
         switch (VM_TYPE(type)) {
             case VM_ANON:
@@ -174,9 +175,11 @@ vm_get_frame (void) {
     // /* TODO: Fill this function. */
 
     // 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
-	if(list_empty(&f_free_table))
-    	frame->kva = palloc_get_page(PAL_USER | PAL_ZERO); //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
-	else{
+	if(list_empty(&f_free_table)){
+        frame->kva = palloc_get_page(PAL_USER|PAL_ZERO);
+        //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
+    }
+    else{
 		frame = list_entry(list_pop_front(&f_free_table), struct frame, f_elem);
 		//이 프레임으로 kva 다시 뺀다.
 	}
@@ -189,7 +192,7 @@ vm_get_frame (void) {
         return reframe; // 맵핑을 끊은, 이제 빈 프레임 반환
     }
     frame->page = NULL; // 프레임의 page NULL로.
-    // list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
+    list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
 
     ASSERT (frame != NULL);
     ASSERT (frame->page == NULL);
@@ -214,7 +217,8 @@ vm_handle_wp (struct page *page UNUSED) {
 bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
         bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
-    ASSERT(false);
+            
+    addr = pg_round_down(addr);
     struct supplemental_page_table *spt = &thread_current ()->spt;
     struct page *page = spt_find_page(spt, addr);
     /* TODO: Validate the fault */ // segmentation fault 인지 page fault 인지 검증?
@@ -250,6 +254,7 @@ vm_dealloc_page (struct page *page) {
 bool
 vm_claim_page (void *va UNUSED) {
     struct thread* curr = thread_current();
+    va = pg_round_down(va);
     struct page *page = spt_find_page(&curr->spt, va);
     /* TODO: Fill this function */
     if(!page){
@@ -269,6 +274,7 @@ vm_do_claim_page (struct page *page) {
     /* Set links */
     frame->page = page;
     page->frame = frame;
+    
 
     /* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
     list_push_back(&f_occ_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
@@ -304,7 +310,7 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 unsigned
 page_hash (const struct hash_elem *p_, void *aux UNUSED) {
   const struct page *p = hash_entry (p_, struct page, h_elem);
-  return hash_int (&p->va);
+  return hash_bytes (&p->va,sizeof(p->va));
 }
 
 /* Returns true if page a precedes page b. */
@@ -314,7 +320,7 @@ page_less (const struct hash_elem *a_,
   const struct page *a = hash_entry (a_, struct page, h_elem);
   const struct page *b = hash_entry (b_, struct page, h_elem);
 
-  return a->va < b->va;
+  return (uint64_t)a->va < (uint64_t)b->va;
 }
 
 void free_in_occ_out(struct frame *frame){
