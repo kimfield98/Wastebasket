@@ -12,6 +12,8 @@
 #include "userprog/process.h" // 관련 파일 헤더들 전부 연결
 #include <stdio.h>
 #include <syscall-nr.h>
+#include <vm/vm.h>
+
 
 /* 시스템콜 핸들러 함수 프로토타입 */
 void syscall_entry(void);
@@ -403,10 +405,11 @@ int read(int fd, void *buffer, unsigned size) {
         return -1; // exit(-1)을 하려다가, 공식 문서에 적힌대로 우선 -1로 바꾼 상태
     }
 
-    
+    #ifdef VM
     // 커널 풀에서 writable이 0이라도 read write 가 일어나므로, 오로지 read 만 일어날 수 있게 하기 위해 처리
     if(spt_find_page(&thread_current()->spt,buffer)->writable == 0)
         exit(-1);
+    #endif
 
     read_count = file_read(file, buffer, size); // file_read는 size를 (off_t*) 형태로 바라는 것 같은데, 에러가 떠서 일단 일반 사이즈로 넣음
 

@@ -1,8 +1,9 @@
 #ifndef VM_VM_H
 #define VM_VM_H
 #include <stdbool.h>
-#include "threads/palloc.h"
 #include <hash.h>
+#include "threads/palloc.h"
+#include "threads/malloc.h"
 
 enum vm_type {
 	/* page not initialized */

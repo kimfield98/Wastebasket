@@ -92,16 +92,18 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
             case VM_ANON:
                 // 인자로 받은 타입으로 초기화를 해줌 (이같은 경우는 anon_initializer를 인자로 받아 anon으로 초기화)
                 uninit_new(pd_upage, upage, init, type, aux, anon_initializer); 
+                pd_upage->writable = writable; // aux에 있는 걸로도 넘길 수 있을까?
                 break;
             case VM_FILE:
                 uninit_new(pd_upage, upage, init, type, aux, file_backed_initializer);
+                pd_upage->writable = writable;
                 break;
             default:
-                NOT_REACHED();
                 break;
         }
-        spt_insert_page(spt,pd_upage);
-        return true;
+        if(!spt_insert_page(spt,pd_upage))
+            return false;
+        else return true;
     }
     else{
         return false;
@@ -118,6 +120,9 @@ spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED){
     void* pd_upage = pg_round_down(va); //page 에 맞게 크기 조정
 
     page.va = pd_upage;
+
+    ASSERT(spt && va)
+
     e = hash_find (&spt->hash_table, &page.h_elem);
     return e != NULL ? hash_entry (e, struct page, h_elem) : NULL;
 }
