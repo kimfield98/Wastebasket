@@ -65,6 +65,8 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 
     ASSERT (VM_TYPE(type) != VM_UNINIT)
 
+    upage = pg_round_down(upage); //page 에 맞게 크기 조정
+
     struct supplemental_page_table *spt = &thread_current ()->spt;
     /*upage 가 이미 할당된 상태인지 확인*/
     struct page * found_page = spt_find_page (spt, upage);
@@ -80,7 +82,9 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
         /* TODO: Insert the page into the spt. */
         //페이지를 spt에 삽입
 
-        struct page *pd_upage = calloc(1,sizeof(PGSIZE)); // 유저 풀에 4kb 공간 할당 받고 0으로 초기화
+        struct page *pd_upage = calloc(1,sizeof(struct page)); // 커널 풀에 4kb 공간 할당 받고 0으로 초기화 
+        //(유저 풀에 하면 사용자가 페이지 정보를 볼 수 있으므로. -> protection)
+
         // void* pd_upage = pg_round_down(upage);  // offset을 페이지의 시작 위치로 만들기 위해
         pd_upage->writable = writable;
 
@@ -111,15 +115,17 @@ spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED){
     /* TODO: Fill this function. */
       struct hash_elem *e;
 
-    page.va = va;
+    void* pd_upage = pg_round_down(va); //page 에 맞게 크기 조정
+
+    page.va = pd_upage;
     e = hash_find (&spt->hash_table, &page.h_elem);
     return e != NULL ? hash_entry (e, struct page, h_elem) : NULL;
 }
 
 /* 페이지를 검증한 다음 spt 테이블에 삽입. */
 bool
-spt_insert_page (struct supplemental_page_table *spt UNUSED,
-    struct page *page UNUSED) {
+spt_insert_page (struct supplemental_page_table *spt,
+    struct page *page) {
     int succ = false;
     /* TODO: Fill this function. */
     if (hash_insert(&spt->hash_table, &page->h_elem)==NULL);
@@ -164,9 +170,9 @@ vm_evict_frame (void) {
 
 static struct frame *
 vm_get_frame (void) {
-    struct frame *frame = NULL;
+    struct frame *frame = calloc(1, sizeof(struct page));
     struct thread* curr = thread_current();
-    /* TODO: Fill this function. */
+    // /* TODO: Fill this function. */
 
     // 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
 	if(list_empty(&f_free_table))
@@ -184,7 +190,7 @@ vm_get_frame (void) {
         return reframe; // 맵핑을 끊은, 이제 빈 프레임 반환
     }
     frame->page = NULL; // 프레임의 page NULL로.
-    list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
+    // list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
 
     ASSERT (frame != NULL);
     ASSERT (frame->page == NULL);
@@ -245,8 +251,12 @@ vm_dealloc_page (struct page *page) {
 bool
 vm_claim_page (void *va UNUSED) {
     struct thread* curr = thread_current();
-    struct page *page = spt_find_page(&curr->spt,va);
+    struct page *page = spt_find_page(&curr->spt, va);
     /* TODO: Fill this function */
+    if(!page){
+        vm_alloc_page(VM_ANON,va,true);
+        page = spt_find_page(&curr->spt, va); //못찾
+    }
 
     return vm_do_claim_page (page);
 }
@@ -272,8 +282,8 @@ vm_do_claim_page (struct page *page) {
 void
 supplemental_page_table_and_f_occ_table_init (struct supplemental_page_table *spt) {
     struct hash h_table;
-    spt->hash_table = &h_table;
-    hash_init(spt->hash_table,page_hash,page_less,NULL);
+    spt->hash_table = h_table;
+    hash_init(&spt->hash_table,page_hash,page_less,NULL);
     list_init(&f_occ_table);
 	list_init(&f_free_table);
 }
