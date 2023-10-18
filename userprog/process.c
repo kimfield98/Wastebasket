@@ -244,7 +244,6 @@ int process_exec(void *f_name) {
        load() 함수에서 _if의 값들을 마저 채우고 현재 스레드로 적용함. */
 
     success = load(file_name, &_if);
-    printf("3단계@@@@@@@@@@@@@@@@\n");
     palloc_free_page(file_name);
     if (!success)
         return -1;
@@ -546,11 +545,9 @@ static bool load(const char *file_name, struct intr_frame *if_) {
             break;
         }
     }
-    printf("@@@@@@@@@@@@@@@\n");
     /* if_ 구조체를 위해서 User Stack을 Allocate 한 뒤 %rsp를 업데이트 */
     if (!setup_stack(if_))
         goto done;
-    printf("2단계@@@@@@@@@@@@@@@\n");
     /* if_ 구조체의 instruction pointer가 프로그램의 Entry point를 가리키도록 업데이트 */
     if_->rip = ehdr.e_entry;
 
@@ -798,6 +795,7 @@ static bool lazy_load_segment(struct page *page, void *aux) {
 static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes, uint32_t zero_bytes, bool writable) {
     ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
     ASSERT(pg_ofs(upage) == 0);
+    ASSERT(pg_ofs(ofs) == 0);
     ASSERT(ofs % PGSIZE == 0);
     
 
@@ -822,7 +820,7 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         read_bytes -= page_read_bytes;
         zero_bytes -= page_zero_bytes;
         upage += PGSIZE;
-        ofs += read_bytes;
+        ofs += page_read_bytes;
     }
 
     return true;
