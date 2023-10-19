@@ -141,12 +141,11 @@ hash_delete (struct hash *h, struct hash_elem *e) {
 	return found;
 }
 
-/* Calls ACTION for each element in hash table H in arbitrary
-   order.
-   Modifying hash table H while hash_apply() is running, using
-   any of the functions hash_clear(), hash_destroy(),
-   hash_insert(), hash_replace(), or hash_delete(), yields
-   undefined behavior, whether done from ACTION or elsewhere. */
+/* 해시 테이블 H의 각 요소에 대해 임의의 순서로 ACTION을 호출합니다.
+hash_apply()가 실행 중일 때 해시 테이블 H을 수정하여
+hash_clear(), hash_destroy(), hash_insert(), hash_replace(),
+또는 hash_delete() 중 하나의 함수를 사용하는 것은
+ACTION이나 다른 곳에서 수행되더라도 정의되지 않은 동작을 일으킵니다. */
 void
 hash_apply (struct hash *h, hash_action_func *action) {
 	size_t i;

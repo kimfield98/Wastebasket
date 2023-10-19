@@ -6,8 +6,6 @@
 #include "string.h"
 #include "hash.h"
 
-static struct list farme_table;
-
 /*
 4가지 상태 - uninit, anon, file, cache
 
@@ -80,7 +78,6 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 
         /* TODO: Insert the page into the spt. */
         //페이지를 spt에 삽입
-
         struct page *pd_upage = calloc(1,sizeof(struct page)); // 커널 풀에 4kb 공간 할당 받고 0으로 초기화 
         //(유저 풀에 하면 사용자가 페이지 정보를 볼 수 있으므로. -> protection)
 
@@ -308,6 +305,22 @@ supplemental_page_table_and_f_occ_table_init (struct supplemental_page_table *sp
 bool
 supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
         struct supplemental_page_table *src UNUSED) {
+    struct hash_iterator i;
+    struct page *tem_page;
+
+    hash_first (&i, &src->hash_table);
+    while (hash_next (&i)){
+        tem_page = hash_entry(hash_cur(&i),struct page,h_elem);
+        if(!vm_alloc_page_with_initializer(VM_ANON,tem_page->va,tem_page->writable,tem_page->uninit.init,tem_page->uninit.aux)){
+            return false;
+        }
+
+        if (tem_page->operations->type == VM_ANON){
+            vm_claim_page(tem_page->va);
+            memcpy(spt_find_page(dst,tem_page->va)->frame->kva, tem_page->frame->kva,PGSIZE);
+        }
+    }
+    return true;
 }
 
 /*보조 페이지 테이블에서 보유한 리소스를 해제합니다.*/
