@@ -5,6 +5,7 @@
 #include "include/threads/mmu.h"
 #include "string.h"
 #include "hash.h"
+#include "userprog/process.h"
 
 /*
 4가지 상태 - uninit, anon, file, cache
@@ -301,23 +302,41 @@ supplemental_page_table_and_f_occ_table_init (struct supplemental_page_table *sp
 	list_init(&f_free_table);
 }
 
-/* Copy supplemental page table from src to dst */
+
 bool
 supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
         struct supplemental_page_table *src UNUSED) {
     struct hash_iterator i;
-    struct page *tem_page;
-
     hash_first (&i, &src->hash_table);
-    while (hash_next (&i)){
-        tem_page = hash_entry(hash_cur(&i),struct page,h_elem);
-        if(!vm_alloc_page_with_initializer(VM_ANON,tem_page->va,tem_page->writable,tem_page->uninit.init,tem_page->uninit.aux)){
-            return false;
+    while (hash_next (&i)) {
+        struct page *src_page = hash_entry(hash_cur(&i), struct page, h_elem);
+        enum vm_type type = src_page -> operations -> type;
+        void *upage = src_page -> va;
+        bool writable = src_page -> writable;
+        vm_initializer *init = src_page ->uninit.init;
+        // type == uninit 이라면 복사하는 페이지도 uninit
+        if (type == VM_UNINIT) {
+            // vm_initializer *init = src_page ->uninit.init;
+            // void *aux = src_page -> uninit.aux;
+            struct aux_info *new_aux = calloc(1,sizeof(struct aux_info));
+            memcpy(new_aux,src_page->uninit.aux, sizeof(struct aux_info));
+            if(!vm_alloc_page_with_initializer (VM_ANON, upage, writable, init, new_aux))
+                return false;
+            // continue;
         }
-
-        if (tem_page->operations->type == VM_ANON){
-            vm_claim_page(tem_page->va);
-            memcpy(spt_find_page(dst,tem_page->va)->frame->kva, tem_page->frame->kva,PGSIZE);
+        else{
+        //uninit이 아니라면
+            if (!vm_alloc_page(type, upage, writable)) {
+                // init이랑 aux는 Lazy Loading에 필요함
+                // 지금 만드는 페이지는 기다리지 않고 바로 내용을 넣어줄 것이므로 필요 없음
+                return false;
+            }
+            //vm_claim_page로 요청한 후 매핑 + 페이지 타입에 맞게 초기화
+            if (!vm_claim_page(upage)) {
+                return false;
+            }
+            struct page *dst_page = spt_find_page(dst, upage);
+            memcpy(dst_page->frame->kva, src_page->frame->kva, PGSIZE);
         }
     }
     return true;
