@@ -312,14 +312,14 @@ void process_exit(void) {
 
     /* 열린 파일 전부 닫기*/
     fd_table_close();
-    // int cnt = 2;
-    // while (cnt < 256) {
-    //     if (table[cnt]) {
-    //         file_close(table[cnt]);
-    //         table[cnt] = NULL;
-    //     }
-    //     cnt++;
-    // }
+    int cnt = 2;
+    while (cnt < 256) {
+        if (table[cnt]) {
+            file_close(table[cnt]);
+            table[cnt] = NULL;
+        }
+        cnt++;
+    }
 
 
     /* 페이지 테이블 메모리 반환 및 pml4 리셋 */
@@ -839,11 +839,10 @@ static bool setup_stack(struct intr_frame *if_) {
      * TODO: 페이지가 스택임을 표시해야 합니다. */
     /* TODO: 여기에 코드를 작성하십시오 */
 
-    success = vm_alloc_page(VM_ANON, stack_bottom,1);
-    if (success){
-        success = vm_claim_page(stack_bottom);
-        if (success){
+    if(vm_alloc_page(VM_ANON, stack_bottom,1)){;
+        if(vm_claim_page(stack_bottom)){;
             if_->rsp = USER_STACK;
+            success = true;
         }
     }
 

@@ -34,10 +34,10 @@ WRITE_BOUNDARY="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/write-
 WRITE_ZERO="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/write-zero:write-zero -p ../../tests/userprog/sample.txt:sample.txt --swap-disk=4 -- -q   -f run write-zero"
 WRITE_STDIN="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/write-stdin:write-stdin --swap-disk=4 -- -q   -f run write-stdin"
 WRITE_BAD_FD="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/write-bad-fd:write-bad-fd --swap-disk=4 -- -q   -f run write-bad-fd"
-FORK_ONCE="pintos --gdb -v -k -m 20   --fs-disk=10 -p tests/userprog/fork-once:fork-once --swap-disk=4 -- -q   -f run fork-once"
+FORK_ONCE="pintos -v -k -m 20   --fs-disk=10 -p tests/userprog/fork-once:fork-once --swap-disk=4 -- -q   -f run fork-once"
 FORK_MULTIPLE="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/fork-multiple:fork-multiple --swap-disk=4 -- -q   -f run fork-multiple"
 FORK_RECURSIVE="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/fork-recursive:fork-recursive --swap-disk=4 -- -q   -f run fork-recursive"
-FORK_READ="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/fork-read:fork-read -p ../../tests/userprog/sample.txt:sample.txt --swap-disk=4 -- -q   -f run fork-read"
+FORK_READ="pintos -v -k -m 20   --fs-disk=10 -p tests/userprog/fork-read:fork-read -p ../../tests/userprog/sample.txt:sample.txt --swap-disk=4 -- -q   -f run fork-read"
 FORK_CLOSE="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/fork-close:fork-close -p ../../tests/userprog/sample.txt:sample.txt --swap-disk=4 -- -q   -f run fork-close"
 FORK_BOUNDARY="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/fork-boundary:fork-boundary --swap-disk=4 -- -q   -f run fork-boundary"
 EXEC_ONCE="pintos -v -k -T 60 -m 20   --fs-disk=10 -p tests/userprog/exec-once:exec-once -p tests/userprog/child-simple:child-simple --swap-disk=4 -- -q   -f run exec-once"
@@ -147,4 +147,4 @@ make
 cd build
 source ../../activate
 
-$FORK_ONCE
+$FORK_READ
