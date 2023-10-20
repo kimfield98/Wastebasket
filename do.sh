@@ -147,4 +147,4 @@ make
 cd build
 source ../../activate
 
-$FORK_READ
+$PT_GROW_STACK

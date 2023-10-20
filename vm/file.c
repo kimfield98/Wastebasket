@@ -54,6 +54,9 @@ file_backed_destroy (struct page *page) {
 void *
 do_mmap (void *addr, size_t length, int writable,
 		struct file *file, off_t offset) {
+	// TODO: fd로 열린 파일의 오프셋(offset)부터 length만큼을 addr에 매핑
+	// TODO: 파일의 길이가 PGSIZE의 배수여야함
+	// TODO: 아닐시 stick out처러해줌
 }
 
 /* Do the munmap */

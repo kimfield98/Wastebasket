@@ -88,6 +88,9 @@ void syscall_handler(struct intr_frame *f) {
     // 커널-사이드에서 실행된 결과물을 %rax에 넣어서 반환해야 함
 
     int syscall_num = f->R.rax;
+    #ifdef VM
+        thread_current()->rsp = f->rsp;
+    #endif
 
     switch (syscall_num) {
 
@@ -144,6 +147,12 @@ void syscall_handler(struct intr_frame *f) {
 
     case SYS_CLOSE:
         close(f->R.rdi);
+        break;
+
+    case SYS_MMAP:
+        break;
+
+	case SYS_MUNMAP:
         break;
 
     default:

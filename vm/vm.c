@@ -119,8 +119,6 @@ spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED){
 
     page.va = pd_upage;
 
-    ASSERT(spt && va)
-
     e = hash_find (&spt->hash_table, &page.h_elem);
     return e != NULL ? hash_entry (e, struct page, h_elem) : NULL;
 }
@@ -205,6 +203,7 @@ vm_get_frame (void) {
 /* Growing the stack. */
 static void
 vm_stack_growth (void *addr UNUSED) {
+    vm_alloc_page(VM_ANON|VM_MARKER_0,pg_round_down(addr),1);
 }
 
 /* 쓰기 보호된 페이지의 오류를 처리합니다. */
@@ -221,18 +220,26 @@ bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
         bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
             
-    addr = pg_round_down(addr);
     struct supplemental_page_table *spt = &thread_current ()->spt;
-    struct page *page = spt_find_page(spt, addr);
-    if(page == NULL){
-		return false;
-	}
+    struct page *page = NULL;
     /* TODO: Validate the fault */ // segmentation fault 인지 page fault 인지 검증?
-	if (!is_user_vaddr(addr)){
+    if(!addr){
         return false;
     }
-    if(not_present){ // frame 자체가 비어있는 경우
-        //page fault 로직 처리
+    if (!is_user_vaddr(addr)){
+        return false;
+    }
+    if(not_present) // frame 자체가 비어있는 경우
+    {//page fault 로직 처리
+        void* rsp = f->rsp;
+        if(!user)
+            rsp = thread_current()->rsp;
+        if (USER_STACK - (1 << 20) <= rsp && rsp <= addr && addr <= USER_STACK){
+            vm_stack_growth(addr);
+        }
+        page = spt_find_page(spt,addr);
+        if (!page)
+            return false;
         return vm_do_claim_page (page); // 프레임 할당하는 함수
     }
     else{ // frame은 채워져 있는 상태(이지만 내 것인지 모를 때?)
@@ -342,11 +349,19 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
     return true;
 }
 
+void hash_page_destroy(struct hash_elem *e, void *aux)
+{
+    struct page *page = hash_entry(e, struct page, h_elem);
+    destroy(page);
+    free(page);
+}
+
 /*보조 페이지 테이블에서 보유한 리소스를 해제합니다.*/
 void
 supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
     /* TODO: 스레드가 보유한 모든 보조 페이지 테이블을 파괴하고
      수정된 모든 내용을 저장 매체에 기록합니다."*/
+    hash_clear(&spt->hash_table,hash_page_destroy);
 }
 
 /* Returns a hash value for page p. */
