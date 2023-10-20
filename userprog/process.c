@@ -764,7 +764,6 @@ static bool lazy_load_segment(struct page *page, void *aux) {
     uint32_t read_bytes = aux_info->read_bytes;
     uint32_t zero_bytes = aux_info->zero_bytes;
     off_t ofs = aux_info->ofs;
-    bool writable = aux_info->writable;
 
     file_seek(file,ofs);
 
@@ -813,7 +812,6 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         aux_info->file = file;
         aux_info->ofs = ofs;
         aux_info->upage = pg_round_down(upage);
-        aux_info->writable = writable;
 
         if (!vm_alloc_page_with_initializer(VM_ANON, upage, writable, lazy_load_segment, aux_info))
             return false;

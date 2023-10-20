@@ -36,6 +36,14 @@ enum vm_type {
 struct page_operations;
 struct thread;
 
+struct lazy_aux{
+    struct file *file;
+    off_t ofs;
+	uint8_t upage;
+    uint64_t read_bytes;
+	uint64_t zero_bytes;
+};
+
 #define VM_TYPE(type) ((type) & 7)
 
 /* The representation of "page".
@@ -50,6 +58,7 @@ struct page {
 	/* Your implementation */
 	struct hash_elem h_elem;
 	bool writable;
+	int mapped_page_count;
 
 	/* Per-type data are binded into the union.
 	 * Each function automatically detects the current union */
