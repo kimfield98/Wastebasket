@@ -46,13 +46,14 @@ static bool
 file_backed_swap_in (struct page *page, void *kva) {
 	struct file_page *file_page UNUSED = &page->file;
 	file_backed_initializer(page,VM_FILE,kva);
+	return true;
 }
 
 /* Swap out the page by writeback contents to the file. */
 static bool
 file_backed_swap_out (struct page *page) {
 	struct file_page *file_page = &page->file;
-	
+	return true;
 }
 
 /* Destory the file backed page. PAGE will be freed by the caller. */
@@ -165,4 +166,5 @@ do_munmap (void *addr) {
 		addr += PGSIZE;
 		p = spt_find_page(spt, addr);
 	}
+
 }

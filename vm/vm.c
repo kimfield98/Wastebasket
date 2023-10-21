@@ -241,6 +241,8 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
         page = spt_find_page(spt,addr);
         if (!page)
             return false;
+        if (write == 1 && page->writable ==0)
+            return false;
         return vm_do_claim_page (page); // 프레임 할당하는 함수
     }
     else{ // frame은 채워져 있는 상태(이지만 내 것인지 모를 때?)
