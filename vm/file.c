@@ -72,17 +72,21 @@ static bool lazy_do_mmap(struct page *page, void *aux) {
     /* TODO: 이 함수는 주소 VA에서 처음 페이지 폴트(page fault)가 발생할 때 호출됩니다. */
     /* TODO: VA는 이 함수를 호출할 때 사용 가능합니다. */
     /* 실행 가능한 파일의 페이지들을 초기화하는 함수*/
-    struct lazy_aux *aux_info = aux;
+    struct lazy_aux *aux_info = (struct lazy_aux *)aux;
 
     struct file *file = aux_info->file;
-    uint64_t read_bytes = aux_info->read_bytes;
-	uint64_t zero_bytes = aux_info->zero_bytes;
+    uint32_t read_bytes = aux_info->read_bytes;
+    uint32_t zero_bytes = aux_info->zero_bytes;
     off_t ofs = aux_info->ofs;
 
     file_seek(file,ofs);
+
     /* Load this page. */
-    file_read(file, page->frame->kva, read_bytes);
-    // free(aux); 
+    if (file_read(file, page->frame->kva, read_bytes) != (int)read_bytes) {
+        palloc_free_page(page->frame->kva);
+        return false;
+    }
+    // memset(page->frame->kva + read_bytes, 0, zero_bytes);
     return true;
 }
 
@@ -97,8 +101,11 @@ do_mmap (void *addr, size_t length, int writable,
 	size_t read_bytes = file_length(f) < length ? file_length(f) : length;
 	size_t zero_bytes = PGSIZE - read_bytes % PGSIZE;
 
+	if(addr != pg_round_down(addr)){
+		return NULL;
+	}
+	
 	ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
-	ASSERT(pg_ofs(addr) == 0);	  // upage가 페이지 정렬되어 있는지 확인
 	ASSERT(offset % PGSIZE == 0); // ofs가 페이지 정렬되어 있는지 확인
 	
 

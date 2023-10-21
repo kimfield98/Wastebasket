@@ -354,6 +354,7 @@ int open(const char *file) {
     }
 
     /* 파일을 열어보려고 시도하고, 실패시 -1 반환 (struct file 필수) */
+    sema_down(&filesys_sema);
     struct file *opened_file;
     opened_file = filesys_open(file); // *file의 주소 file
     if (!opened_file) {
@@ -371,8 +372,8 @@ int open(const char *file) {
     /* File Descriptor Table이 가득차면 그냥 파일 닫기 */
     if (fd == -1) {
         file_close(opened_file);
-        return -1;
     }
+    sema_up(&filesys_sema);
 
     /* 여기까지 왔으면 성공했으니 fd값 반환 */
     return fd;

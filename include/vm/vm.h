@@ -39,7 +39,6 @@ struct thread;
 struct lazy_aux{
     struct file *file;
     off_t ofs;
-	uint8_t upage;
     uint64_t read_bytes;
 	uint64_t zero_bytes;
 };
