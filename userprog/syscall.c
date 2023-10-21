@@ -202,8 +202,8 @@ bool buffer_validity_check(void *buffer, unsigned size) {
         return false;
 
     // /* buffer의 마지막 주소를 확인 */
-    // if (!pointer_validity_check(buffer + size - 1)) // GPT한데 코드를 확인받아보니, buffer+size가 딱 페이지의 끝일 경우 0으로 돌아가기 때문에 -1을 추천
-    //     return false;
+    if (!pointer_validity_check(buffer + size - 1)) // GPT한데 코드를 확인받아보니, buffer+size가 딱 페이지의 끝일 경우 0으로 돌아가기 때문에 -1을 추천
+        return false;
 
     /* 각각의 페이지 크기 (PintOS는 4KB) */
     const size_t PAGE_SIZE = 4096;
