@@ -166,6 +166,7 @@ static void __do_fork(void *aux) {
 
     /* (1) 백업된 intr_frame의 데이터를 복사 */
     memcpy(&child_if_, parent_if, sizeof(struct intr_frame));
+    child_if_.R.rax = 0;
 
     /* (2) 페이지테이블을 복사 */
     current->pml4 = pml4_create();
@@ -183,26 +184,24 @@ static void __do_fork(void *aux) {
 #endif
 
     /* (3) File Descriptor를 복사 ; thread_create에서 palloc은 완료 */
-    lock_acquire(&parent->fd_lock);
+    // lock_acquire(&parent->fd_lock);
     for (int i = 2; i < 256; i++) {
-        if (parent->fd_table[i] != 0) {
+        if (parent->fd_table[i] != NULL) {
             current->fd_table[i] = file_duplicate(parent->fd_table[i]);
         } else {
             current->fd_table[i] = 0;
         }
     }
-    lock_release(&parent->fd_lock);
-
-    /* (4) 새로 생성되는 프로세스와 관련된 초기화 작업 수행 */
-    process_init();
-
     /* (5) 부모의 Children 리스트에 자식의 child_elem을 넣고, child의 부모 포인터를 업데이트하고, sema_up으로 포크가 완료됨을 통보 */
     current->parent_is = parent; // thread_create()시점에 정의하긴 했으나, fork caller가 맞도록 다시 재확인
+    // lock_release(&parent->fd_lock);
+
+    /* (4) 새로 생성되는 프로세스와 관련된 초기화 작업 수행 */
     sema_up(&parent->fork_sema);
+    process_init();
 
     /* 최종적으로 완성된 child process로 switch 하는 과정 ; 단, fork된 child는 parent의 fork()에서 사용된 R.rax 값이 비어야 함 */
     if (succ) {
-        child_if_.R.rax = 0;
         do_iret(&child_if_);
     }
 error:
@@ -309,7 +308,7 @@ void process_exit(void) {
     if (!curr->parent_is) {
         printf("%s\n", curr->name);
     }
-
+    
     /* 열린 파일 전부 닫기*/
     fd_table_close();
     int cnt = 2;
@@ -758,24 +757,21 @@ static bool lazy_load_segment(struct page *page, void *aux) {
     /* TODO: 이 함수는 주소 VA에서 처음 페이지 폴트(page fault)가 발생할 때 호출됩니다. */
     /* TODO: VA는 이 함수를 호출할 때 사용 가능합니다. */
     /* 실행 가능한 파일의 페이지들을 초기화하는 함수*/
-    struct aux_info *aux_info = (struct aux_info *)aux;
+    struct lazy_aux *aux_info = (struct lazy_aux *)aux;
 
     struct file *file = aux_info->file;
     uint32_t read_bytes = aux_info->read_bytes;
     uint32_t zero_bytes = aux_info->zero_bytes;
     off_t ofs = aux_info->ofs;
-    bool writable = aux_info->writable;
 
     file_seek(file,ofs);
 
     /* Load this page. */
     if (file_read(file, page->frame->kva, read_bytes) != (int)read_bytes) {
         palloc_free_page(page->frame->kva);
-        free(aux); 
         return false;
     }
     memset(page->frame->kva + read_bytes, 0, zero_bytes);
-    free(aux); 
     return true;
 }
 
@@ -807,13 +803,11 @@ static bool load_segment(struct file *file, off_t ofs, uint8_t *upage, uint32_t 
         size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
         /* TODO: Set up aux to pass information to the lazy_load_segment. */
-        struct aux_info* aux_info = (struct aux_info*)malloc(sizeof(struct aux_info));
+        struct lazy_aux* aux_info = (struct lazy_aux*)malloc(sizeof(struct lazy_aux));
         aux_info->read_bytes = page_read_bytes;
         aux_info->zero_bytes = page_zero_bytes;
         aux_info->file = file;
         aux_info->ofs = ofs;
-        aux_info->upage = pg_round_down(upage);
-        aux_info->writable = writable;
 
         if (!vm_alloc_page_with_initializer(VM_ANON, upage, writable, lazy_load_segment, aux_info))
             return false;

@@ -38,6 +38,8 @@ int write(int fd, const void *buffer, unsigned size);
 void seek(int fd, unsigned position);
 unsigned tell(int fd);
 void close(int fd);
+void *mmap (void *addr, size_t length, int writable, int fd, off_t offset);
+void munmap (void *addr);
 
 /* File Descriptor 관련 함수 Prototype & Global Variables */
 int allocate_fd(struct file *file);
@@ -88,6 +90,9 @@ void syscall_handler(struct intr_frame *f) {
     // 커널-사이드에서 실행된 결과물을 %rax에 넣어서 반환해야 함
 
     int syscall_num = f->R.rax;
+    #ifdef VM
+        thread_current()->rsp = f->rsp;
+    #endif
 
     switch (syscall_num) {
 
@@ -144,6 +149,14 @@ void syscall_handler(struct intr_frame *f) {
 
     case SYS_CLOSE:
         close(f->R.rdi);
+        break;
+
+    case SYS_MMAP:
+        f->R.rax = mmap(f->R.rdi,f->R.rsi,f->R.rdx,f->R.r10,f->R.r8);
+        break;
+
+	case SYS_MUNMAP:
+        do_munmap(f->R.rdi);
         break;
 
     default:
@@ -341,6 +354,7 @@ int open(const char *file) {
     }
 
     /* 파일을 열어보려고 시도하고, 실패시 -1 반환 (struct file 필수) */
+    sema_down(&filesys_sema);
     struct file *opened_file;
     opened_file = filesys_open(file); // *file의 주소 file
     if (!opened_file) {
@@ -358,8 +372,8 @@ int open(const char *file) {
     /* File Descriptor Table이 가득차면 그냥 파일 닫기 */
     if (fd == -1) {
         file_close(opened_file);
-        return -1;
     }
+    sema_up(&filesys_sema);
 
     /* 여기까지 왔으면 성공했으니 fd값 반환 */
     return fd;
@@ -455,7 +469,7 @@ int write(int fd, const void *buffer, unsigned size) {
 
     int bytes_written = file_write(file_to_write, buffer, size);
 
-    // sema_up(&filesys_sema);
+    sema_up(&filesys_sema);
 
     return bytes_written;
 }
@@ -495,6 +509,37 @@ void close(int fd) {
         close_file(fd);
         lock_release(&t->fd_lock);
     }
+}
+
+void *mmap (void *addr, size_t length, int writable, int fd, off_t offset){
+    struct file* m_file = get_file_from_fd(fd);
+
+    // addr이 NULL 이거나, page 정렬이 아니거나, 오프셋이 page 정렬이 아닐 때 리턴
+    if(!addr || addr != pg_round_down(addr)) 
+        return NULL;
+
+    if(offset != pg_round_down(offset))
+        return NULL;
+
+    // addr이 user addr 이 아니거나, addr + length 가 user addr 이 아닐 때 리턴
+    if(!is_user_vaddr(addr) || !is_user_vaddr(addr+length))
+        return NULL;
+    
+    // addr에 할당된 페이지가 이미 존재하는 경우 리턴
+    if(spt_find_page(&thread_current()->spt, addr))
+        return NULL;
+
+    if (m_file==NULL)
+        return NULL;
+
+    if (file_length(m_file)==0||(int)length<=0)
+        return NULL;
+
+    return do_mmap(addr,length,writable,m_file,offset);
+}
+
+void munmap (void *addr){
+    do_munmap(addr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
