@@ -513,6 +513,28 @@ void close(int fd) {
 
 void *mmap (void *addr, size_t length, int writable, int fd, off_t offset){
     struct file* m_file = get_file_from_fd(fd);
+
+    // addr이 NULL 이거나, page 정렬이 아니거나, 오프셋이 page 정렬이 아닐 때 리턴
+    if(!addr || addr != pg_round_down(addr)) 
+        return NULL;
+
+    if(offset != pg_round_down(offset))
+        return NULL;
+
+    // addr이 user addr 이 아니거나, addr + length 가 user addr 이 아닐 때 리턴
+    if(!is_user_vaddr(addr) || !is_user_vaddr(addr+length))
+        return NULL;
+    
+    // addr에 할당된 페이지가 이미 존재하는 경우 리턴
+    if(spt_find_page(&thread_current()->spt, addr))
+        return NULL;
+
+    if (m_file==NULL)
+        return NULL;
+
+    if (file_length(m_file)==0||(int)length<=0)
+        return NULL;
+
     return do_mmap(addr,length,writable,m_file,offset);
 }
 
