@@ -158,6 +158,7 @@ vm_evict_frame (void) {
     struct frame *victim = vm_get_victim ();
     /* TODO: swap out the victim and return the evicted frame. */
     swap_out(victim->page);
+    memset(victim->kva,0,PGSIZE);
     return victim;
 }
 

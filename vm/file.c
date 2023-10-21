@@ -3,6 +3,7 @@
 #include "vm/vm.h"
 #include "threads/vaddr.h"
 #include "threads/thread.h"
+#include "threads/mmu.h"
 
 static bool file_backed_swap_in (struct page *page, void *kva);
 static bool file_backed_swap_out (struct page *page);
@@ -45,7 +46,13 @@ file_backed_initializer (struct page *page, enum vm_type type, void *kva) {
 static bool
 file_backed_swap_in (struct page *page, void *kva) {
 	struct file_page *file_page UNUSED = &page->file;
-	file_backed_initializer(page,VM_FILE,kva);
+	// file_backed_initializer(page,VM_FILE,kva);
+
+	file_seek(file_page->file,file_page->ofs);
+	file_read(file_page->file,kva,file_page->read_bytes);
+	pml4_set_dirty(thread_current()->pml4,page->va,false);
+	pml4_set_page(thread_current()->pml4,page->va,kva,page->writable);
+
 	return true;
 }
 
@@ -53,6 +60,14 @@ file_backed_swap_in (struct page *page, void *kva) {
 static bool
 file_backed_swap_out (struct page *page) {
 	struct file_page *file_page = &page->file;
+	// printf(" aA a a aa a aA A aa aA aAa aa a   %p \n",page->va);
+	if(pml4_is_dirty(thread_current()->pml4,page->va)) {
+		file_seek(file_page->file,file_page->ofs);
+		file_write(file_page->file,page->frame->kva,file_page->read_bytes);
+		pml4_set_dirty(thread_current()->pml4,page->va,false);
+	}
+	pml4_clear_page(thread_current()->pml4,page->va);
+	page->frame = NULL;
 	return true;
 }
 
@@ -146,25 +161,33 @@ do_mmap (void *addr, size_t length, int writable,
 void
 do_munmap (void *addr) {
 	struct supplemental_page_table *spt = &thread_current()->spt;
-	struct page *p = spt_find_page(spt, addr);
-	int count = p->mapped_page_count;
+	struct page *page = spt_find_page(spt, addr);
+	struct file_page *file_page UNUSED = &page->file;
+	int count = page->mapped_page_count;
 	for (int i = 0; i < count; i++)
 	{
-		if (p)
-			destroy(p);
+		if (page)
 		{
-			if (pml4_get_page(thread_current()->pml4, p->va))
-				// 매핑된 프레임이 있다면 = swap out 되지 않았다면 -> 페이지를 제거하고 연결된 프레임도 제거
-				spt_remove_page(spt, p);
-			else
-			{ // swap out된 경우에는 매핑된 프레임이 없으므로 페이지만 제거
-				hash_delete(&spt->hash_table, &p->h_elem);
-				free(p);
+			// if (pml4_get_page(thread_current()->pml4, page->va))
+			// 	// 매핑된 프레임이 있다면 = swap out 되지 않았다면 -> 페이지를 제거하고 연결된 프레임도 제거
+			// 	spt_remove_page(spt, page);
+			// else
+			// { // swap out된 경우에는 매핑된 프레임이 없으므로 페이지만 제거
+			// 	hash_delete(&spt->hash_table, &page->h_elem);
+			// 	free(page);
+			// }
+
+			if (pml4_is_dirty(thread_current()->pml4, page->va))
+			{
+				file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->ofs);
+				pml4_set_dirty(thread_current()->pml4, page->va, 0);
 			}
+			pml4_clear_page(thread_current()->pml4, page->va);
 		}
-		// pml4_clear_page(thread_current()->pml4, p->va);
+		// destroy(page);
+		// pml4_clear_page(thread_current()->pml4, page->va);
 		addr += PGSIZE;
-		p = spt_find_page(spt, addr);
+		page = spt_find_page(spt, addr);
 	}
 
 }

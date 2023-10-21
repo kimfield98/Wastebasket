@@ -303,14 +303,13 @@ void process_exit(void) {
 
     struct thread *curr = thread_current();
     struct file **table = curr->fd_table;
-
     /* Debug */
     if (!curr->parent_is) {
         printf("%s\n", curr->name);
     }
     
     /* 열린 파일 전부 닫기*/
-    fd_table_close();
+    // fd_table_close();
     int cnt = 2;
     while (cnt < 256) {
         if (table[cnt]) {
