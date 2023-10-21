@@ -469,7 +469,7 @@ int write(int fd, const void *buffer, unsigned size) {
 
     int bytes_written = file_write(file_to_write, buffer, size);
 
-    // sema_up(&filesys_sema);
+    sema_up(&filesys_sema);
 
     return bytes_written;
 }
@@ -539,7 +539,7 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 }
 
 void munmap (void *addr){
-    return do_munmap(addr);
+    do_munmap(addr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

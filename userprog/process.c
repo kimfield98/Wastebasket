@@ -308,7 +308,7 @@ void process_exit(void) {
     if (!curr->parent_is) {
         printf("%s\n", curr->name);
     }
-
+    
     /* 열린 파일 전부 닫기*/
     fd_table_close();
     int cnt = 2;
