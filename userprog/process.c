@@ -105,8 +105,6 @@ tid_t process_fork(const char *name, struct intr_frame *if_) {
 
     struct thread *child = get_child_process(pid);
 
-    /* Caller의 fork_sema를 내리면서 대기 상태 진입 ;
-    _do_fork가 끝날때 Callee가 sema_up 예정 */
     sema_down(&child->fork_sema);
 
     if (child->exit_status == TID_ERROR)
@@ -208,7 +206,6 @@ static void __do_fork(void *aux) {
     }
     /* (5) 부모의 Children 리스트에 자식의 child_elem을 넣고, child의 부모 포인터를 업데이트하고, sema_up으로 포크가 완료됨을 통보 */
     current->parent_is = parent; // thread_create()시점에 정의하긴 했으나, fork caller가 맞도록 다시 재확인
-    // lock_release(&parent->fd_lock);
 
     /* (4) 새로 생성되는 프로세스와 관련된 초기화 작업 수행 */
     sema_up(&current->fork_sema);
@@ -330,6 +327,7 @@ void process_exit(void) {
     /* 페이지 테이블 메모리 반환 및 pml4 리셋 */
     palloc_free_page(table);
     file_close(curr->running);
+
     process_cleanup();
     hash_destroy(&curr->spt.hash_table,NULL);
     

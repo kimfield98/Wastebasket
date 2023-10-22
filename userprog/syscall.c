@@ -238,6 +238,7 @@ void exit(int status) {
     printf("%s: exit(%d)\n", thread_current()->name, status); // 이걸 process_exit()으로 옮기면 syn-read가 조금 더 진행됨 (;;)
 
     /* 유저 프로그램이 직접 제공한 status 값을 exit 하는 프로세스/스레드의 exit_status 값으로 저장 */
+
     // thread_current()->exit_status = status;
 
     /* 스레드 죽이기 */
@@ -251,19 +252,6 @@ void exit(int status) {
    기본적으로 pml4_for_each()로 메모리와 페이지테이블 구조를 복제하지만, 이 함수에 들어갈 func를 작성해야 함 (duplicate_pte). */
 pid_t fork(const char *thread_name, struct intr_frame *snapshot) {
 
-    // if (!pointer_validity_check(thread_name))
-    //     return false;
-
-    /* 시스템콜이 발생한 시점의 Parent intr_frame을 저장하고 process_fork로 전달 */
-    // pid_t pid = process_fork(thread_name, snapshot);
-
-    /* 만일 포크가 실패한다면 */
-    // if (pid == TID_ERROR) {
-    //     return TID_ERROR;
-    // }
-
-    /* 포크 성공! ; do_fork에서 child의 %Rax 값을 0으로 만들어줬기 때문에 리턴값은 자동으로 처리됨 */
-    // return pid;
     return process_fork(thread_name, snapshot);
 }
 
@@ -418,13 +406,15 @@ int read(int fd, void *buffer, unsigned size) {
             read_count++;
         }
         file_lock_release();
-    } else{
+
+    }else{
         if (fd<2){
             file_lock_release();
             return -1;
         }
 
-    /* fd = 0이 아닐 경우 */
+
+        /* fd = 0이 아닐 경우 */
         struct file *file = get_file_from_fd(fd);
         if (!file) {
             file_lock_release();
@@ -478,7 +468,9 @@ int write(int fd, const void *buffer, unsigned size) {
     } // 만일 deny_write라면 실패 반환 (임시, sync_write 등에서 수정 필요할 가능성 높음)
 
     file_lock_acquire();
+
     int bytes_written = file_write(file_to_write, buffer, size);
+
     file_lock_release();
 
     return bytes_written;

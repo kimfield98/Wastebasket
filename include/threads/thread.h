@@ -129,6 +129,7 @@ struct thread {
     struct list children_list;   // 특정 스레드가 발생시킨 Child의 명단
     struct list_elem child_elem; // children 리스트 삽입 목적
 
+
     int exit_status;     // 프로세스 종료시 exit status 코드 저장
     bool already_waited; // 해당 child에 대한 process_wait()이 이미 호출되었다면 true (False로 init 필요)
     int fork_depth;  // 포크 얼마나 했는지 알아야 함

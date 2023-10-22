@@ -309,6 +309,7 @@ vm_do_claim_page (struct page *page) {
     
 
     /* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
+
     // list_push_back(&f_occ_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
     pml4_set_page(curr->pml4,page->va,frame->kva,page->writable); // page 와 물리 메모리 맵핑
 
