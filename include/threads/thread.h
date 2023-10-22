@@ -116,6 +116,7 @@ struct thread {
     /* File Descriptor 관리를 위한 멤버 */
     struct lock fd_lock;    // Allocate_fd()에서 사용되는 락, per thread
     struct file **fd_table; // File Descriptor Table ; init_thread에서 한번 초기화
+    struct file *running;
 
     /* process_wait() 및 exit()을 위해서 추가된 멤버 */
 
@@ -127,6 +128,7 @@ struct thread {
     struct thread *parent_is;    // 부모를 가리키는 포인터
     struct list children_list;   // 특정 스레드가 발생시킨 Child의 명단
     struct list_elem child_elem; // children 리스트 삽입 목적
+
 
     int exit_status;     // 프로세스 종료시 exit status 코드 저장
     bool already_waited; // 해당 child에 대한 process_wait()이 이미 호출되었다면 true (False로 init 필요)
@@ -188,5 +190,7 @@ bool comparison_for_sleeplist_insertion(const struct list_elem *new, const struc
 bool comparison_for_readylist_insertion(const struct list_elem *new, const struct list_elem *existing, void *aux UNUSED);
 bool comparison_for_priority_donation(const struct list_elem *new, const struct list_elem *existing, void *aux UNUSED);
 void thread_check_yield(void);
+void file_lock_acquire();
+void file_lock_release();
 
 #endif /* threads/thread.h */
