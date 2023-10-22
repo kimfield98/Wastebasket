@@ -116,15 +116,15 @@ do_mmap (void *addr, size_t length, int writable,
 
 	size_t read_bytes = file_length(f) < length ? file_length(f) : length;
 	size_t zero_bytes = PGSIZE - read_bytes % PGSIZE;
-
-	if(addr != pg_round_down(addr)){
-		return NULL;
-	}
 	
 	ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
+	ASSERT(pg_ofs(addr) == 0); // upage가 페이지 정렬되어 있는지 확인
 	ASSERT(offset % PGSIZE == 0); // ofs가 페이지 정렬되어 있는지 확인
-	
 
+	// if(addr != pg_round_down(addr)){
+	// 	return NULL;
+	// }
+	
 	while (read_bytes > 0 || zero_bytes > 0)
 	{
 		/* 이 페이지를 채우는 방법을 계산합니다.
@@ -167,25 +167,16 @@ do_munmap (void *addr) {
 	for (int i = 0; i < count; i++)
 	{
 		if (page)
-		{
-			// if (pml4_get_page(thread_current()->pml4, page->va))
-			// 	// 매핑된 프레임이 있다면 = swap out 되지 않았다면 -> 페이지를 제거하고 연결된 프레임도 제거
-			// 	spt_remove_page(spt, page);
-			// else
-			// { // swap out된 경우에는 매핑된 프레임이 없으므로 페이지만 제거
-			// 	hash_delete(&spt->hash_table, &page->h_elem);
-			// 	free(page);
-			// }
-
-			if (pml4_is_dirty(thread_current()->pml4, page->va))
-			{
-				file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->ofs);
-				pml4_set_dirty(thread_current()->pml4, page->va, 0);
-			}
-			pml4_clear_page(thread_current()->pml4, page->va);
-		}
-		// destroy(page);
-		// pml4_clear_page(thread_current()->pml4, page->va);
+			destroy(page);
+		// if (page)
+		// {
+		// 	if (pml4_is_dirty(thread_current()->pml4, page->va))
+		// 	{
+		// 		file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->ofs);
+		// 		pml4_set_dirty(thread_current()->pml4, page->va, 0);
+		// 	}
+		// 	pml4_clear_page(thread_current()->pml4, page->va);
+		// }
 		addr += PGSIZE;
 		page = spt_find_page(spt, addr);
 	}
