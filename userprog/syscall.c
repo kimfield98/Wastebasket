@@ -239,6 +239,8 @@ void exit(int status) {
 
     /* 유저 프로그램이 직접 제공한 status 값을 exit 하는 프로세스/스레드의 exit_status 값으로 저장 */
 
+    // thread_current()->exit_status = status;
+
     /* 스레드 죽이기 */
     thread_exit();
 }
@@ -250,7 +252,6 @@ void exit(int status) {
    기본적으로 pml4_for_each()로 메모리와 페이지테이블 구조를 복제하지만, 이 함수에 들어갈 func를 작성해야 함 (duplicate_pte). */
 pid_t fork(const char *thread_name, struct intr_frame *snapshot) {
 
-    /* 시스템콜이 발생한 시점의 Parent intr_frame을 저장하고 process_fork로 전달 */
     return process_fork(thread_name, snapshot);
 }
 
@@ -405,11 +406,13 @@ int read(int fd, void *buffer, unsigned size) {
             read_count++;
         }
         file_lock_release();
+
     }else{
         if (fd<2){
             file_lock_release();
             return -1;
         }
+
 
         /* fd = 0이 아닐 경우 */
         struct file *file = get_file_from_fd(fd);

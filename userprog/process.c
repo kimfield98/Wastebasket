@@ -105,7 +105,6 @@ tid_t process_fork(const char *name, struct intr_frame *if_) {
 
     struct thread *child = get_child_process(pid);
 
-    /* Caller의 fork_sema를 내리면서 대기 상태 진입 ; _do_fork가 끝날때 Callee가 sema_up 예정 */
     sema_down(&child->fork_sema);
 
     if (child->exit_status == TID_ERROR)
@@ -118,7 +117,6 @@ tid_t process_fork(const char *name, struct intr_frame *if_) {
 		// 자식 프로세스의 pid가 아닌 TID_ERROR를 반환한다.
 		return TID_ERROR;
 	}
-
 
     return pid;
 }
@@ -309,14 +307,13 @@ void process_exit(void) {
 
     struct thread *curr = thread_current();
     struct file **table = curr->fd_table;
-
     /* Debug */
     if (!curr->parent_is) {
         printf("%s\n", curr->name);
     }
     
     /* 열린 파일 전부 닫기*/
-    fd_table_close();
+    // fd_table_close();
     int cnt = 2;
     while (cnt < 256) {
         if (table[cnt]) {

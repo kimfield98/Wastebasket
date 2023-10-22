@@ -148,7 +148,7 @@ static struct frame *
 vm_get_victim (void) {
     struct frame *victim = NULL;
      /* TODO: The policy for eviction is up to you. */
-    
+    victim = list_entry(list_pop_front(&f_occ_table), struct frame, f_elem);
     return victim;
 }
 
@@ -157,8 +157,9 @@ static struct frame *
 vm_evict_frame (void) {
     struct frame *victim = vm_get_victim ();
     /* TODO: swap out the victim and return the evicted frame. */
-
-    return NULL;
+    swap_out(victim->page);
+    memset(victim->kva,0,PGSIZE);
+    return victim;
 }
 
 /*
@@ -177,25 +178,37 @@ vm_get_frame (void) {
     // /* TODO: Fill this function. */
 
     // 인자로 아무것도 안 넣었을 때 커널풀, PAL_USER 는 유저풀 , PAL_ZERO 는 0으로 초기화 해줌.
-	if(list_empty(&f_free_table)){
-        frame->kva = palloc_get_page(PAL_USER|PAL_ZERO);
-        //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
-    }
-    else{
-		frame = list_entry(list_pop_front(&f_free_table), struct frame, f_elem);
-		//이 프레임으로 kva 다시 뺀다.
-	}
-    if (frame->kva == NULL){ //사용 가능한 페이지가 없는 경우
-        struct frame *reframe = vm_evict_frame(); //페이지를 쫒아내고 그 페이지에 상응하는 프레임을 reframe으로 리턴.
-        swap_out(reframe->page); // reframe을 물리 메모리에서 스왚 디스크로 swap_out
-		free_in_occ_out(&reframe->f_elem);
-        reframe->page = NULL; // 프레임의 page NULL로.
-        pml4_clear_page (curr->pml4,reframe->kva); //pml4 맵핑을 끊어야함 => pa와의 맵핑을 끊음.
-        return reframe; // 맵핑을 끊은, 이제 빈 프레임 반환
-    }
-    frame->page = NULL; // 프레임의 page NULL로.
-    list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
+	// if(list_empty(&f_free_table)){
+    //     frame->kva = palloc_get_page(PAL_USER|PAL_ZERO);
+    //     //palloc()을 호출하여 프레임을 얻는다. 이 때, PAL_ZREO 를 인자로 넘겨서 커널 풀 영역에 페이지를 할당한다.
+    // }
+    // else{
+	// 	frame = list_entry(list_pop_front(&f_free_table), struct frame, f_elem);
+	// 	//이 프레임으로 kva 다시 뺀다.
+	// }
+    // if (frame->kva == NULL){ //사용 가능한 페이지가 없는 경우
+    //     struct frame *reframe = vm_evict_frame(); //페이지를 쫒아내고 그 페이지에 상응하는 프레임을 reframe으로 리턴.
+    //     swap_out(reframe->page); // reframe을 물리 메모리에서 스왚 디스크로 swap_out
+	// 	free_in_occ_out(&reframe->f_elem);
+    //     reframe->page = NULL; // 프레임의 page NULL로.
+    //     pml4_clear_page (curr->pml4,reframe->kva); //pml4 맵핑을 끊어야함 => pa와의 맵핑을 끊음.
+    //     return reframe; // 맵핑을 끊은, 이제 빈 프레임 반환
+    // }
+    // frame->page = NULL; // 프레임의 page NULL로.
+    // list_push_back(&f_occ_table, &frame->f_elem); // 프레임 테이블에 방금 만든 프레임 집어넣음
+    frame->kva = palloc_get_page(PAL_USER | PAL_ZERO);
 
+    if(frame->kva == NULL || frame == NULL){
+        if(frame != NULL){
+            free(frame);
+        }
+        frame = vm_evict_frame();
+
+    }
+
+    list_push_back(&f_occ_table, &frame->f_elem);
+
+    frame->page = NULL;
     ASSERT (frame != NULL);
     ASSERT (frame->page == NULL);
     return frame;
@@ -296,7 +309,8 @@ vm_do_claim_page (struct page *page) {
     
 
     /* TODO: 페이지 테이블 항목을 삽입하여 페이지의 가상 주소(VA)를 프레임의 물리 주소(PA)에 매핑합니다. */
-    list_push_back(&f_occ_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
+
+    // list_push_back(&f_occ_table,&frame->f_elem); // 프레임 테이블에 삽입 한 후 
     pml4_set_page(curr->pml4,page->va,frame->kva,page->writable); // page 와 물리 메모리 맵핑
 
     return swap_in (page, frame->kva);
