@@ -1,22 +1,15 @@
-// src/App.js
+import React, { useState } from "react";
 
-import React from "react";
-
-function Child(props) {
-  return <div>{props.GrandFatherName}</div>
-}
-
-function Mother(props) {
-  return <Child GrandFatherName={props.GrandFatherName} />
-}
-
-function GrandFather() {
-  const name = "이범규";
-  return <Mother GrandFatherName={name} />
-}
 
 function App () {
-  return <GrandFather />
+  const [number, setNunber] = useState(0);
+  return (
+    <div>
+      <div>{number}</div>
+      <button onClick={()=>{setNunber(number+1)}}>+1</button>
+      <button onClick={()=>{setNunber(number-1)}}>-1</button>
+    </div>
+  );
 }
 
 export default App;
