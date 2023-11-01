@@ -1,19 +1,22 @@
-import React from 'react';
+// src/App.js
 
-function Child() {
-  return <div>연결 성공</div>;
+import React from "react";
+
+function Child(props) {
+  return <div>{props.GrandFatherName}</div>
 }
 
-function Mother() {
-  return <Child/>;
+function Mother(props) {
+  return <Child GrandFatherName={props.GrandFatherName} />
 }
 
 function GrandFather() {
-  return <Mother/>;
+  const name = "이범규";
+  return <Mother GrandFatherName={name} />
 }
 
-function App() {
-  return <GrandFather/>;
+function App () {
+  return <GrandFather />
 }
 
 export default App;
