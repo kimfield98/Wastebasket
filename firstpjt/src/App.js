@@ -1,41 +1,34 @@
+// src/App.js
+
 import React from "react";
-import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 
-const StContainer = styled.div`
-  display: flex;
-`;
+// 사용할 Action creator를 import 합니다.
+import { minusOne, plusOne } from "./redux/modules/counter";
 
-const StBox = styled.div`
-  width: 100px;
-  height: 100px;
-  border: 1px solid ${(props) => props.borderColor};
-  margin: 20px;
-`;
-
-// 박스의 색을 배열에 담기
-const boxList = ["red", "green", "blue"];
-
-// 색을 넣으면, 이름을 반환해주는 함수
-const getBoxName = (color) => {
-  switch (color) {
-    case "red":
-      return "빨간 박스";
-    case "green":
-      return "초록 박스";
-    case "blue":
-      return "파란 박스";
-    default:
-      return "검정 박스";
-   }
-};
 const App = () => {
+  const dispatch = useDispatch();
+  const number = useSelector((state) => state.counter.number);
+
   return (
-    <StContainer>
-			{/* map을 이용해서 StBox를 반복하여 화면에 그립니다. */}
-      {boxList.map((box) => (
-        <StBox borderColor={box}>{getBoxName(box)}</StBox>
-      ))}
-    </StContainer>
+    <div>
+      {number}
+      <button
+        onClick={() => {
+          dispatch(plusOne()); // 액션객체를 Action creator로 변경합니다.
+        }}
+      >
+        + 1
+      </button>
+      {/* 빼기 버튼 추가 */}
+      <button
+        onClick={() => {
+          dispatch(minusOne()); // 액션객체를 Action creator로 변경합니다.
+        }}
+      >
+        - 1
+      </button>
+    </div>
   );
 };
 
