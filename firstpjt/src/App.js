@@ -1,27 +1,42 @@
-// src/App.js
 import React from "react";
-import Square from "./components/Square.js";
-import "./App.css";
+import styled from "styled-components";
 
-function App() {
-  const users = [
-    { id: 1, age: 30, name: "송중기" },
-    { id: 2, age: 24, name: "송강" },
-    { id: 3, age: 21, name: "김유정" },
-    { id: 4, age: 29, name: "구교환" },
-  ];
+const StContainer = styled.div`
+  display: flex;
+`;
 
+const StBox = styled.div`
+  width: 100px;
+  height: 100px;
+  border: 1px solid ${(props) => props.borderColor};
+  margin: 20px;
+`;
+
+// 박스의 색을 배열에 담기
+const boxList = ["red", "green", "blue"];
+
+// 색을 넣으면, 이름을 반환해주는 함수
+const getBoxName = (color) => {
+  switch (color) {
+    case "red":
+      return "빨간 박스";
+    case "green":
+      return "초록 박스";
+    case "blue":
+      return "파란 박스";
+    default:
+      return "검정 박스";
+   }
+};
+const App = () => {
   return (
-    <div className="app-style">
-      {users.map((user) => {
-        return <Square key={user.id}>
-        <p>이름: {user.name}</p>
-        <p>나이: {user.age}</p>
-      </Square>
-      ;
-      })}
-    </div>
+    <StContainer>
+			{/* map을 이용해서 StBox를 반복하여 화면에 그립니다. */}
+      {boxList.map((box) => (
+        <StBox borderColor={box}>{getBoxName(box)}</StBox>
+      ))}
+    </StContainer>
   );
-}
+};
 
 export default App;
