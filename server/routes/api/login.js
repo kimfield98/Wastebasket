@@ -1,17 +1,17 @@
 const express = require("express");
 const login = express.Router();
 const bcrypt = require("bcryptjs");
-const User = require("../../models/User"); // User model 불러오기
+const User = require("../../models/User");
 
 login.post("/", async (req, res) => {
   try {
-    // DB에서 요청한 Email 찾기
-    const user = await User.findOne({ email: req.body.email });
+    // DB에서 요청한 사용자 이름으로 사용자 찾기
+    const user = await User.findOne({ username: req.body.username });
 
     if (!user) {
       return res.json({
         loginSuccess: false,
-        message: "email을 다시 확인하세요.",
+        message: "사용자 이름을 다시 확인하세요.",
       });
     }
 
@@ -25,7 +25,7 @@ login.post("/", async (req, res) => {
       });
     }
 
-    // 비밀 번호가 맞으면 Token 생성
+    // 비밀번호가 일치하면 Token 생성
     await user.generateToken(); // Promise를 기다립니다.
 
     // 생성된 토큰을 쿠키에 저장

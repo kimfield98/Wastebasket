@@ -22,7 +22,7 @@ function Signin(){
     // 입력된 username와 password를 서버에 전송
     try {
       const response = await axios.post('/REACT_APP_API_URL', {
-        email: username, // 이메일 대신 username 사용
+        username: username,
         password: password
       });
   
