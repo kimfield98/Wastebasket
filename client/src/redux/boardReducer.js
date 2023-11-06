@@ -36,7 +36,7 @@ export const removePost = (id) => ({
 })
 
 const initialState = {
-    lastId :0,
+    lastId : 0,
     postData : [
         {
             id : '',

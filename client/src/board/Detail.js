@@ -47,19 +47,19 @@ function Detail(){
             <div className='background'>
                 <div>
                     <div>
-                        <div className="layoutstyles2">
+                        <div className="layoutStyles2">
                             <label className="labelStyle">제목</label>
                             <input className='inputStyle' type='text' onChange={handleTitle} value={title} />
                         </div>
                     </div>
                     <div>
-                        <div className="layoutstyles2">
+                        <div className="layoutStyles2">
                             <div className="labelStyle">내용</div>
                             <textarea className='textareaStyle' onChange={handleContent} value={content} />
                         </div>
                         <div>
                             <div className='btncover' >
-                                <button className='btn' onClick={onChange}>수정</button>
+                                <button className='btn' onClick={onChange}>수정 완료</button>
                                 <button className='btn' onClick={onRemove}>삭제</button>
                             </div>
                         </div>

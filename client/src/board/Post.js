@@ -43,9 +43,11 @@ function Post(){
         <div style={{ width: "100vw", height: "100vh" }}>
             <Header />
             <div className='background'>
+                <h2 className='titlebar'>메시지를 작성해보세요 💝</h2>
+                <br />
                 <form onSubmit={postSubmit}>
                     <div>
-                        <div className="layoutstyles2">
+                        <div className="layoutStyles2">
                             <label className="labelStyle" htmlFor="subject">제목</label>
                             <input className='inputStyle'
                                    type='text'
@@ -53,13 +55,13 @@ function Post(){
                                    value={title}
                                    placeholder="여기에 제목을 입력하세요 (10글자 이상)" />
                         </div>
-                        <div className="layoutstyles2">
-                        <label className="labelStyle" htmlFor="content">내용</label>
-                            <input className='textareaStyle'
+                        <div className="layoutStyles2">
+                            <label className="labelStyle" htmlFor="content">내용</label>
+                            <textarea className='textareaStyle'
                                    type='text'
                                    onChange={handleContent}
                                    value={content}
-                                   placeholder='내 용' />
+                                   placeholder='상대에게 전하고 싶은 메시지' />
                         </div>
                     </div>
                     <br/>
