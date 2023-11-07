@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { savePost } from '../redux/boardReducer';
 import Header from './Header';
 import '../css/App.css';
@@ -66,6 +66,7 @@ function Post(){
                     </div>
                     <br/>
                     <div className='btncover'>
+                        <button className='btn' type='submit'><Link to='/'>되돌아가기</Link></button>
                         <button className='btn' type='submit'>확인</button>
                     </div>
                 </form>

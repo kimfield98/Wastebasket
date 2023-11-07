@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { editPost, removePost } from '../redux/boardReducer';
 import Header from './Header';
 import '../css/App.css';
@@ -59,6 +59,7 @@ function Detail(){
                         </div>
                         <div>
                             <div className='btncover' >
+                                <button className='btn' type='submit'><Link to='/'>되돌아가기</Link></button>
                                 <button className='btn' onClick={onChange}>수정 완료</button>
                                 <button className='btn' onClick={onRemove}>삭제</button>
                             </div>
