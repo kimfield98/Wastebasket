@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { sidebarLinks } from "../constants/index";
 
 const LeftSidebar = () => {
-  const router = useRouter();
+
   const pathname = usePathname();
+  const pathSegments = pathname.split("/");
 
   return (
     <section className='custom-scrollbar leftsidebar'>
@@ -20,7 +21,7 @@ const LeftSidebar = () => {
 
           return (
             <Link
-              href={link.route}
+              href={link.route+"/"+pathSegments[2]}
               key={link.label}
               className={`leftsidebar_link ${isActive && "bg-primary-500 "}`}
             >

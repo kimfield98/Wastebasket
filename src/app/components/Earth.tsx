@@ -4,23 +4,7 @@ import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
 import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three';
 import { gsap } from 'gsap';
-
-
-const dummyData = [
-    {
-        lat: 37.5518911,
-        lon: 126.9917937,
-        radius: 2.2
-    },{
-      lat: 25.451233,
-      lon: 28.111223,
-      radius: 2.2
-    },{
-      lat: 0,
-      lon: 35,
-      radius: 2.2
-    }
-    ]    
+import axios from 'axios';
 
 const Light = () => {
   const spotLightRef = useRef<THREE.SpotLight | null>(null!);
@@ -68,112 +52,8 @@ const EarthlatLongToVector3 = (lat:any,lon:any,radius:any) => {
   return new THREE.Vector3(x,y,z);
 }
 
-interface PinProps {
-  lat: number;
-  lon: number;
-  radius: number;
-}
-
-const Pin: React.FC<PinProps> = (props) => {
-  const groupRef = useRef<THREE.Group>(null!);
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const sphereRef = useRef<THREE.Mesh>(null!);
-  const plateRef = useRef<THREE.Mesh>(null!);
-  const { camera } = useThree();
-
-  useEffect(() => {
-    if (typeof props.radius === 'number') {
-      const position = EarthlatLongToVector3(props.lat, props.lon, props.radius);
-      if (groupRef.current) {
-        groupRef.current.position.copy(position);
-        groupRef.current.lookAt(new THREE.Vector3(0,0,0));
-      }
-      if (meshRef.current) {
-        meshRef.current.rotation.x = 0.2;
-        meshRef.current.rotation.y = 1.54;
-        meshRef.current.rotation.z = 1.38; 
-      }
-      if (sphereRef.current) {
-        sphereRef.current.position.x = 0;
-        sphereRef.current.position.y = 0;
-        sphereRef.current.position.z = -0.12; 
-      }
-    }
-  }, [props.lat, props.lon, props.radius]);
-
-  useEffect(() => {
-    if (plateRef.current) {
-      plateRef.current.rotation.x = 3.14;
-    }
-  })
-
-  const onPinClick = () => {
-    zoomInToLocation(props.lat, props.lon);
-  }
-
-const zoomInToLocation = (lat:any, lon:any) => {
-  // 클릭한 지점으로 이동할 카메라 위치 계산
-  const intermediatePosition = EarthlatLongToVector3(lat, lon, 5); // 예시 값, 지구 표면에서 높은 위치
-  // 최종 목적지 위치 계산
-  const finalPosition = EarthlatLongToVector3(lat, lon, 2.3); // 지구 표면에서 약간 떨어진 위치
-
-
-  // 클릭한 지점으로 빠르게 이동
-  gsap.to(camera.position, {
-    x: intermediatePosition.x,
-    y: intermediatePosition.y,
-    z: intermediatePosition.z,
-    duration: 0.6, // 빠른 이동
-    ease: "power2.inOut",
-    onUpdate: () => camera.lookAt(new THREE.Vector3(0, 0, 0)),
-    onComplete: () => {
-      // 천천히 최종 목적지로 줌인
-      gsap.to(camera.position, {
-        x: finalPosition.x,
-        y: finalPosition.y,
-        z: finalPosition.z,
-        duration: 1.5, // 천천히 이동
-        ease: "power2.inOut",
-        onUpdate: () => camera.lookAt(new THREE.Vector3(0, 0, 0)),
-        onComplete: () => {
-          try{
-            window.location.href =`/detail?lat=${lat}&lon=${lon}`;
-          } catch (error) {
-            console.log("이동실패", error);
-            setTimeout(() => {
-              gsap.to(camera.position, {
-                x: intermediatePosition.x,
-                y: intermediatePosition.y,
-                z: intermediatePosition.z,
-                duration: 1.5, // 천천히 이동
-              });
-          }, 1000);
-        }
-      }
-    });
-  }});
-};
-
-return (
-  <group ref={groupRef}>
-    {/* 몸통 */}
-    <mesh ref={meshRef} onClick={onPinClick}>
-      <coneGeometry args={[0.05, 0.15]} />
-      <meshBasicMaterial color="red" />       
-    </mesh>
-    {/* 머리 */}
-    <mesh ref={sphereRef}>
-      <sphereGeometry args={[0.04]}/>
-      <meshBasicMaterial color="blue" />
-    </mesh>
-  </group>
-);
-};
-
-
 const Earth = () => {
   const model = useGLTF('/earth/scene.gltf');
-  const camera = useThree((state) => state.camera);
 
   return (
     <mesh receiveShadow castShadow>
@@ -210,8 +90,48 @@ const Cloud = () => {
     </mesh>
   )};
 
+const BorderSphere = ({ borderData }:any) => {
+  // 메쉬 그룹을 저장할 ref 생성
+  const meshGroupRef = useRef<THREE.Group>(new THREE.Group());
+
+
+  useEffect(() => {
+    // 메쉬 그룹에 접근하여 모든 메쉬를 추가
+    const meshGroup = meshGroupRef.current;
+    if (!meshGroup) return;
+
+    borderData.forEach((border:any) => {
+      console.log(border.geometry.type)
+      if (Array.isArray(border) && meshGroup) {
+        border.forEach((coord) => {
+          const lat = coord[1];
+          const lon = coord[0];
+          const radius = 2.2;
+          const position = EarthlatLongToVector3(lat, lon, radius);
+          const geometry = new THREE.SphereGeometry(0.01, 32, 32);
+          const material = new THREE.MeshBasicMaterial({ color: 'red' });
+          const mesh = new THREE.Mesh(geometry, material);
+          mesh.position.copy(position);
+          meshGroup.add(mesh); // 메쉬를 그룹에 추가
+        });
+      }
+    });
+  },); 
+  return <primitive ref={meshGroupRef} object={new THREE.Group()} />;
+};  
+
 export const EarthCanvas = () => {
-  const [resetCamera, setResetCamera] = useState(false);
+  const [borderData, setBorderData] = useState<any>([]);
+
+  useEffect(() => {
+    axios.get('/CountryBoundaries.json')
+    .then(response => {
+      setBorderData(response.data.features)
+    })
+    .catch(err => 
+      console.log(err)
+    )
+  },[]);
 
   return (
     <>
@@ -233,14 +153,9 @@ export const EarthCanvas = () => {
         saturation={0}
         fade={true}/>
         <Earth />
+        <BorderSphere borderData={borderData}/>
         <Cloud />
         <Atmosphere /> 
-        {dummyData.map((data, index) => {
-          console.log(index);
-          return(
-            <Pin key={index} lat={data.lat} lon={data.lon} radius={data.radius}/>
-          )
-        })}
       </Canvas>
     </>
   )
