@@ -1,13 +1,13 @@
 export const sidebarLinks = [
   {
-    imgURL: "/assets/search.svg",
+    imgURL: "/assets/community.svg",
     route: "/detail1",
-    label: "National Statistics",
+    label: "Disasters by Country",
   },
   {
     imgURL: "/assets/search.svg",
     route: "/detail2",
-    label: "Disaster Statistics",
+    label: "Search",
   },
   {
     imgURL: "/assets/heart.svg",
