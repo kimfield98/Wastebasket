@@ -1,5 +1,5 @@
 "use client";
-import { OrbitControls, useAnimations, useGLTF, Stars, SpotLight, Plane} from '@react-three/drei';
+import { OrbitControls, Html, useGLTF, Stars, SpotLight, Plane} from '@react-three/drei';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
 import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three';
@@ -158,6 +158,7 @@ export const EarthCanvas = () => {
     const { camera } = useThree();
     const country = props.country;
     const year = props.year.toString().split('-')[0];
+    const [hovered, setHovered] = useState(false);
 
     useEffect(() => {
       if (typeof props.radius === 'number') {
@@ -240,7 +241,9 @@ export const EarthCanvas = () => {
   };
   
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef}
+      onPointerOver={()=>setHovered(true)}
+      onPointerOut={()=>setHovered(false)}>
       {/* 몸통 */}
       <mesh ref={meshRef} onClick={onPinClick}>
         <coneGeometry args={[0.05, 0.15]} />
@@ -253,6 +256,21 @@ export const EarthCanvas = () => {
           color={props.color}
         />
       </mesh>
+      {hovered && (
+        <Html>
+          <div style={{ 
+            display: 'inline-block',
+            padding: '5px', 
+            borderRadius: '8px', 
+            fontSize: '1.2rem',
+            color:'white',
+            background: 'rgba(155, 189, 227, 0.354)',
+            whiteSpace: 'nowrap',
+          }}>
+            {props.country}
+          </div>
+        </Html>
+      )}
     </group>
   );
   };
