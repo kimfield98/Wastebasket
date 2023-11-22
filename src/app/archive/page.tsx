@@ -1,5 +1,5 @@
 import React from 'react';
-import EarthCanvas from '../components/Earth';
+import EarthCanvas from '../components/EarthPin';
 
 export default function Home() {
 
