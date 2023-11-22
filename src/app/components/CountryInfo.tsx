@@ -57,9 +57,6 @@ const CountryInfo: React.FC = () => {
                 <p className='text-light-3'>
                   <label>Location:</label> {countryInfo.cLocation}
                 </p>
-                <p className='text-light-3'>
-                  <label>Geo Coordinates:</label> [{countryInfo.cGeoCoordinates}]
-                </p>
               </div>
             </>
           )}
