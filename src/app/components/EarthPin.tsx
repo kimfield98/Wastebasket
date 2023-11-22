@@ -7,23 +7,6 @@ import { gsap } from 'gsap';
 import axios from 'axios';
 import { usePathname, useRouter } from 'next/navigation';
 
-const dummyData = [{
-  dLatitude: 37.5665,
-  dLongitude: 126.9780,
-  dCountry: "Korea",
-  dDate: "2021-08-01"
-},{
-  dLatitude: 24.8607,
-  dLongitude: 67.0011,
-  dCountry: "Pakistan",
-  dDate: "2021-08-01"
-},{
-  dLatitude: 22.3193,
-  dLongitude: 114.1694,
-  dCountry: "Hong Kong",
-  dDate: "2021-08-01"
-}]
-
 const Light = () => {
   const spotLightRef = useRef<THREE.SpotLight | null>(null!);
   const directLightRef = useRef<THREE.DirectionalLight | null>(null!);
@@ -118,11 +101,12 @@ const Cloud = () => {
   )};
 
 interface DisasterData {
-  dLatitude: number ;
+  dLatitude: number;
   dLongitude: number;
   dCountry: string;
   dDate: string;
-}
+  dStatus: string;
+}  
 
 export const EarthCanvas = () => {
   // 카메라 옮기기
@@ -132,28 +116,43 @@ export const EarthCanvas = () => {
   const [isLoading, setIsLoading] = useState(false);
   const currentPath = usePathname();
 
-  // useEffect(() => {
-  //   getDisaster();
-  // },[])
+  useEffect(() => {
+    const curPath = currentPath.split('/')[1];
+    async function getDisaster() {
+      try {
+        const response = await axios.get('https://worldisaster.com/api/disasters', {timeout: 5000});
+        const updatedData = response.data;
 
-  async function getDisaster() {
-    try{
-      const response = await axios.get('https://worldisaster.com/api/disasters', {timeout: 5000});
-      const updatedData = response.data;
-      setDisasterData(updatedData);
-      setIsLoading(false);
-      console.log("데이터 가져오기 성공");
-    }catch (error: any) {
-      if (error.code === 'ECONNABORTED') {
-        console.log("타임아웃");
+        // Filter based on pathname and dStatus
+        const filteredData = updatedData.filter((item:any) => {
+          if (curPath ==='archive') {
+            return item.dStatus !== 'ongoing';
+          } else if (curPath === 'live') {
+            return item.dStatus === 'ongoing';
+          } return false;
+        });
+
+        setDisasterData(filteredData);
+        setIsLoading(false);
+        console.log("데이터 가져오기 성공");
+      } catch (error: any) {
+        if (error.code === 'ECONNABORTED') {
+          console.log("타임아웃");
+          console.log(error);
+        }
+        console.log("데이터 가져오기 실패");
         console.log(error);
       }
-      console.log("데이터 가져오기 실패");
-      console.log(error);
     }
-  }
 
-  const Pin: React.FC<PinProps> = (props) => {
+      if (currentPath.includes("archive") || currentPath.includes("live")) {
+        setIsLoading(true);
+        getDisaster();
+      }
+    },[currentPath]);
+    console.log(disasterData)
+
+    const Pin: React.FC<PinProps> = (props) => {
     const groupRef = useRef<THREE.Group>(null!);
     const meshRef = useRef<THREE.Mesh>(null!);
     const sphereRef = useRef<THREE.Mesh>(null!);
@@ -221,7 +220,7 @@ export const EarthCanvas = () => {
           onUpdate: () => camera.lookAt(new THREE.Vector3(0, 0, 0)),
           onComplete: () => {
             try{
-              router.push(`detail/${country}`);
+              router.push(`detail1/${country}`);
             } catch (error) {
               console.log("이동실패", error);
               setTimeout(() => {
@@ -243,7 +242,7 @@ export const EarthCanvas = () => {
       {/* 몸통 */}
       <mesh ref={meshRef} onClick={onPinClick}>
         <coneGeometry args={[0.05, 0.15]} />
-        <meshBasicMaterial color={"red"} />       
+        <meshBasicMaterial color="red" />       
       </mesh>
       {/* 머리 */}
       <mesh ref={sphereRef}>
@@ -280,7 +279,7 @@ export const EarthCanvas = () => {
         <Earth />
         <Cloud />
         <Atmosphere />
-        {isLoading ? disasterData.map((data, index) => {
+        {disasterData.map((data, index) => {
           if (data.dLatitude !== undefined && data.dLongitude !== undefined && data.dCountry!==undefined && data.dDate!==undefined){
           return(
             <Pin 
@@ -290,23 +289,9 @@ export const EarthCanvas = () => {
               radius={2.2} 
               country={data.dCountry} 
               year={data.dDate}
-              color={currentPath.includes("archive")? "red" : "green"} />
+              color={currentPath.includes("archive")? "blue" : "green"} />
           )}
-        }):
-        dummyData.map((data, index) => {
-          if (data.dLatitude !== undefined && data.dLongitude !== undefined && data.dCountry!==undefined && data.dDate!==undefined){
-            return(
-              <Pin 
-                key={index} 
-                lat={data.dLatitude} 
-                lon={data.dLongitude} 
-                radius={2.2} 
-                country={data.dCountry} 
-                year={data.dDate} 
-                color={currentPath.includes("archive")? "red" : "green"}/>
-            )}
-        })
-      }
+        })}
       </Canvas>
       }
     </>

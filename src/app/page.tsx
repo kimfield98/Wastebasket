@@ -30,11 +30,12 @@ export default function Home() {
     width: '100%',
     height: '100%',
     backgroundSize: 'cover',
+    backgroundPosition: 'center',
     transition: 'opacity 1s ease-in-out',
   };
 
   return (
-    <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ height: '100vh', overflow: 'hidden' ,display: 'flex', alignItems: 'center'}}>
       {images.map((imageUrl, index) => (
         <div
           key={index}
@@ -46,10 +47,16 @@ export default function Home() {
           }}
         ></div>
       ))}
-      <div style={{ display:'flex', flexDirection:'column', alignItems:'start', position: 'absolute', top: '55%', left: '28%', transform: 'translate(-50%, -50%)', zIndex: 2, color: '#fff' }}>
-        <h1 style={{ fontSize: '5.5rem' }}>세계 재난재해 아카이브</h1>
-        <p style={{ display: 'inline-block', fontSize: '4rem', marginTop: '15px' }}>및 실시간 알림</p>
-        <p style={{ display: 'inline-block', fontSize: '1.5rem', marginTop: '30px', border:'3px solid white', padding:'10px 15px' }}><Link href='/archive'>지구로 이동</Link></p>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'start', zIndex: 2, color: '#fff', marginLeft:'4vw' }}>
+        <h1 className='text-[1.5rem] w-[100vw] sm:text-[2.5rem] md:text-[3.5rem]  lg:text-[4.5rem] sm:break-words xl:text-[5.5rem]'>세계 재난재해 아카이브</h1>
+        <h1 className='text-[1.5rem] w-[100vw] sm:text-[2.5rem] md:text-[3.5rem]  lg:text-[4.5rem] sm:break-words xl:text-[5.5rem]'>및 실시간 알림 </h1>
+        <div>
+            <Link  href='/archive'>
+              <span className=' inline-block sm:text-[1.5rem] border-2 sm:px-[15px] sm:py-[10px] px-[10px] py-[5px] text-[1rem] hover:bg-slate-300/90'>
+              지구로 이동하기
+              </span>
+            </Link>
+        </div>
       </div>
     </div>
   );

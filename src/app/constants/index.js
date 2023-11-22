@@ -14,9 +14,9 @@ export const sidebarLinks = [
     route: "/support",
     label: "Support",
   },
-  {
-    imgURL: "/assets/create.svg",
-    route: "/upload",
-    label: "Upload",
-  },
+  // {
+  //   imgURL: "/assets/create.svg",
+  //   route: "/upload",
+  //   label: "Upload",
+  // },
 ];

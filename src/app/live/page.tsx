@@ -1,7 +1,19 @@
-export default function Online() {
+import React from 'react';
+import dynamic from 'next/dynamic';
+import EarthCanvas from '../components/EarthPin';
+
+const DynamicEarthCanvas = dynamic(
+  () => import('../components/EarthPin'),
+  { loading: () => <p>Loading...</p> }
+);
+
+export default function Live() {
+
   return (
     <>
-      <div>실시간 페이지 입니다.</div>
+      <div className='h-[100vh] flex items-center justify-center'>
+        <EarthCanvas/>
+      </div>
     </>
   )
 }

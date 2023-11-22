@@ -1,5 +1,5 @@
-import LeftSidebar from "../components/LeftSidebar"
-import RightSidebar from "../components/RightSidebar"
+import LeftSidebar from "../../components/LeftSidebar"
+import RightSidebar from "../../components/RightSidebar"
 
 export default function Disaster() {
   return (
