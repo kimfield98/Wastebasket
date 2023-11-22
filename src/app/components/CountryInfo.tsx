@@ -43,12 +43,23 @@ const CountryInfo: React.FC = () => {
         <div className='flex flex-1 flex-col justify-start'>
           {countryInfo && (
             <>
-              <h3 className='text-heading4-medium text-light-1'>{countryInfo.cCountry}({countryInfo.cCode})</h3>
-              <div className='mt-7 flex w-[350px] flex-col gap-9'>
-                <p className='text-light-3'>대륙: {countryInfo.cContinent}</p>
-                <p className='text-light-3'>GDP: {countryInfo.cGDP}</p>
-                <p className='text-light-3'>인구: {countryInfo.cPopulation}</p>
-                <p className='text-light-3'>지역: {countryInfo.cLocation},[{countryInfo.cGeoCoordinates}]</p>
+              <h3 className='text-heading4-medium'>{countryInfo.cCountry}</h3>
+              <div className='mt-7 flex flex-col max-w-4xl gap-7 p-3'>
+                <p className='text-light-3'>
+                  <label>Continent:</label> {countryInfo.cContinent}
+                </p>
+                <p className='text-light-3'>
+                  <label>GDP:</label> {countryInfo.cGDP}
+                </p>
+                <p className='text-light-3'>
+                  <label>Population:</label> {countryInfo.cPopulation}
+                </p>
+                <p className='text-light-3'>
+                  <label>Location:</label> {countryInfo.cLocation}
+                </p>
+                <p className='text-light-3'>
+                  <label>Geo Coordinates:</label> [{countryInfo.cGeoCoordinates}]
+                </p>
               </div>
             </>
           )}

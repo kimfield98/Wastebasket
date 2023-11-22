@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nextui-org/react": "^2.2.9",
+    "@nextui-org/system": "^2.0.15",
+    "@nextui-org/theme": "^2.1.17",
     "@react-three/drei": "^9.88.13",
     "@react-three/fiber": "^8.15.10",
     "@react-three/postprocessing": "^2.15.11",
@@ -16,6 +19,7 @@
     "cobe": "^0.6.3",
     "cors": "^2.8.5",
     "framer": "^2.4.1",
+    "framer-motion": "^10.16.5",
     "gasp": "^0.0.2",
     "gsap": "^3.12.2",
     "js-cookie": "^3.0.5",
