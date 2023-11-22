@@ -18,24 +18,24 @@ const Light = () => {
       // 카메라와 행성 사이의 거리 계산
       const distanceToPlanet = camera.position.distanceTo(planetPosition);
       directLightRef.current.target.position.copy(new THREE.Vector3(0,0,0));
-
+  
       // 스포트라이트의 X축 위치 계산
       const spotlightX = camera.position.x / distanceToPlanet;
       const spotlightY = camera.position.y / distanceToPlanet;
       const spotlightZ = camera.position.z / distanceToPlanet;
-
+  
       // 스포트라이트 위치 업데이트
       spotLightRef.current.position.x = spotlightX;
       spotLightRef.current.position.y = spotlightY;
       spotLightRef.current.position.z = spotlightZ;
-
-
+      
+      
       directLightRef.current.position.copy(new THREE.Vector3(camera.position.x+2, camera.position.y+2, camera.position.z));
       // 스포트라이트가 행성을 향하도록 설정 (필요한 경우)
       spotLightRef.current.target.position.copy(planetPosition);
     }
   });
-
+  
   return (
     <mesh>
       <SpotLight ref={spotLightRef} color='#00BFFF' angle={Math.PI/2.2}/>
@@ -120,21 +120,19 @@ export const EarthCanvas = () => {
     const curPath = currentPath.split('/')[1];
     async function getDisaster() {
       try {
-        const response = await axios.get('https://worldisaster.com/api/disasters', {timeout: 5000});
-        const updatedData = response.data;
-
-        // Filter based on pathname and dStatus
-        const filteredData = updatedData.filter((item:any) => {
-          if (curPath ==='archive') {
-            return item.dStatus !== 'ongoing';
-          } else if (curPath === 'live') {
-            return item.dStatus === 'ongoing';
-          } return false;
-        });
-
-        setDisasterData(filteredData);
-        setIsLoading(false);
-        console.log("데이터 가져오기 성공");
+        if(curPath === "archive") {
+          const response = await axios.get('https://worldisaster.com/api/disasters/archive', {timeout: 5000});
+          const updatedData = response.data;
+          setDisasterData(updatedData);
+          setIsLoading(false);
+          console.log("아카이브 데이터 가져오기 성공");
+        } else if (curPath === "live") {
+          const response = await axios.get('https://worldisaster.com/api/disasters/live', {timeout: 5000});
+          const updatedData = response.data;
+          setDisasterData(updatedData);
+          setIsLoading(false);
+          console.log("라이브 데이터 가져오기 성공");
+        }
       } catch (error: any) {
         if (error.code === 'ECONNABORTED') {
           console.log("타임아웃");
@@ -145,14 +143,14 @@ export const EarthCanvas = () => {
       }
     }
 
-      if (currentPath.includes("archive") || currentPath.includes("live")) {
-        setIsLoading(true);
-        getDisaster();
-      }
-    },[currentPath]);
-    console.log(disasterData)
+    if (currentPath.includes("archive") || currentPath.includes("live")) {
+      setIsLoading(true);
+      getDisaster();
+    }
+  },[currentPath])
+  console.log(disasterData)
 
-    const Pin: React.FC<PinProps> = (props) => {
+  const Pin: React.FC<PinProps> = (props) => {
     const groupRef = useRef<THREE.Group>(null!);
     const meshRef = useRef<THREE.Mesh>(null!);
     const sphereRef = useRef<THREE.Mesh>(null!);
@@ -180,13 +178,13 @@ export const EarthCanvas = () => {
         }
       }
     }, [props.lat, props.lon, props.radius]);
-
+  
     useEffect(() => {
       if (plateRef.current) {
         plateRef.current.rotation.x = 3.14;
       }
     })
-
+  
     const onPinClick = () => {
       if (country && year) {
         zoomInToLocation(props.lat, props.lon, router);
@@ -194,13 +192,13 @@ export const EarthCanvas = () => {
         console.error("Country or year is undefined");
       }
     };
-
+  
   const zoomInToLocation = (lat:number|string, lon:number|string, router:any) => {
     // 클릭한 지점으로 이동할 카메라 위치 계산
     const intermediatePosition = EarthlatLongToVector3(lat, lon, 5); // 예시 값, 지구 표면에서 높은 위치
     // 최종 목적지 위치 계산
     const finalPosition = EarthlatLongToVector3(lat, lon, 2.3); // 지구 표면에서 약간 떨어진 위치
-
+  
     // 클릭한 지점으로 빠르게 이동
     gsap.to(camera.position, {
       x: intermediatePosition.x,
@@ -220,7 +218,11 @@ export const EarthCanvas = () => {
           onUpdate: () => camera.lookAt(new THREE.Vector3(0, 0, 0)),
           onComplete: () => {
             try{
-              router.push(`detail1/${country}`);
+              if(currentPath.includes("archive")) {
+                router.push(`detail1/${country}`);
+                } else if (currentPath.includes("live")) {
+                router.push(`detail2/${country}`);
+              }
             } catch (error) {
               console.log("이동실패", error);
               setTimeout(() => {
@@ -236,20 +238,20 @@ export const EarthCanvas = () => {
       });
     }});
   };
-
+  
   return (
     <group ref={groupRef}>
       {/* 몸통 */}
       <mesh ref={meshRef} onClick={onPinClick}>
         <coneGeometry args={[0.05, 0.15]} />
-        <meshBasicMaterial color="red" />       
+        <meshBasicMaterial color="red" />
       </mesh>
       {/* 머리 */}
       <mesh ref={sphereRef}>
         <sphereGeometry args={[0.04]}/>
         <meshBasicMaterial 
           color={props.color}
-          />
+        />
       </mesh>
     </group>
   );
