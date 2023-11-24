@@ -25,8 +25,9 @@
 | Github | <a href="https://github.com/kimfield98/vanillajs-chrome-app" target="_blank">Repository</a> | <a href="https://github.com/kimfield98/project3-momyakson" target="_blank">Repository</a> |
 | 예시 | <img height="170" alt="" src=""> | <img height="170" alt="메인" src="https://github.com/kimfield98/kimfield98/assets/141253939/13081574-78d9-4368-b58a-2ed4919ecfe7"> |
 
+
 <br>
 <br>
 
-⌨️ [기술 블로그](https://kimfield.tistory.com/)
-💭 [회고](https://velog.io/@kimfield/)
+## 스터디
+[Notion](https://kimfield98.oopy.io/)
