@@ -19,7 +19,7 @@ const DidLeftSidebar: React.FC<didDetailProps>= ({ dID }) => {
 
       
   return (
-    <div className='custom-scrollbar absolute left-0 top-0 z-20 flex flex-col h-screen w-[500px] overflow-auto bg-dark-2 px-4 pb-5 pt-14'>
+    <div className='custom-scrollbar absolute left-0 top-0 z-20 flex flex-col h-screen w-[27%] overflow-auto bg-dark-2 px-4 pb-5 pt-14'>
       <div className='text-heading3-bold text-light-1 px-3 py-6'>Disaster Detail</div>
 
       <div className='filterbar'>

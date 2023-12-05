@@ -40,7 +40,7 @@ export const FilterBar = () => {
   };
 
   return (
-    <div className='absolute top-20 right-0 flex flex-col max-w-md gap-6 px-6'>
+    <div className='absolute top-0 right-0 flex flex-col max-w-sm gap-6 px-6 pt-28'>
 
       <div>
         <Switch isSelected={selectLive} onValueChange={handleLiveToggle} defaultSelected={selectLive} size="lg">
