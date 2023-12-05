@@ -5,37 +5,26 @@ import {
   Math,
   Cartesian3,
   Color,
-  PinBuilder,
-  EntityCluster,
   IonWorldImageryStyle,
   createWorldImageryAsync,
   CustomDataSource,
-  VerticalOrigin,
-  NearFarScalar,
   ScreenSpaceEventHandler,
   defined,
   ScreenSpaceEventType,
   Ellipsoid,
   Entity,
   JulianDate,
-  Transforms,
-  HeadingPitchRoll,
   ConstantProperty,
   HeightReference,
-  BingMapsImageryProvider,
-  ImageryLayerCollection,
-  ImageryLayer,
   DirectionalLight
 } from 'cesium';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import DidLeftSidebar from './DidLeftSidebar';
-import { constSelector, useRecoilState, useRecoilValue } from 'recoil';
-import { dataState, DataType, filterState, FilterType } from '../recoil/dataRecoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { dataState, DataType, filterState } from '../recoil/dataRecoil';
 import axios from 'axios';
 import FilterBar from './Filter';
-import { set } from 'video.js/dist/types/tech/middleware';
-
 import { AlertModule } from './AlertModule';
 import ChatToggleComponent from './ChatToggle';
 
@@ -71,30 +60,14 @@ const EarthCesium = () => {
   const router = useRouter();
   const search = useSearchParams();
   const viewerRef = useRef<Viewer | null>(null);
-  const [isUserInput, setIsUserInput] = useState(true);
-  const [zoomLevel, setZoomLevel] = useState(18090749.93102962);
-  const [showSidebar, setShowSidebar] = useState<Boolean>(false);
-  const [data, setData] = useRecoilState(dataState); // dataState를 data와 setData로 분리하여 사용
   const dataFilter = useRecoilValue(filterState);
+  const [isUserInput, setIsUserInput] = useState(true);
+  const [data, setData] = useRecoilState(dataState);
   const [dIdValue, setDIdValue] = useState<string>('');
   const [custom, setCustom] = useState<CustomDataSource | null>(null);
-  const [removeAfter, setRemoveAfter] = useState<boolean>(false);
   const [clickedEntity, setClickedEntity] = useState(null);
-  const [originalSize, setOriginalSize] = useState(null);
   const [activeAnimation, setActiveAnimation] = useState<AnimationState | null>(null);
 
-
-  // 디테일 사이드바 토글
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    if (!activeAnimation?.entity.point) return;
-    console.log(activeAnimation)
-    if (activeAnimation) {
-      // 현재 애니메이션 중단 및 크기 복원
-      activeAnimation.stop();
-      activeAnimation.entity.point.pixelSize = new ConstantProperty(activeAnimation.originalSize);
-    }
-  }
 
   // 재난 타입에 따른 색상 지정
   function getColorForDisasterType(type: any) {
@@ -102,100 +75,63 @@ const EarthCesium = () => {
       case "Tropical Cyclone":
         return "RED";
       case 'Mud Slide':
-        return "BROWN"; // 진흙색으로 수정
+        return "BROWN";
       case 'Flash Flood':
-        return "DARKBLUE"; // 어두운 파랑색으로 수정
+        return "DARKBLUE";
       case 'Wild Fire':
-        return "ORANGE"; // 불의 색상으로 수정
+        return "ORANGE";
       case 'Cold Wave':
-        return "CYAN"; // 차가운 색상으로 수정
+        return "CYAN";
       case 'Technological Disaster':
-        return "GRAY"; // 기술적 재난을 회색으로 표현
+        return "GRAY";
       case 'Snow Avalanche':
-        return "LIGHTSKYBLUE"; // 눈사태에 어울리는 색상으로 수정
+        return "LIGHTSKYBLUE";
       case 'Volcano':
-        return "DARKRED"; // 활화산을 짙은 빨강으로 표현
+        return "DARKRED";
       case 'Fire' && 'Forest Fire':
-        return "FIREBRICK"; // 불의 다른 색상으로 표현
+        return "FIREBRICK";
       case 'Epidemic':
-        return "GREENYELLOW"; // 전염병을 밝은 녹색으로 표현
+        return "GREENYELLOW";
       case 'Storm Surge':
-        return "STEELBLUE"; // 폭풍 해일을 철색으로 표현
+        return "STEELBLUE";
       case 'Tsunami':
-        return "DEEPSKYBLUE"; // 쓰나미를 하늘색으로 표현
+        return "DEEPSKYBLUE";
       case 'Insect Infestation':
-        return "OLIVE"; // 곤충 재해를 올리브색으로 표현
+        return "OLIVE";
       case 'Drought':
-        return "TAN"; // 가뭄을 베이지색으로 표현
+        return "TAN";
       case 'Earthquake':
-        return "SIENNA"; // 지진을 진흙 갈색으로 표현
+        return "SIENNA";
       case 'Flood':
-        return "NAVY"; // 홍수를 진한 파랑색으로 표현
+        return "NAVY";
       case 'Land Slide':
-        return "SADDLEBROWN"; // 산사태를 갈색으로 표현
+        return "SADDLEBROWN";
       case 'Severe Local Storm':
-        return "DARKSLATEGRAY"; // 강한 폭풍을 어두운 회색으로 표현
+        return "DARKSLATEGRAY";
       case 'Extratropical Cyclone':
-        return "DARKORCHID"; // 외대륙 사이클론을 어두운 보라색으로 표현
+        return "DARKORCHID";
       case 'Heat Wave':
-        return "RED2"; // 열파를 빨간색으로 표현      
+        return "RED2";     
       default:
         return "WHITE";
     }
   }
 
   useEffect(() => {
-    // 이미 Viewer가 초기화된 경우 새로 생성하지 않음
     if (typeof window !== 'undefined' && cesiumContainer.current) {
       let viewer = new Viewer(cesiumContainer.current, {
         animation: false, // 애니메이션 위젯 비활성화
         baseLayerPicker: false,// 베이스 레이어 선택기 비활성화
         fullscreenButton: false,// 전체 화면 버튼 비활성화
         vrButton: false,// VR 버튼 비활성화
-        geocoder: false,// 지오코더 비활성화
+        geocoder: true,// 지오코더 비활성화
         homeButton: true,// 홈 버튼 비활성화
         infoBox: false,// 정보 박스 비활성화
         sceneModePicker: false,// 장면 모드 선택기 비활성화
         selectionIndicator: false,// 선택 지시기 비활성화
         timeline: false,// 타임라인 비활성화
         navigationHelpButton: false,// 네비게이션 도움말 버튼 비활성화
-        creditContainer: document.createElement("none"), // 스택오버플로우 참고
-        // navigationInstructionsInitiallyVisible?: boolean;
-        // scene3DOnly?: boolean;
-        // shouldAnimate?: boolean;
-        // clockViewModel?: ClockViewModel;
-        // selectedImageryProviderViewModel?: ProviderViewModel;
-        // imageryProviderViewModels?: ProviderViewModel[];
-        // selectedTerrainProviderViewModel?: ProviderViewModel;
-        // terrainProviderViewModels?: ProviderViewModel[];
-        // baseLayer?: ImageryLayer | false;
-        // terrainProvider?: TerrainProvider;
-        // terrain?: Terrain;
-        // skyBox?: SkyBox | false;
-        // skyAtmosphere?: SkyAtmosphere | false;
-        // fullscreenElement?: Element | string;
-        // useDefaultRenderLoop?: boolean;
-        // targetFrameRate?: number;
-        // showRenderLoopErrors?: boolean;
-        // useBrowserRecommendedResolution?: boolean;
-        // automaticallyTrackDataSourceClocks?: boolean;
-        // contextOptions?: ContextOptions;
-        // sceneMode?: SceneMode;
-        // mapProjection?: MapProjection;
-        // globe?: Globe | false;
-        // orderIndependentTranslucency?: boolean;
-        // creditContainer?: Element | string;
-        // creditViewport?: Element | string;
-        // dataSources?: DataSourceCollection;
-        // shadows?: boolean;
-        // terrainShadows?: ShadowMode;
-        // mapMode2D?: MapMode2D;
-        // projectionPicker?: boolean;
-        // blurActiveElementOnCanvasFocus?: boolean;
-        // requestRenderMode?: boolean;
-        // maximumRenderTimeChange?: number;
-        // depthPlaneEllipsoidOffset?: number;
-        // msaaSamples?: number;
+        creditContainer: document.createElement("none"),
       });
 
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // 최소 확대 거리 (미터 단위)
@@ -367,7 +303,7 @@ const EarthCesium = () => {
     // 호버 이벤트
     handler.setInputAction((movement: any) => {
       const pickedObject = viewerRef.current?.scene.pick(movement.endPosition);
-      if (defined(pickedObject) && pickedObject.id && pickedObject.id.properties && !showSidebar) {
+      if (defined(pickedObject) && pickedObject.id && pickedObject.id.properties) {
         const properties = pickedObject.id.properties;
         const disasterData: disasterInfoHover = {
           dId: properties._dID?._value,
@@ -514,7 +450,6 @@ const EarthCesium = () => {
         complete: () => {
           if (detail) {
             setDIdValue(detail);
-            setShowSidebar(true);
           }
         }
       });
@@ -524,12 +459,11 @@ const EarthCesium = () => {
   return (
     <>
       <div id="cesiumContainer" ref={cesiumContainer}>
-        {/* <ModalComponent /> */}
       </div>
-      {showSidebar && <DidLeftSidebar onClose={toggleSidebar} dID={dIdValue} />}
-      <FilterBar />
+      <DidLeftSidebar dID={dIdValue} />
       <AlertModule />
       <ChatToggleComponent />
+      <FilterBar />
     </>
   );
 };
