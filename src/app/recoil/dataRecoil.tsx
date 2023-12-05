@@ -66,6 +66,21 @@ export const userLoginState = atom<UserType>({
   },
 });
 
+// 채팅창 상태
+export const chatState = atom<boolean>({
+  key: 'chatState',
+  default: false,
+});
+
+// 필터 버튼 상태 정의
+export const filterButtonState = atom<{
+  top: string; // 또는 필요한 다른 속성들
+}>({
+  key: 'filterButtonState',
+  default: {
+    top: 'initial-top-value', // 초기값 설정
+  },
+});
 
 export default function RecoidContextProvider({ children }: { children: React.ReactNode }) {
   return <RecoilRoot>{children}</RecoilRoot>;

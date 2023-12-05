@@ -24,10 +24,10 @@ import 'cesium/Build/Cesium/Widgets/widgets.css';
 import DidLeftSidebar from './DidLeftSidebar';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { dataState, DataType, filterState } from '../recoil/dataRecoil';
-import axios from 'axios';
-import FilterBar from './Filter';
 import { AlertModule } from './AlertModule';
+import axios from 'axios';
 import ChatToggleComponent from './ChatToggle';
+import FilterBtnComponent from './FilterBtn';
 
 interface disasterInfoHover {
   dId: string;
@@ -461,7 +461,7 @@ const EarthCesium = () => {
       <DidLeftSidebar dID={dIdValue} />
       <AlertModule />
       <ChatToggleComponent />
-      <FilterBar />
+      <FilterBtnComponent />
     </>
   );
 };
