@@ -1,5 +1,6 @@
-//../components/DidLeftSidebar.tsx
-import React from 'react';
+"use client";
+
+import React, {useCallback, useState} from 'react';
 import { useRecoilValue } from 'recoil';
 import { dataState } from '../recoil/dataRecoil';
 import Link from 'next/link';
@@ -13,21 +14,39 @@ interface didDetailProps {
 }
 
 const DidLeftSidebar: React.FC<didDetailProps>= ({ dID }) => {
-  const data = useRecoilValue(dataState); // dataState를 data와 setData로 분리하여 사용
-  const filteredData = data.filter((item) => item.dID === dID); // data에서 dID가 일치하는 데이터만 필터링
-  if (dID===null) return;
+  const data = useRecoilValue(dataState);
+  const filteredData = data.filter((item) => item.dID === dID);
+  if (dID === null) return null;
 
+  const [width, setWidth] = useState<number>(27);
+
+  const startResize = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const startX = e.clientX;
+    const startWidth = width;
+
+    const doResize = (e: MouseEvent) => {
+      const currentWidth = startWidth + (e.clientX - startX);
+      setWidth(currentWidth);
+    };
+
+    const stopResize = () => {
+      window.removeEventListener('mousemove', doResize);
+      window.removeEventListener('mouseup', stopResize);
+    };
+
+    window.addEventListener('mousemove', doResize);
+    window.addEventListener('mouseup', stopResize);
+  }, [width]);
       
   return (
-    <div className='custom-scrollbar absolute left-0 top-0 z-20 flex flex-col h-screen w-[27%] overflow-auto bg-dark-2 px-4 pb-5 pt-14'>
-      <div className='text-heading3-bold text-light-1 px-3 py-6'>Disaster Detail</div>
-
+    <div id="drageRight" style={{ width: `${width}px` }} className=' custom-scrollbar absolute left-0 top-0 z-20 flex flex-col h-screen min-w-[20%] max-w-[50%] overflow-auto bg-dark-2 px-4 pb-5 pt-14'>
+      <div className='absolute right-0 top-0 w-2 h-full cursor-ew-resize' onMouseDown={startResize}></div>
+      <div className='text-heading3-bold text-light-1 px-3 py-6 select-none'>Disaster Detail</div>
       <div className='filterbar'>
       {filteredData.length > 0 ? (
       <div>
-        <Accordion selectionMode="multiple" variant="splitted">
-          <AccordionItem key="1" aria-label="Accordion 1" title="요약" className='text-black'>
-            <div>{filteredData[0].dTitle}</div>
+        <Accordion selectionMode="multiple" variant="splitted" >
+          <AccordionItem key="1" aria-label="Accordion 1" className='text-black'>
           </AccordionItem>
           <AccordionItem key="2" aria-label="Accordion 2" title="설명" className='text-black'>
             <div>{filteredData[0].dCountry}</div>
@@ -44,8 +63,8 @@ const DidLeftSidebar: React.FC<didDetailProps>= ({ dID }) => {
         </Accordion>
       </div>
       ) : (
-        <span className='flex justify-center mt-60'>Click on the Pin 👉</span>
-      )}
+      <span className='flex justify-center mt-60 select-none'>Click on the Pin 👉</span>
+    )}
       </div>
     </div>
   );

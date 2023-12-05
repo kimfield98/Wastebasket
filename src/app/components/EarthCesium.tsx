@@ -314,10 +314,12 @@ const EarthCesium = () => {
         };
         // pickedObject.id._point._pixelSize._value
         tooltip.innerHTML = `
-          <div>type: ${disasterData.dType}</div>
-          <div>Country: ${disasterData.dCountry}</div>
-          <div>Data: ${disasterData.dDate}</div>
-          <div>Status: ${disasterData.dStatus}</div>`;
+          <div className="select-none "> 
+            <div>type: ${disasterData.dType}</div>
+            <div>Country: ${disasterData.dCountry}</div>
+            <div>Data: ${disasterData.dDate}</div>
+            <div>Status: ${disasterData.dStatus}</div>
+          </div>`;
         tooltip.style.display = 'block';
         tooltip.style.bottom = `${window.innerHeight - movement.endPosition.y - 50}px`;
         tooltip.style.left = `${movement.endPosition.x}px`;
