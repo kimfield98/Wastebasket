@@ -129,8 +129,9 @@ const Mypage: React.FC<MypageProps> = () => {
 
   // 첫 번째 선택에서 "world"를 선택하거나, 두 번째 또는 세 번째에서 "world" 선택 시 첫 번째를 "world"로 변경
   const handleNationChange = (selectedNation:string, position:string) => {
-    if (selectedNation === "world") {
-      setNation1("world");
+    if (selectedNation === "all") {
+      
+      setNation1("all");
       setNation2("");
       setNation3("");
     } else {
@@ -145,9 +146,11 @@ const Mypage: React.FC<MypageProps> = () => {
   };
 
   // 경보 레벨 상태 정의
-  const [redAlert, setRedAlert] = useState(false);
-  const [orangeAlert, setOrangeAlert] = useState(false);
-  const [greenAlert, setGreenAlert] = useState(false);
+  const [redAlert, setRedAlert] = useState<boolean>(false);
+  const [orangeAlert, setOrangeAlert] = useState<boolean>(false);
+  const [greenAlert, setGreenAlert] = useState<boolean>(false);
+  
+  console.log(redAlert, orangeAlert, greenAlert);
 
   // 경보 레벨 상태 토글 함수
   const toggleRedAlert = () => setRedAlert(!redAlert);
@@ -168,9 +171,9 @@ const Mypage: React.FC<MypageProps> = () => {
         setNation1(data.nation1);
         setNation2(data.nation2);
         setNation3(data.nation3);
-        setRedAlert(data.redAlert);
-        setOrangeAlert(data.orangeAlert);
-        setGreenAlert(data.greenAlert);
+        data.redAlert==="true" ? setRedAlert(true) : setRedAlert(false);
+        data.orangeAlert==="true" ? setOrangeAlert(true) : setOrangeAlert(false);
+        data.greenAlert==="true" ? setGreenAlert(true) : setGreenAlert(false);
         console.log('알림 설정 데이터 로드 성공', res);
       } catch (error) {
         console.error('알림 설정 데이터 로드 실패', error);
@@ -182,10 +185,20 @@ const Mypage: React.FC<MypageProps> = () => {
 
   // 저장 버튼 함수
   const handleSave = async () => {
+    const isConfirmed = confirm("설정을 저장하시겠습니까?");
+    if (!isConfirmed) {
+      return;
+    }
+
     const token = Cookies.get("access-token");
   
     try {
       setLoading(true); // 서버 응답 대기 중임을 나타내는 상태 업데이트
+
+      if ((redAlert || orangeAlert || greenAlert) && nation1 === "" ) {
+        alert("최소 한 국가를 선택해주세요.");
+        return;
+      }
   
       const response = await axios.post(
         "https://worldisaster.com/api/auth/info",
@@ -255,7 +268,7 @@ const Mypage: React.FC<MypageProps> = () => {
                       <div className="main-title w-min-[200px]">메일 설정📮</div>
                       <div className="content-box2">
                         <div className="content-title">국가 선택</div>
-                        <div className="!grid h-[112px] !grid-rows-1 content-box2 md:!grid md:!grid-cols-3 md:!h-full">
+                        <div className="!grid !grid-rows-1 content-box2 md:!grid md:!grid-cols-3">
                           {/* 첫 번째 국가 선택 */}
                           <select 
                             className="w-full"
@@ -284,7 +297,7 @@ const Mypage: React.FC<MypageProps> = () => {
                             id="nation2" 
                             onChange={(e) => handleNationChange(e.target.value, "nation2")}
                             value={nation2}
-                            hidden={nation1 === "" || nation1 === "world"}
+                            hidden={nation1 === "" || nation1 === "all"}
                           >
                             {nation2 === "" ? 
                               <option value="">두번째 국가를 선택해주세요</option> : null}
@@ -306,7 +319,7 @@ const Mypage: React.FC<MypageProps> = () => {
                             id="nation3" 
                             onChange={(e) => handleNationChange(e.target.value, "nation3")}
                             value={nation3}
-                            hidden={nation2 === "" || (nation1 === "world" && nation2 === "")}
+                            hidden={nation2 === "" || (nation1 === "all" && nation2 === "")}
                           >
                             {nation3 === "" ? 
                               <option value="">세번째 국가를 선택해주세요</option> : null}

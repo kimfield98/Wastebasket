@@ -40,8 +40,7 @@ export const FilterBar = () => {
   };
 
   return (
-    <div className='absolute top-0 right-0 flex flex-col max-w-sm gap-6 px-6 pt-28'>
-
+    <div className='absolute top-[6.5rem] right-0 flex flex-col max-w-sm gap-6 px-6 '>
       <div>
         <Switch isSelected={selectLive} onValueChange={handleLiveToggle} defaultSelected={selectLive} size="lg">
           <p className="text-small">
@@ -58,6 +57,7 @@ export const FilterBar = () => {
         {disasters.map((disaster) => (
             <Button 
               key={disaster.type} 
+              className={!selectDisasters.includes(disaster.type) ? undefined:"px-[10px]"}
               color="primary" 
               size="sm" 
               radius="full"
