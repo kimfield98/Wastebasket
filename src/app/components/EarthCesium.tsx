@@ -16,7 +16,8 @@ import {
   JulianDate,
   ConstantProperty,
   HeightReference,
-  DirectionalLight
+  DirectionalLight,
+  NearFarScalar
 } from 'cesium';
 import { useRouter, useSearchParams } from 'next/navigation';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
@@ -131,7 +132,7 @@ const EarthCesium = () => {
         selectionIndicator: false,// 선택 지시기 비활성화
         timeline: false,// 타임라인 비활성화
         navigationHelpButton: false,// 네비게이션 도움말 버튼 비활성화
-        creditContainer: document.createElement("none"),
+        creditContainer: document.createElement("none"), // 스택오버플로우 참고
       });
 
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // 최소 확대 거리 (미터 단위)
@@ -216,14 +217,13 @@ const EarthCesium = () => {
           item.dStatus === 'ongoing' ? (
             entityToAdd = new Entity({
               position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
-              point: {
-                pixelSize: 8,
-                heightReference: 0,
-                outlineWidth: 2,
-                outlineColor: item.dAlertLevel == "Green" ? Color.LIMEGREEN : item.dAlertLevel == "Orange" ? Color.YELLOW : Color.TOMATO,
-                color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
-
-              },
+                point: {
+                  pixelSize: 10,
+                  outlineWidth: 2,
+                  outlineColor: item.dAlertLevel=="Green"? Color.LIMEGREEN:item.dAlertLevel=="Orange"? Color.YELLOW:Color.TOMATO,
+                  color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
+                  scaleByDistance: new NearFarScalar(10e3, 3, 10e6, 0.7)
+                },
               properties: item,
             })) : (
             entityToAdd = new Entity({
@@ -372,34 +372,30 @@ const EarthCesium = () => {
 
   const applyBlinkingEffect = (entity: Entity) => {
     if (!entity.point?.pixelSize) return;
-    console.log("apply들어옴: ", activeAnimation)
-    // 새로운 애니메이션 적용
+  
+    let growing = true; // 크기가 커지고 있는지 여부를 나타내는 플래그
     const originalSize = entity.point.pixelSize.getValue(JulianDate.now());
-    let startTime = Date.now();
+    const maxSize = originalSize * 5; // 최대 크기
     let currentSize = originalSize;
-
+  
     const onTickListener = () => {
       if (!entity.point) return;
-
-      let elapsedTime = Date.now() - startTime;
-      if (elapsedTime > 1000) {
-        // 애니메이션 시간이 끝났을 경우
-        entity.point.pixelSize = new ConstantProperty(20);
-        // entity.point.pixelSize = new ConstantProperty(originalSize);
-        return;
+  
+      if (growing) {
+        currentSize += 1.5; // 점점 커지게 함
+        if (currentSize >= maxSize) growing = false; // 최대 크기에 도달하면 줄어드는 것으로 전환
+      } else {
+        currentSize -= 1.5; // 점점 작아지게 함
+        if (currentSize <= originalSize) growing = true; // 원래 크기로 돌아오면 다시 커지는 것으로 전환
       }
-
-      // 애니메이션 계산 로직
-      let progress = elapsedTime / 1000;
-      currentSize = originalSize + 1.8 * (originalSize * progress);
-
+  
       entity.point.pixelSize = new ConstantProperty(currentSize);
     };
-
+  
     if (activeAnimation) {
       activeAnimation.stop();
     }
-
+  
     viewerRef.current?.clock.onTick.addEventListener(onTickListener);
 
     // 애니메이션 상태 업데이트
