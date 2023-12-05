@@ -5,6 +5,8 @@ import { NextUIProvider, Card, CardBody } from "@nextui-org/react";
 import axios from "axios";
 import Cookies from 'js-cookie';
 import "../globals.css";
+import { dataState, DataType } from "../recoil/dataRecoil";
+import { useRecoilState } from "recoil";
 
 interface Disaster {
   objectId: number;
@@ -16,11 +18,12 @@ interface Disaster {
 }
 
 const Support: React.FC = () => {
-
+  const [data,setdata] = useRecoilState(dataState);
   const [disasters, setDisasters] = useState<Disaster[]>([]);
   const [selecteddID, setSelecteddID] = useState<string>("");
   const [amount, setAmount] = useState<string>('0');
   const [currency, setCurrency] = useState<string>("USD");
+  const [supportDetail, setSupportDetail] = useState<DataType | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +82,31 @@ const Support: React.FC = () => {
       }
     };
 
+    useEffect(() => {
+      if (data.length === 0) {
+        const loadData = async () => {
+          try {
+            const [oldData, newData] = await Promise.all([
+              axios.get('https://worldisaster.com/api/oldDisasters'),
+              axios.get('https://worldisaster.com/api/newDisasters'),
+            ]);
+            setdata(oldData.data.concat(newData.data));
+          } catch (err) {
+            console.log('데이터 로드 실패', err);
+            // 여기서 필요한 에러 처리를 수행합니다.
+          }
+        };
+        loadData();
+      } else {
+        const selectedDisaster = data.find((disaster) => disaster.dID === selecteddID);
+        if (selectedDisaster) {
+          setSupportDetail(selectedDisaster);
+        } else {
+          setSupportDetail(null);
+        }
+      }
+    },[selecteddID]);
+
     return (
       <>
         <NextUIProvider>
@@ -88,8 +116,22 @@ const Support: React.FC = () => {
                 <Card className="flex flex-row px-3 py-10">
 
                   <CardBody className="w-full mx-auto py-3 gap-5 max-w-md h-96">
-                    <div className="card">
-                      후원할 지역의 상세정보 보여주기
+                    <div className=" card">
+                    {!supportDetail ? 
+                        <div className="flex items-center justify-center">
+                          <div>
+                            후원할 지역의 상세정보 보여주기
+                          </div>:
+                        </div>:
+                        <>
+                          <div>
+                            {/* 여기를 꾸며주셔야합니다. */}
+                            Title: {supportDetail.dTitle}
+                            {supportDetail.dAlertLevel}
+                            {supportDetail.dStatus}
+                          </div>
+                        </>
+                    }
                     </div>
                   </CardBody>
 
@@ -102,10 +144,11 @@ const Support: React.FC = () => {
                       value={selecteddID}
                       onChange={(event) => setSelecteddID(event.target.value)}
                     >
-                      {disasters.map((disaster) => (
+                      {selecteddID === "" ? <option>재난을 선택해주세요</option> : null}
+                      {disasters.map((disaster,index) => (
                         <option 
-                          key={disaster.objectId} 
-                          value={disaster.dID}
+                          key={index}
+                          value={disaster.dID} 
                         >
                           {disaster.dTitle}
                         </option>
