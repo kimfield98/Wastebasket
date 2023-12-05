@@ -1,10 +1,15 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import ChatModule from './ChatModule'; // 실제 채팅 모듈 불러오기
+import ChatModule from './ChatModule';
+import FilterBar from './Filter';
+import { useRecoilState } from 'recoil';
+import { chatState, filterButtonState } from '../recoil/dataRecoil';
+
 
 const ChatToggleComponent = () => {
-    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useRecoilState(chatState);
+    const [filterButton, setFilterButton] = useRecoilState(filterButtonState);
     const [isButtonOnly, setIsButtonOnly] = useState(true);
 
     /* 채팅 토글을 열면 스크롤 이동 */
@@ -17,8 +22,17 @@ const ChatToggleComponent = () => {
                     lastMessage.scrollIntoView({ behavior: 'smooth' });
                 }
             }
+            // 채팅 창이 열리면 필터 버튼을 위로 이동
+            if (filterButton.top !== '700px') {
+                setFilterButton({ ...filterButton, top: '700px' });
+            }
+        } else {
+            // 채팅 창이 닫히면 필터 버튼을 원래 위치로 복귀
+            if (filterButton.top !== 'initial-top-value') {
+            setFilterButton({ ...filterButton, top: 'initial-top-value' });
+            }
         }
-    }, [isChatOpen]);
+    }, [isChatOpen, setFilterButton]);
 
     /* 채팅창 토글용 함수 */
     const toggleChat = () => {
@@ -50,6 +64,7 @@ const ChatToggleComponent = () => {
         fontSize: '24px',
         boxShadow: '0 2px 5px rgba(255, 255, 255, 0.2)',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        zIndex: 500,
     };
 
     const chatModuleContainerStyle: React.CSSProperties = {
