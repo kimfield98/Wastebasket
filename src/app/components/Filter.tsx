@@ -58,6 +58,7 @@ export const FilterBar = () => {
         {disasters.map((disaster) => (
             <Button 
               key={disaster.type} 
+              className={!selectDisasters.includes(disaster.type) ? undefined:"px-[10px]"}
               color="primary" 
               size="sm" 
               radius="full"
