@@ -1,6 +1,8 @@
-//../recoil/dateRecoil.tsx
-import { atom } from 'recoil';
+"use client"
 
+import { RecoilRoot, atom } from "recoil";
+
+//////// interface ////////
 export interface DataType{
   dID: string;
   dSource: string;
@@ -30,11 +32,17 @@ export interface UserType {
     name: string,
     email: string,
     provider: string,
+    nation1: string,
+    nation2: string,
+    nation3: string,
+    redAlert: boolean,
+    orangeAlert: boolean,
+    greenAlert: boolean,
   } | null,
 }
 
 
-// Recoil을 사용하여 상태를 관리하는 원자(atom) 정의
+//////// atom ////////
 export const dataState = atom<DataType[]>({
   key: 'dataState',
   default: [] as DataType[],
@@ -57,3 +65,8 @@ export const userLoginState = atom<UserType>({
     userInfo: null,
   },
 });
+
+
+export default function RecoidContextProvider({ children }: { children: React.ReactNode }) {
+  return <RecoilRoot>{children}</RecoilRoot>;
+}

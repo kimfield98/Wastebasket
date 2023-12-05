@@ -1,11 +1,9 @@
-//../src/app/layout.tsx
-
 import React from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from './components/Navbar';
-import RecoidContextProvider from './recoilContext';
+import RecoidContextProvider from './recoil/dataRecoil';
 
 const inter = Inter({ subsets: ['latin'] })
 
