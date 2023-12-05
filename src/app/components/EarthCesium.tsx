@@ -2,21 +2,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Viewer,
-  Math, 
-  Cartesian3, 
-  Color, 
-  PinBuilder, 
+  Math,
+  Cartesian3,
+  Color,
+  PinBuilder,
   EntityCluster,
-  IonWorldImageryStyle, 
-  createWorldImageryAsync, 
-  CustomDataSource, 
-  VerticalOrigin, 
-  NearFarScalar, 
-  ScreenSpaceEventHandler, 
-  defined, 
-  ScreenSpaceEventType, 
-  Ellipsoid, 
-  Entity, 
+  IonWorldImageryStyle,
+  createWorldImageryAsync,
+  CustomDataSource,
+  VerticalOrigin,
+  NearFarScalar,
+  ScreenSpaceEventHandler,
+  defined,
+  ScreenSpaceEventType,
+  Ellipsoid,
+  Entity,
   JulianDate,
   Transforms,
   HeadingPitchRoll,
@@ -25,15 +25,19 @@ import {
   BingMapsImageryProvider,
   ImageryLayerCollection,
   ImageryLayer,
-  DirectionalLight} from 'cesium';
+  DirectionalLight
+} from 'cesium';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import DidLeftSidebar from './DidLeftSidebar';
 import { constSelector, useRecoilState, useRecoilValue } from 'recoil';
-import { dataState, DataType, filterState, FilterType} from '../recoil/dataRecoil';
+import { dataState, DataType, filterState, FilterType } from '../recoil/dataRecoil';
 import axios from 'axios';
 import FilterBar from './Filter';
 import { set } from 'video.js/dist/types/tech/middleware';
+
+import { AlertModule } from './AlertModule';
+import ChatToggleComponent from './ChatToggle';
 
 interface disasterInfoHover {
   dId: string;
@@ -49,11 +53,11 @@ interface disasterInfo {
   dCountry: string;
   dStatus: string;
   dDate: string;
-  dCountryLatitude: number|null;
-  dCountryLongitude: number|null;
+  dCountryLatitude: number | null;
+  dCountryLongitude: number | null;
   dLatitude: string;
   dLongitude: string;
-  objectId:number;
+  objectId: number;
 }
 
 interface AnimationState {
@@ -66,18 +70,18 @@ const EarthCesium = () => {
   const cesiumContainer = useRef(null);
   const router = useRouter();
   const search = useSearchParams();
-  const viewerRef = useRef<Viewer|null>(null);
+  const viewerRef = useRef<Viewer | null>(null);
   const [isUserInput, setIsUserInput] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(18090749.93102962);
   const [showSidebar, setShowSidebar] = useState<Boolean>(false);
   const [data, setData] = useRecoilState(dataState); // dataState를 data와 setData로 분리하여 사용
   const dataFilter = useRecoilValue(filterState);
   const [dIdValue, setDIdValue] = useState<string>('');
-  const [custom, setCustom] = useState<CustomDataSource|null>(null);
+  const [custom, setCustom] = useState<CustomDataSource | null>(null);
   const [removeAfter, setRemoveAfter] = useState<boolean>(false);
   const [clickedEntity, setClickedEntity] = useState(null);
   const [originalSize, setOriginalSize] = useState(null);
-  const [activeAnimation, setActiveAnimation] = useState<AnimationState|null>(null);
+  const [activeAnimation, setActiveAnimation] = useState<AnimationState | null>(null);
 
 
   // 디테일 사이드바 토글
@@ -93,7 +97,7 @@ const EarthCesium = () => {
   }
 
   // 재난 타입에 따른 색상 지정
-  function getColorForDisasterType(type:any) {
+  function getColorForDisasterType(type: any) {
     switch (type) {
       case "Tropical Cyclone":
         return "RED";
@@ -141,9 +145,9 @@ const EarthCesium = () => {
   }
 
   useEffect(() => {
-      // 이미 Viewer가 초기화된 경우 새로 생성하지 않음
+    // 이미 Viewer가 초기화된 경우 새로 생성하지 않음
     if (typeof window !== 'undefined' && cesiumContainer.current) {
-      let viewer = new Viewer(cesiumContainer.current,{
+      let viewer = new Viewer(cesiumContainer.current, {
         animation: false, // 애니메이션 위젯 비활성화
         baseLayerPicker: false,// 베이스 레이어 선택기 비활성화
         fullscreenButton: false,// 전체 화면 버튼 비활성화
@@ -193,7 +197,7 @@ const EarthCesium = () => {
         // depthPlaneEllipsoidOffset?: number;
         // msaaSamples?: number;
       });
-      
+
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // 최소 확대 거리 (미터 단위)
       viewer.scene.screenSpaceCameraController.maximumZoomDistance = 18090749.93102962; // 최대 확대 거리 (미터 단위)
       viewer.scene.screenSpaceCameraController.enableTilt = false; // 휠클릭 회전 활성화 여부
@@ -202,13 +206,13 @@ const EarthCesium = () => {
       // viewer.scene.globe.maximumScreenSpaceError = 0; // 지형의 최대 화면 공간 오차 (픽셀 단위)
       viewer.scene.globe.enableLighting = false; // 조명 활성화 여부
       viewer.scene.light = new DirectionalLight({
-        direction: Cartesian3.fromDegrees(1.0,1.0,1.0),
+        direction: Cartesian3.fromDegrees(1.0, 1.0, 1.0),
         intensity: 11,
       });
 
       // viewer 인스턴스 저장
       viewerRef.current = viewer;
-          
+
       // layout 추가
       createWorldImageryAsync({
         style: IonWorldImageryStyle.AERIAL_WITH_LABELS,
@@ -218,111 +222,111 @@ const EarthCesium = () => {
       }).catch((err) => {
         console.log(`layout추가 실패: ${err}`);
       });
-      
+
       // viewer 정리 로직 추가
       return () => {
-        if (viewer && viewer.destroy){
-        viewer?.destroy();
+        if (viewer && viewer.destroy) {
+          viewer?.destroy();
         }
       }
     }
-  },[]);
+  }, []);
 
-    //데이터 load로직
-    const loadData = async () => {
-      try{
-        const [oldData, newData] = await Promise.all([
-          axios.get('https://worldisaster.com/api/oldDisasters'),
-          axios.get('https://worldisaster.com/api/newDisasters'),
-        ]);
-        setData(oldData.data.concat(newData.data));
-        setCustom(new CustomDataSource('Disasters'));
-        console.log(`데이터 로드 성공`);
-      } catch(err) {
-        console.log('데이터 로드 실패', err);
-      }
+  //데이터 load로직
+  const loadData = async () => {
+    try {
+      const [oldData, newData] = await Promise.all([
+        axios.get('https://worldisaster.com/api/oldDisasters'),
+        axios.get('https://worldisaster.com/api/newDisasters'),
+      ]);
+      setData(oldData.data.concat(newData.data));
+      setCustom(new CustomDataSource('Disasters'));
+      console.log(`데이터 로드 성공`);
+    } catch (err) {
+      console.log('데이터 로드 실패', err);
+    }
+  }
+
+  const applyFilters = () => {
+    const viewer = viewerRef.current;
+    if (!viewer || !viewer.scene || !viewer.camera) {
+      return;
+    }
+    if (!custom) return;
+    viewer.dataSources.add(custom);
+    let filteredData = data
+
+    if (dataFilter.selectedCountry !== "world") {
+      filteredData = filteredData.filter((item: DataType) => item.dCountry === dataFilter.selectedCountry);
+    }
+    if (dataFilter.selectedDisaster && dataFilter.selectedDisaster.length > 0) {
+      filteredData = filteredData.filter((item: DataType) => !dataFilter.selectedDisaster.includes(item.dType));
+    }
+    if (dataFilter.selectedYear) {
+      filteredData = filteredData.filter((item: DataType) => new Date(item.dDate).getFullYear() === dataFilter.selectedYear);
+    }
+    if (dataFilter.selectedLive !== null) {
+      filteredData = filteredData.filter((item: DataType) => (dataFilter.selectedLive ? item.dStatus !== "past" : item.dStatus === "past"));
     }
 
-    const applyFilters = () => {
-      const viewer = viewerRef.current;
-      if (!viewer || !viewer.scene || !viewer.camera) {
-        return;
-      }
-      if (!custom) return;
-      viewer.dataSources.add(custom);
-      let filteredData = data
-      
-      if (dataFilter.selectedCountry !== "world") {
-        filteredData = filteredData.filter((item:DataType) => item.dCountry === dataFilter.selectedCountry);
-      }
-      if (dataFilter.selectedDisaster && dataFilter.selectedDisaster.length > 0) {
-        filteredData = filteredData.filter((item:DataType) => !dataFilter.selectedDisaster.includes(item.dType));
-      }
-      if (dataFilter.selectedYear) {
-        filteredData = filteredData.filter((item:DataType) => new Date(item.dDate).getFullYear() === dataFilter.selectedYear);
-      }
-      if (dataFilter.selectedLive !== null) {
-        filteredData = filteredData.filter((item:DataType) => (dataFilter.selectedLive ? item.dStatus!=="past" : item.dStatus==="past"));
-      }
-  
-      custom.entities.removeAll();
+    custom.entities.removeAll();
 
-      // console.log(viewer.entities)
-  
-      filteredData.forEach((item:DataType) => {
-        if (item.dLongitude && item.dLatitude) {
-          let entityToAdd;
-          if (item.dStatus === 'ongoing' || item.dStatus === 'real-time'){
-            item.dStatus === 'ongoing' ? (
-              entityToAdd = new Entity({
-                position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
-                point: {
-                  pixelSize: 8,
-                  heightReference: 0,
-                  outlineWidth: 2,
-                  outlineColor: item.dAlertLevel=="Green"? Color.LIMEGREEN:item.dAlertLevel=="Orange"? Color.YELLOW:Color.TOMATO,
-                  color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
-                  
-                },
-                properties: item,
-              })):(
-              entityToAdd = new Entity({
-                position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
-                model: {
-                  uri: `/pin/${getColorForDisasterType(item.dType)}.glb`,
-                  minimumPixelSize: 100,
-                  maximumScale: 80000,
-                  heightReference: HeightReference.CLAMP_TO_GROUND,
-                },
-                properties: item,
-            }))
-          } else {
+    // console.log(viewer.entities)
+
+    filteredData.forEach((item: DataType) => {
+      if (item.dLongitude && item.dLatitude) {
+        let entityToAdd;
+        if (item.dStatus === 'ongoing' || item.dStatus === 'real-time') {
+          item.dStatus === 'ongoing' ? (
             entityToAdd = new Entity({
               position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
               point: {
-                pixelSize: 10,
+                pixelSize: 8,
                 heightReference: 0,
+                outlineWidth: 2,
+                outlineColor: item.dAlertLevel == "Green" ? Color.LIMEGREEN : item.dAlertLevel == "Orange" ? Color.YELLOW : Color.TOMATO,
                 color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
+
               },
               properties: item,
-            });
-          }
-          // rotateEntity(entityToAdd, viewer, item);
-          custom.entities.add(entityToAdd)
+            })) : (
+            entityToAdd = new Entity({
+              position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
+              model: {
+                uri: `/pin/${getColorForDisasterType(item.dType)}.glb`,
+                minimumPixelSize: 100,
+                maximumScale: 80000,
+                heightReference: HeightReference.CLAMP_TO_GROUND,
+              },
+              properties: item,
+            }))
+        } else {
+          entityToAdd = new Entity({
+            position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
+            point: {
+              pixelSize: 10,
+              heightReference: 0,
+              color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
+            },
+            properties: item,
+          });
         }
-      });
-    }
-  
-  useEffect(()=>{
-    loadData();
-  },[]) 
+        // rotateEntity(entityToAdd, viewer, item);
+        custom.entities.add(entityToAdd)
+      }
+    });
+  }
 
-  useEffect(()=>{
+  useEffect(() => {
+    loadData();
+  }, [])
+
+  useEffect(() => {
     if (!custom || !viewerRef.current) return;
-      // custom.entities.removeAll();
-      viewerRef.current.dataSources.remove(custom);
-      console.log(3);
-  },[dataFilter])
+    // custom.entities.removeAll();
+    viewerRef.current.dataSources.remove(custom);
+    console.log(3);
+  }, [dataFilter])
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -331,14 +335,14 @@ const EarthCesium = () => {
     }
     const customDataSource = new CustomDataSource('Disasters');
     viewer.dataSources.add(customDataSource);
-    console.log(1);
-  }, [dataFilter,data]);
-  
-  useEffect(()=>{
+    console.log(1); // debug
+  }, [dataFilter, data]);
+
+  useEffect(() => {
     if (!custom || !viewerRef.current) return;
     applyFilters();
-    console.log(2);
-  },[dataFilter,data])
+    console.log(2); // debug
+  }, [dataFilter, data])
 
   // 클릭 이벤트 관리
   useEffect(() => {
@@ -361,11 +365,11 @@ const EarthCesium = () => {
     const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
     // 호버 이벤트
-    handler.setInputAction((movement:any) => {
+    handler.setInputAction((movement: any) => {
       const pickedObject = viewerRef.current?.scene.pick(movement.endPosition);
       if (defined(pickedObject) && pickedObject.id && pickedObject.id.properties && !showSidebar) {
         const properties = pickedObject.id.properties;
-        const disasterData:disasterInfoHover = {
+        const disasterData: disasterInfoHover = {
           dId: properties._dID?._value,
           dType: properties._dType?._value,
           dCountry: properties._dCountry?._value,
@@ -387,11 +391,11 @@ const EarthCesium = () => {
     }, ScreenSpaceEventType.MOUSE_MOVE);
 
     // 원클릭 이벤트
-    handler.setInputAction((click:any) => {
+    handler.setInputAction((click: any) => {
       const pickedObject = viewer.scene.pick(click.position);
       if (defined(pickedObject) && pickedObject.id && pickedObject.id.properties) {
         const properties = pickedObject.id.properties;
-        const disasterData:disasterInfo = {
+        const disasterData: disasterInfo = {
           dId: properties._dID?._value,
           dType: properties._dType?._value,
           dCountry: properties._dCountry?._value,
@@ -432,15 +436,15 @@ const EarthCesium = () => {
 
   const applyBlinkingEffect = (entity: Entity) => {
     if (!entity.point?.pixelSize) return;
-    console.log("apply들어옴: ",activeAnimation)  
+    console.log("apply들어옴: ", activeAnimation)
     // 새로운 애니메이션 적용
     const originalSize = entity.point.pixelSize.getValue(JulianDate.now());
     let startTime = Date.now();
     let currentSize = originalSize;
-  
+
     const onTickListener = () => {
       if (!entity.point) return;
-  
+
       let elapsedTime = Date.now() - startTime;
       if (elapsedTime > 1000) {
         // 애니메이션 시간이 끝났을 경우
@@ -448,18 +452,18 @@ const EarthCesium = () => {
         // entity.point.pixelSize = new ConstantProperty(originalSize);
         return;
       }
-  
+
       // 애니메이션 계산 로직
       let progress = elapsedTime / 1000;
-      currentSize = originalSize + 1.8*(originalSize * progress);
-  
+      currentSize = originalSize + 1.8 * (originalSize * progress);
+
       entity.point.pixelSize = new ConstantProperty(currentSize);
     };
 
     if (activeAnimation) {
       activeAnimation.stop();
     }
-  
+
     viewerRef.current?.clock.onTick.addEventListener(onTickListener);
 
     // 애니메이션 상태 업데이트
@@ -473,10 +477,10 @@ const EarthCesium = () => {
   // 카메라 이동마다 이벤트 관리
   useEffect(() => {
     const viewer = viewerRef.current;
-    if(!viewer || !viewer.scene || !viewer.camera) {
+    if (!viewer || !viewer.scene || !viewer.camera) {
       return;
     };
-    
+
     const moveEndListener = viewer.camera.moveEnd.addEventListener(() => {
       const cameraPosition = viewer.camera.positionCartographic;
       const longitude = Math.toDegrees(cameraPosition.longitude).toFixed(4);
@@ -485,13 +489,13 @@ const EarthCesium = () => {
       router.push(`/earth?lon=${longitude}&lat=${latitude}&height=${cameraHeight}`, undefined);
     });
 
-    return()=>{
-      if (!isUserInput){
+    return () => {
+      if (!isUserInput) {
         moveEndListener()
       }
     }
 
-  }, [viewerRef.current?.camera,search.get('did')]);
+  }, [viewerRef.current?.camera, search.get('did')]);
 
   // url로 들어오는 경우 이벤트 관리
   useEffect(() => {
@@ -500,22 +504,22 @@ const EarthCesium = () => {
     const lat = search.get('lat');
     const zoomHeight = search.get('height');
     const detail = search.get('did');
-    if(!viewer || !viewer.scene || !viewer.camera || !isUserInput) {
+    if (!viewer || !viewer.scene || !viewer.camera || !isUserInput) {
       return;
     };
     if (lon && lat && viewer && viewer.scene && viewer.camera) {
       viewer.camera.flyTo({
-        destination: Cartesian3.fromDegrees(lon?Number(lon):0, lat?Number(lat):0, zoomHeight?Number(zoomHeight):10e5),
+        destination: Cartesian3.fromDegrees(lon ? Number(lon) : 0, lat ? Number(lat) : 0, zoomHeight ? Number(zoomHeight) : 10e5),
         duration: 1,
         complete: () => {
-          if (detail){
+          if (detail) {
             setDIdValue(detail);
             setShowSidebar(true);
           }
         }
       });
     }
-  },[search.get('lon'), search.get('lat'), search.get('height'), search.get('did')]);
+  }, [search.get('lon'), search.get('lat'), search.get('height'), search.get('did')]);
 
   return (
     <>
@@ -523,7 +527,9 @@ const EarthCesium = () => {
         {/* <ModalComponent /> */}
       </div>
       {showSidebar && <DidLeftSidebar onClose={toggleSidebar} dID={dIdValue} />}
-      <FilterBar/>
+      <FilterBar />
+      <AlertModule />
+      <ChatToggleComponent />
     </>
   );
 };
