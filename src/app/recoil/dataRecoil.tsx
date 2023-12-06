@@ -48,9 +48,9 @@ export const dataState = atom<DataType[]>({
   default: [] as DataType[],
 });
 
-export const yearState = atom<string>({
+export const yearState = atom<number>({
   key: 'yearState',
-  default: '2023' ,
+  default: 2023 ,
 });
 
 export const filterState = atom<FilterType>({

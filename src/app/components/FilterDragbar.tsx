@@ -12,7 +12,8 @@ export const FilterDragbar = () => {
 
 
   // 연도 선택 핸들러
-  const handleYearChange = (year: number) => {
+  const handleYearChange = (year:number) => {
+    setSelectedYear(year);
     setFiltering({ ...filtering, selectedYear: year });
   };
 
@@ -24,7 +25,7 @@ export const FilterDragbar = () => {
           maxValue={2023}
           minValue={2000}
           getValue={(year) => `${year} / 2023`}
-          value={filtering.selectedYear}
+          value={selectedYear}
           onChange={(newYear)=>{
               const year = Array.isArray(newYear) ? newYear[0] : newYear;
               handleYearChange(year);
