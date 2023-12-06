@@ -1,9 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, createRef, RefObject } from "react";
 import axios, { AxiosError } from "axios";
 import { Button } from "@nextui-org/react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import { set } from "video.js/dist/types/tech/middleware";
+import { userLoginState } from "../recoil/dataRecoil";
+import { useRecoilValue } from "recoil";
+
+interface VideoData {
+  video_url: string;
+  // 다른 필요한 필드 추가
+}
 
 interface VideoUploaderProps {
   dID: string;
@@ -19,6 +26,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
   const [fileName, setFileName] = useState<string>("");
   const [fileError, setFileError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const isLogin = useRecoilValue(userLoginState);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -91,35 +99,39 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
   },5000)
 
   return (
-    <div className="m-2">
-      <div
-        className=" rounded-lg bg-white text-black h-20 flex justify-center items-center border-gray-600/80 border-1 mb-2"
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
-        {fileName ? 
-        <>
-        선택된 파일: {fileName}
-          <div className="m-2" onClick={DropCancel}>
-            <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-black hover:text-gray-1' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
-            </svg>
-          </div>
-        </>: fileError? <div>{fileError}</div>:<div>파일을 드래그 해주세요.</div>}
-      </div>
-      <div className="flex justify-end">
-        <Button onClick={uploadVideo}>업로드</Button>
-      </div>
-    </div>
+    <>
+    {!isLogin ? 
+      <div className="m-2">
+        <div
+          className=" rounded-lg bg-white text-black h-20 flex justify-center items-center border-gray-600/80 border-1 mb-2"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          {fileName ? 
+          <>
+          선택된 파일: {fileName}
+            <div className="m-2" onClick={DropCancel}>
+              <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-black hover:text-gray-1' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+              </svg>
+            </div>
+          </>: fileError? <div>{fileError}</div>:<div>파일을 드래그 해주세요.</div>}
+        </div>
+        <div className="flex justify-end">
+          <Button onClick={uploadVideo}>업로드</Button>
+        </div>
+      </div>:null
+    }
+    </>
   );
 };
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoUrls, setVideoUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [currentVideoUrl, setCurrentVideoUrl] = useState<string>("");
+  const [videoData, setVideoData] = useState<VideoData[]>([]);
+  const [videoRefs, setVideoRefs] = useState<RefObject<HTMLVideoElement>[]>([]);
+
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -128,13 +140,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
       try {
         const response = await axios(`https://worldisaster.com/api/upload/${dID}`,{timeout: 5000});
         const data = response.data;
-        if(!data.approved) return setError("동영상이 승인되지 않았습니다.");
-        if (data.urls && data.urls.length > 0) {
-          setVideoUrls(data.urls);
-          setCurrentVideoUrl(data.urls[0]);
-        } else {
-          setError("동영상이 없습니다.");
-        }
+          setVideoData(data);
+          setVideoRefs(videoData.map(() => createRef()));
       } catch (err) {
         if(axios.isAxiosError(err)) {
           if (err.response?.status === 404) {
@@ -154,48 +161,39 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
   }, [dID]);
 
   useEffect(() => {
-    if (videoRef.current && videoUrls.length > 0) {
-      if (!videojs.getPlayers()[videoRef.current.id]) {
-        // Video.js 플레이어가 아직 초기화되지 않았으면 초기화
-        videojs(videoRef.current, {
-          sources: [{ src: currentVideoUrl, type: "application/x-mpegURL" }],
+    videoData.forEach((video: any, index: number) => {
+      console.log(video.current)
+      if(video.current){
+        videojs(video.current, {
+          controls: true,
+          sources: [{
+            src: video.video_url,
+            type: 'video/mp4'
+          }]
         });
-      } else {
-        // 이미 초기화된 플레이어가 있으면 소스만 변경
-        const player = videojs.getPlayers()[videoRef.current.id];
-        player.src({ src: currentVideoUrl, type: "application/x-mpegURL" });
       }
-    }
-
-    // 컴포넌트 언마운트 시 플레이어 제거
-    return () => {
-      if (videoRef.current && videojs.getPlayers()[videoRef.current.id]) {
-        videojs.getPlayers()[videoRef.current.id].dispose();
-      }
-    };
-  }, [videoUrls, dID]); // dID도 종속성 배열에 추가
+    })
+  },[dID]);
 
   return (
-    <div>
-      {loading && 
-      <div className="flex justify-center">
-        <p>동영상 불러오는 중...</p>
-      </div>}
-      {error && 
-      <div className="flex justify-center">
-        <p>{error}</p>
-      </div>}
-      {!loading && !error && videoUrls.length > 0 && (
-        <div>
-          <video ref={videoRef} className="video-js !w-[100%]" controls />
+    <>
+      {loading && <div className="flex justify-center"><p>동영상 불러오는 중...</p></div>}
+      {error && <div className="flex justify-center"><p>{error}</p></div>}
+      {!loading && !error && videoData.length > 0 && (
+        <div className="flex overflow-x-scroll snap-x snap-mandatory">
+          {videoData.map((video: any, index: number) => (
+            <div key={index} className="mx-60 snap-center w-80 bg-blue-500 flex-shrink-0">
+              <video 
+                ref={videoRefs[index]}
+                className="video-js !w-full !h-[500px]" 
+                controls 
+              >
+              </video>
+            </div>
+          ))}
         </div>
       )}
-      {/* {videoData.name.map((item:any,index:number) => (
-        <div key={index} >
-          {item}
-        </div>
-      ))}; */}
-    </div>
+    </>
   );
 };
 

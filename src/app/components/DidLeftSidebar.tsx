@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import { useRecoilValue } from 'recoil';
 import { DataType, dataState } from '../recoil/dataRecoil';
 import Link from 'next/link';
@@ -41,7 +41,7 @@ const DidLeftSidebar: React.FC<didDetailProps>= ({ onClose, dID }) => {
       
   return (
     <div id="drageRight" style={{ width: `${width}px` }} className='min-w-full custom-scrollbar absolute left-0 top-0 z-20 flex flex-col h-screen md:min-w-[30%] md:max-w-[50%] overflow-auto bg-dark-2 px-4 pb-5'>
-      <div className='absolute right-0 top-0 w-3 h-full cursor-ew-resize hover:bg-slate-500 ' onMouseDown={startResize}></div>
+      <div className='absolute right-0 top-0 w-3 cursor-ew-resize hover:bg-slate-500 ' onMouseDown={startResize}></div>
       <div className='bg-dark-2 w-[100%] sticky pt-20 pb-4 top-0 text-heading3-bold text-light-1 select-none z-10 flex place-content-between'>
         <div className='inline-flex'>Disaster Detail
           <img className='rounded-xl w-8' src={`/Disaster/${detailData.dType}.png`} alt="disaster" />
@@ -55,7 +55,7 @@ const DidLeftSidebar: React.FC<didDetailProps>= ({ onClose, dID }) => {
       <div className='filterbar'>
       {detailData ? (
       <div className='p-2 bg-gray-300 rounded-xl'>
-        <div className=' p-4 rounded-xl bg-white text-gray-600/80 mb-3'><span className=' text-black'>Type: </span>{detailData.dType}</div>
+        <div className=' p-4 rounded-xl bg-white text-gray-600/80 mb-3'><span className=' text-black select-none'>Type: </span>{detailData.dType}</div>
         <Accordion selectionMode="multiple"	className='text-gray-600/80 bg-white rounded-xl select-none' >
           <AccordionItem key="2" aria-label="Accordion 2" title="설명" className='text-gray-600/80 select-none mt-2'>
             <table>

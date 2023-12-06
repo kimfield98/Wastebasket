@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: 'Merriweather', serif;
+}
+
 :root {
+
   background-color: black;
   color: white;
 }
