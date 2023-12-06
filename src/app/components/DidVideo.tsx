@@ -180,7 +180,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
 
   return (
     <>
-      {loading && <div className="flex justify-center"><p>Loading video...</p></div>}
+      {loading && <div className="flex justify-center"><p>동영상 불러오는 중...</p></div>}
       <div className="flex justify-center"><p>{error}</p></div>
       {!loading && !error && videoData.length > 0 && (
         <div className="flex overflow-x-scroll snap-x snap-mandatory">
