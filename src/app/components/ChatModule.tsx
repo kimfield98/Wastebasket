@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
-import Cookies from 'js-cookie';
 import { MessageList, Input, Button, Popup } from 'react-chat-elements';
 import 'react-chat-elements/dist/main.css';
 import { useRecoilValue } from 'recoil';
@@ -35,36 +34,12 @@ const ChatModule = () => {
      useState()함수를 통해서 어떤 component에서 함수에서 사용 가능한 배열과 세팅용 함수를 추출할 수 있음 */
 
   const socketRef = useRef<Socket | null>(null); // 소켓 연결은 단 한번만 (연결되면 not null로 상태값이 바뀜)
-  // const [user, setUser] = useState<User | null>(null); // 로그인된 유저 정보
-
   const [message, setMessage] = useState(''); // 작성중인 메시지
   const [inputKey, setInputKey] = useState(Math.random()); // input 클리어링 버그 해결
 
   const [chat, setChat] = useState<ChatMessage[]>([]); // 채팅 히스토리
   const [messageListArray, setMessageListArray] = useState<any>([]); // react-chat-element 전용 리스트
   const messageListRef = useRef(); // react-chat-element에서 필요한 Reference 선언
-
-  // const lastProcessedMessageIdRef = useRef<number | null>(null);
-
-  /* 로그인 여부 확인 */
-  // useEffect(() => {
-  //   const token = Cookies.get('access-token');
-  //   if (token) {
-  //     axios.get('https://worldisaster.com/api/auth/info', {
-  //       headers: {
-  //         'Authorization': `Bearer ${token}`
-  //       }
-  //     })
-  //       .then(response => {
-  //         if (JSON.stringify(response.data) !== JSON.stringify(user)) {
-  //           setUser(response.data);
-  //         }
-  //       })
-  //       .catch(error => {
-  //         // console.error("Error fetching user info:", error); // debug-only
-  //       });
-  //   }
-  // }, [user]);
 
   /* 웹소켓 연결 기능 */
   useEffect(() => {
@@ -122,28 +97,6 @@ const ChatModule = () => {
       fetchChatHistory();
 
       /* 서버에서 newMessage 라는 제목으로 메시지를 발송, 여기서 받아서 처리 */
-
-      // socketRef.current.on('newMessage', (receivedMessage: ChatMessage) => {
-      //   console.log("Received message:", receivedMessage);
-      //   console.log("Current user state:", user);
-
-      //   // Check if this message has already been processed
-      //   if (receivedMessage.chatMessageID === lastProcessedMessageIdRef.current) {
-      //     console.log("This message has already been processed. Ignoring.");
-      //     return;
-      //   }
-
-      //   // Update the last processed message ID
-      //   lastProcessedMessageIdRef.current = receivedMessage.chatMessageID;
-
-      //   // Process the message
-      //   setChat((prevChat) => [...prevChat, receivedMessage]);
-      //   const transformedMessage = transformMessage(receivedMessage, user);
-      //   setMessageListArray((prevMessages: any) => [...prevMessages, transformedMessage]);
-
-      //   console.log("Processed and added the message to the state.");
-      // });
-
       socketRef.current.on('newMessage', (receivedMessage: ChatMessage) => {
         setChat((prevChat) => [...prevChat, receivedMessage]);
         const transformedMessage = transformMessage(receivedMessage, user);
@@ -172,13 +125,12 @@ const ChatModule = () => {
 
   /* API나 웹소켓으로 받은 채팅 메시지를 react-chat-element에서 해석 가능하도록 변환하는 함수 */
   const transformMessage = (msg: ChatMessage, currentUser: User | null) => {
-    
 
-    const currentUserHandle = currentUser?.email || currentUser?.name; // 이메일 또는 이름을 사용
+    const currentUserHandle = currentUser?.email.split('@')[0].trim().toLowerCase();
     const senderHandle = msg.chatSenderID.trim().toLowerCase();
     const isCurrentUser = currentUserHandle === senderHandle;
-    
-    // console.log(`Current User: ${currentUserHandle}, Sender: ${msg.chatSenderID}, Is Current User: ${isCurrentUser}`); // debug
+
+    console.log(`Current User: ${currentUserHandle}, Sender: ${msg.chatSenderID}, Is Current User: ${isCurrentUser}`); // debug
 
     return {
       id: msg.chatMessageID,
@@ -194,9 +146,9 @@ const ChatModule = () => {
   const onMessageSubmit = useCallback(() => {
 
     if (user && message && socketRef.current) {
-      const senderId = user.email;
+      const currentUserHandle = user?.email.split('@')[0].trim().toLowerCase();
       const newMessage = {
-        chatSenderID: senderId,
+        chatSenderID: currentUserHandle,
         chatRoomID: 'main',
         chatMessage: message,
       };
