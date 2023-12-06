@@ -76,9 +76,7 @@ export const AlertModule = () => {
               <span style={{ color: alertLevelColor }}> ({dAlertLevel})</span>.
               {' '}
               <Link href={earthURL}>
-                <a>
                   Click <span style={{ color: 'yellow' }}>HERE</span> for details.
-                </a>
               </Link>
             </div>
           );
