@@ -58,12 +58,12 @@ const ChatModule = () => {
 
       socketRef.current.on('connect', () => {
         socketRef.current?.emit('joinRoom', 'main');
-        console.log('Chats 웹소켓 연결 성공');
+        console.log('Log: Chats websocket connection successful');
       });
 
       /* 연결이 끊기면 로그 발신 */
       socketRef.current.on('disconnect', () => {
-        // console.log('Disconnected from the server.'); // debug-only
+        console.log('Log: Chats websocket disconnected from the server.');
       });
     }
 
@@ -129,8 +129,6 @@ const ChatModule = () => {
     const currentUserHandle = currentUser?.email.split('@')[0].trim().toLowerCase();
     const senderHandle = msg.chatSenderID.trim().toLowerCase();
     const isCurrentUser = currentUserHandle === senderHandle;
-
-    console.log(`Current User: ${currentUserHandle}, Sender: ${msg.chatSenderID}, Is Current User: ${isCurrentUser}`); // debug
 
     return {
       id: msg.chatMessageID,

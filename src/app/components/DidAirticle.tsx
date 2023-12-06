@@ -9,7 +9,7 @@ interface ArticleProps {
 interface ArticleData {
   headline: string;
   url: string;
-  image: string|null;
+  image: string | null;
   // Add other necessary fields here
 }
 
@@ -27,11 +27,11 @@ const DidArticle: React.FC<ArticleProps> = ({ dID }) => {
           axios(`https://worldisaster.com/api/live/${dID}`),
           axios(`https://worldisaster.com/api/archiveNews/${dID}`)
         ]);
-  
+
         // 두 데이터 소스를 하나의 배열로 결합합니다.
         const combinedArticles = [...liveResponse.data, ...archiveResponse.data];
         setArticles(combinedArticles); // 결합된 결과를 상태에 저장합니다.
-        console.log("기사 데이터 받음");
+        console.log("Log: Articles data loaded successfully");
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.message);
@@ -42,7 +42,7 @@ const DidArticle: React.FC<ArticleProps> = ({ dID }) => {
         setIsLoading(false);
       }
     };
-  
+
     fetchArticles();
   }, [dID]);
 
@@ -62,20 +62,20 @@ const DidArticle: React.FC<ArticleProps> = ({ dID }) => {
     <div className='flex overflow-x-scroll snap-x snap-mandatory'>
       {articles.map((article, index) => (
         <div key={index} className="  mx-60 snap-center w-60  bg-blue-500 flex-shrink-0">
-            <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-                {isNaN(parseInt(dID.charAt(0))) ?<img className=" w-full h-[200px] object-cover object-center" src={article.image? article.image:"https://via.placeholder.com/150x100.png?text=NO IMAGE"} alt="article" />:null}
-                <div className="p-6">
-                    <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{article.headline}</h2>
-                    <div className="flex items-center flex-wrap">
-                        <Link target='_blank' href={article.url} className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">Learn More
-                          <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M5 12h14"></path>
-                              <path d="M12 5l7 7-7 7"></path>
-                          </svg>
-                        </Link>
-                    </div>
-                </div>
+          <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+            {isNaN(parseInt(dID.charAt(0))) ? <img className=" w-full h-[200px] object-cover object-center" src={article.image ? article.image : "https://via.placeholder.com/150x100.png?text=NO IMAGE"} alt="article" /> : null}
+            <div className="p-6">
+              <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{article.headline}</h2>
+              <div className="flex items-center flex-wrap">
+                <Link target='_blank' href={article.url} className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">Learn More
+                  <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5l7 7-7 7"></path>
+                  </svg>
+                </Link>
+              </div>
             </div>
+          </div>
         </div>
       ))}
     </div>

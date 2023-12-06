@@ -12,27 +12,27 @@ export const FilterDragbar = () => {
 
 
   // 연도 선택 핸들러
-  const handleYearChange = (year:number) => {
+  const handleYearChange = (year: number) => {
     setSelectedYear(year);
     setFiltering({ ...filtering, selectedYear: year });
   };
 
   return (
-      <div className="max-w-full p-3">
-        <Slider 
-          label="연도 별 재난 흐름 확인 🔮"
-          size="sm"
-          maxValue={2023}
-          minValue={2000}
-          getValue={(year) => `${year} / 2023`}
-          value={selectedYear}
-          onChange={(newYear)=>{
-              const year = Array.isArray(newYear) ? newYear[0] : newYear;
-              handleYearChange(year);
-          }}
-          className="max-w-md text-white"
-        />
-      </div>
+    <div className="max-w-full p-3">
+      <Slider
+        label="Slide to see disasters by year."
+        size="sm"
+        maxValue={2023}
+        minValue={2000}
+        getValue={(year) => `${year} / 2023`}
+        value={selectedYear}
+        onChange={(newYear) => {
+          const year = Array.isArray(newYear) ? newYear[0] : newYear;
+          handleYearChange(year);
+        }}
+        className="max-w-md text-white"
+      />
+    </div>
   );
 };
 
