@@ -221,8 +221,6 @@ const EarthCesium = () => {
 
     custom.entities.removeAll();
 
-    // console.log(viewer.entities)
-
     filteredData.forEach((item: DataType) => {
       if (item.dLongitude && item.dLatitude) {
         let entityToAdd;
@@ -274,7 +272,6 @@ const EarthCesium = () => {
     if (!custom || !viewerRef.current) return;
     // custom.entities.removeAll();
     viewerRef.current.dataSources.remove(custom);
-    console.log(3);
   }, [dataFilter])
 
   useEffect(() => {
@@ -284,13 +281,11 @@ const EarthCesium = () => {
     }
     const customDataSource = new CustomDataSource('Disasters');
     viewer.dataSources.add(customDataSource);
-    console.log(1); // debug
   }, [dataFilter, data]);
 
   useEffect(() => {
     if (!custom || !viewerRef.current) return;
     applyFilters();
-    console.log(2); // debug
   }, [dataFilter, data])
 
   // 클릭 이벤트 관리

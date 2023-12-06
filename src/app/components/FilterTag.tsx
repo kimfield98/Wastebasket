@@ -14,18 +14,36 @@ export const FilterTag = () => {
 
   // 재난 유형 선택 핸들러
   const handleDisasterSelect = (disasterType: string) => {
-    const updatedDisasters = selectDisasters.includes(disasterType)
-      ? selectDisasters.filter(type => type !== disasterType)
-      : [...selectDisasters, disasterType];
+    if (disasterType === ""){
+      if(selectDisasters.length !== 0) {
+        setSelectDisasters([]);
+        setFiltering({ ...filtering, selectedDisaster: [] });
+        return;
+      }else{
+        disasters.map((disaster) => (
+          selectDisasters.push(disaster.type)
+        ))
+      }
+    }
+    const updatedDisasters = selectDisasters.includes(disasterType) ? selectDisasters.filter(type => type !== disasterType) : [...selectDisasters, disasterType];
     setSelectDisasters(updatedDisasters);
     setFiltering({ ...filtering, selectedDisaster: updatedDisasters });
   };
-
+  
+  console.log(selectDisasters)
 
   return (
       <div className="flex gap-3 flex-wrap">
+        <Button 
+              color="primary" 
+              size="sm" 
+              radius="full"
+              variant={selectDisasters.length == 0 ? undefined:"bordered"}
+              onClick={() => handleDisasterSelect("")}
+            >All</Button>
         {disasters.map((disaster) => (
             <Button 
+              className={selectDisasters.includes(disaster.type) ? "":"!mx-[2px]"}
               key={disaster.type} 
               color="primary" 
               size="sm" 

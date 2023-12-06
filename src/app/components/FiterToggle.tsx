@@ -3,20 +3,23 @@
 import React, { useState } from "react";
 import { Switch } from "@nextui-org/react";
 import { useRecoilState } from "recoil";
-import { filterState } from '../recoil/dataRecoil';
+import { filterState, yearState } from '../recoil/dataRecoil';
 
 
 export const FilterToggle = () => {
+  const [rememberYear,setRememberYear] = useRecoilState<number>(yearState);
   const [filtering, setFiltering] = useRecoilState(filterState);
   const [selectLive, setSelectLive] = useState<boolean>(filtering.selectedLive);
 
   // 실시간 상태 토글 핸들러
   const handleLiveToggle = (isLive: boolean) => {
     setSelectLive(isLive);
+    
     if (isLive){
+      setRememberYear(filtering.selectedYear);
       setFiltering({ ...filtering, selectedLive: isLive, selectedYear: 2023 });
     } else {
-      setFiltering({ ...filtering, selectedLive: isLive });
+      setFiltering({ ...filtering, selectedLive: isLive, selectedYear: rememberYear });
     }
   };
 
