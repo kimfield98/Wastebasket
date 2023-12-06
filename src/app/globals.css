@@ -175,6 +175,18 @@ select {
   color: white;
   background-color: #006FEE;
 }
+.deleteBtn {
+  padding: 5px 10px;
+  background-color: #d0d7de;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.deleteBtn:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  color: white;
+  background-color: #006FEE;
+}
 
 .border {
   border: none;

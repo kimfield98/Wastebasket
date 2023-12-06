@@ -226,6 +226,37 @@ const Mypage: React.FC<MypageProps> = () => {
       setLoading(false); // 서버 응답 대기가 끝났음을 나타내는 상태 업데이트
     }
   };
+
+  const handleWithdrawal = async () => {
+    const isConfirmed = confirm("정말로 회원 탈퇴하시겠습니까?");
+    if (!isConfirmed) {
+      return;
+    }
+
+    const token = Cookies.get("access-token");
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        "https://worldisaster.com/api/auth/delete",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("회원 탈퇴가 성공적으로 처리되었습니다:", response.data);
+      alert('회원 탈퇴 성공!');
+      // You can redirect the user to a different page or perform any other action after successful withdrawal.
+    } catch (error) {
+      console.error("회원 탈퇴에 실패했습니다", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
 
   return (
@@ -255,8 +286,13 @@ const Mypage: React.FC<MypageProps> = () => {
                           언제 어디에 얼마를 보냄
                         </AccordionItem>
 
-                        <AccordionItem key="3" aria-label="회원 탈퇴" title="회원 탈퇴">
-                          Bye ✋
+                        <AccordionItem key="withdrawal" aria-label="회원 탈퇴" title="회원 탈퇴">
+                          <div className="flex items-center gap-5">
+                            <p>정말로 회원 탈퇴하시겠습니까?</p>
+                            <button className="deleteBtn" onClick={handleWithdrawal} disabled={loading}>
+                              회원 탈퇴
+                            </button>
+                          </div>
                         </AccordionItem>
                       </Accordion>
                     </CardBody>
