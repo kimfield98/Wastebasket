@@ -72,7 +72,7 @@ const Support: React.FC = () => {
         console.log(approvalUrl);
 
         if (approvalUrl) {
-            window.location.href = approvalUrl; // PayPal로 리디렉션
+            window.location.href = approvalUrl;
         } else {
             console.error('Approval URL is undefined!');
         }
@@ -93,7 +93,6 @@ const Support: React.FC = () => {
             setdata(oldData.data.concat(newData.data));
           } catch (err) {
             console.log('데이터 로드 실패', err);
-            // 여기서 필요한 에러 처리를 수행합니다.
           }
         };
         loadData();
@@ -110,22 +109,20 @@ const Support: React.FC = () => {
     return (
       <>
         <NextUIProvider>
-          <main className="flex flex-row">
-            <section className="main-container flex-1">
+          <main className="flex flex-row justify-center items-center h-screen">
+            <section className="main-container">
               <div className="flex w-full flex-col mx-auto max-w-4xl">
-                <Card className="flex flex-row px-3 py-10">
+                <Card className="flex flex-row p-6">
 
-                  <CardBody className="w-full mx-auto py-3 gap-5 max-w-md h-96">
-                    <div className=" card">
+                  <CardBody className="w-full mx-auto py-3 gap-5 max-w-md h-96 bg-sky-100 rounded-lg shadow-md">
+                    <div>
                     {!supportDetail ? 
-                        <div className="flex items-center justify-center">
-                          <div>
-                            후원할 지역의 상세정보 보여주기
-                          </div>:
-                        </div>:
+                        <div className="text-center">
+                          후원 목록을 선택 후 상세 정보 확인
+                        </div>
+                        :
                         <>
                           <div>
-                            {/* 여기를 꾸며주셔야합니다. */}
                             Title: {supportDetail.dTitle}
                             {supportDetail.dAlertLevel}
                             {supportDetail.dStatus}
@@ -137,37 +134,44 @@ const Support: React.FC = () => {
 
                   <CardBody className="py-3 gap-7">
 
-                    <select 
-                      name="재난 선택"
-                      placeholder="현재 진행 중인 재난 확인하기" 
-                      id="1" 
-                      value={selecteddID}
-                      onChange={(event) => setSelecteddID(event.target.value)}
-                    >
-                      {selecteddID === "" ? <option>재난을 선택해주세요</option> : null}
-                      {disasters.map((disaster,index) => (
-                        <option 
-                          key={index}
-                          value={disaster.dID} 
-                        >
-                          {disaster.dTitle}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex flex-col gap-3">
+                      
+                      <select 
+                        name="재난 선택"
+                        placeholder="현재 진행 중인 재난 확인하기" 
+                        id="1" 
+                        value={selecteddID}
+                        onChange={(event) => setSelecteddID(event.target.value)}
+                      >
+                        {selecteddID === "" ? <option>재난을 선택해주세요</option> : null}
+                        {disasters.map((disaster,index) => (
+                          <option 
+                            key={index}
+                            value={disaster.dID} 
+                          >
+                            {disaster.dTitle}
+                          </option>
+                        ))}
+                      </select>
 
-                    <input type="text" name="amount" id="amount" placeholder="0.00" onChange={(event) => setAmount(event.target.value)} />
-                    <select
-                      aria-label="통화 선택"
-                      className="outline-none border-0 bg-transparent text-default-400 text-small"
-                      id="currency"
-                      name="currency"
-                      value={currency}
-                      onChange={(event) => setCurrency(event.target.value)}
-                    >
-                      <option>USD</option>
-                      <option>EUR</option>
-                    </select>
-                    <button onClick={handleButtonClick}>후원하기</button>
+                      <select
+                        aria-label="통화 선택"
+                        className="outline-none border-0 bg-transparent text-default-400 text-small"
+                        id="currency"
+                        name="currency"
+                        value={currency}
+                        onChange={(event) => setCurrency(event.target.value)}
+                      >
+                        <option>USD</option>
+                        <option>EUR</option>
+                      </select>
+                      <input type="text" name="amount" id="amount" placeholder="0.00" onChange={(event) => setAmount(event.target.value)} />
+                    </div>
+                    
+                    
+                    <div className="button-box">
+                      <button className="saveBtn" onClick={handleButtonClick}>후원하기</button>
+                    </div>
 
                   </CardBody>
 

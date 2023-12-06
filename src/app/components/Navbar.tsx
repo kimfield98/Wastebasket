@@ -25,7 +25,7 @@ export const Navbar = () => {
             }
           });
           setLoginState({ isLoggedIn: true, userInfo: response.data });
-          console.log('로그인 정보 주세요',response);
+          console.log('로그인 정보 주세요', response);
         } catch (error) {
           console.error('Error fetching user info:', error);
         }
@@ -35,6 +35,18 @@ export const Navbar = () => {
     fetchUserInfo();
   }, [setLoginState]);
 
+  const handleLogin = async () => {
+
+
+    try {
+      const currentUrl = window.location.href;
+      const response = await axios.get(`https://worldisaster.com/api/auth/google/url?preLoginUrl=${encodeURIComponent(currentUrl)}`);
+      const { url } = response.data;
+      window.location.href = url; // 받아온 URL로 리다이렉트
+    } catch (error) {
+      console.error('Error fetching auth URL:', error);
+    }
+  };
 
   // 📌 로그아웃 클릭 시 get 요청
   const handleLogout = async () => {
@@ -73,7 +85,7 @@ export const Navbar = () => {
             </>
           ) : (
             <>
-              <span className='text-xl'><a href='https://worldisaster.com/api/auth/google/'>로그인</a></span>
+              <span className='text-xl'><a onClick={handleLogin} style={{ cursor: 'pointer' }}>로그인</a></span>
             </>
           )}
         </div>
