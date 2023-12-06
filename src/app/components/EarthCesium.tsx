@@ -68,6 +68,19 @@ const EarthCesium = () => {
   const [custom, setCustom] = useState<CustomDataSource | null>(null);
   const [clickedEntity, setClickedEntity] = useState(null);
   const [activeAnimation, setActiveAnimation] = useState<AnimationState | null>(null);
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+
+  // 디테일 사이드바 토글
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+    if (!activeAnimation?.entity.point) return;
+    console.log(activeAnimation)
+    if (activeAnimation) {
+      // 현재 애니메이션 중단 및 크기 복원
+      activeAnimation.stop();
+      activeAnimation.entity.point.pixelSize = new ConstantProperty(activeAnimation.originalSize);
+    }
+  }
 
 
   // 재난 타입에 따른 색상 지정
@@ -350,6 +363,7 @@ const EarthCesium = () => {
         setDIdValue(disasterData.dId);
         setIsUserInput(true)
         setClickedEntity(pickedObject.id);
+        setShowSidebar(true);
       }
     }, ScreenSpaceEventType.LEFT_CLICK);
 
@@ -448,6 +462,7 @@ const EarthCesium = () => {
         complete: () => {
           if (detail) {
             setDIdValue(detail);
+            setShowSidebar(true);
           }
         }
       });
@@ -458,7 +473,7 @@ const EarthCesium = () => {
     <>
       <div id="cesiumContainer" ref={cesiumContainer}>
       </div>
-      <DidLeftSidebar dID={dIdValue} />
+      {showSidebar && <DidLeftSidebar onClose={toggleSidebar} dID={dIdValue} />}
       <AlertModule />
       <ChatToggleComponent />
       <FilterBtnComponent />

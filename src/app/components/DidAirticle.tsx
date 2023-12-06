@@ -59,11 +59,11 @@ const DidArticle: React.FC<ArticleProps> = ({ dID }) => {
   }
 
   return (
-    <div>
+    <div className='flex overflow-x-scroll snap-x snap-mandatory'>
       {articles.map((article, index) => (
-        <div key={index} className=" py-3">
+        <div key={index} className="  mx-60 snap-center w-60  bg-blue-500 flex-shrink-0">
             <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-                {isNaN(parseInt(dID.charAt(0))) ?<img className=" w-full object-cover object-center" src={article.image? article.image:"https://via.placeholder.com/150x100.png?text=NO IMAGE"} alt="article" />:null}
+                {isNaN(parseInt(dID.charAt(0))) ?<img className=" w-full h-[200px] object-cover object-center" src={article.image? article.image:"https://via.placeholder.com/150x100.png?text=NO IMAGE"} alt="article" />:null}
                 <div className="p-6">
                     <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{article.headline}</h2>
                     <div className="flex items-center flex-wrap">

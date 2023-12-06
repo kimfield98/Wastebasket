@@ -181,3 +181,13 @@ select {
   border-bottom: 1px solid black;
   font-weight: bold;
 }
+
+.truncate {
+  max-height: 4.5em; /* 3줄의 높이 (1줄당 대략 1.5em) */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 표시할 줄 수 */
+  -webkit-box-orient: vertical;
+}

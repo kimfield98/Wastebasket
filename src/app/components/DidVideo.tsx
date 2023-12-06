@@ -86,11 +86,14 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
     }
   };
 
+  setTimeout(()=>{
+    setFileError("")
+  },5000)
+
   return (
-    <div>
-      {fileError && <div>{fileError}</div>}
+    <div className="m-2">
       <div
-        className=" rounded-lg bg-white text-black w-full h-20 flex justify-center items-center"
+        className=" rounded-lg bg-white text-black h-20 flex justify-center items-center border-gray-600/80 border-1 mb-2"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -102,9 +105,11 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
             </svg>
           </div>
-        </>: '비디오 파일을 여기에 드래그하세요'}
+        </>: fileError? <div>{fileError}</div>:<div>파일을 드래그 해주세요.</div>}
       </div>
-      <Button onClick={uploadVideo}>업로드</Button>
+      <div className="flex justify-end">
+        <Button onClick={uploadVideo}>업로드</Button>
+      </div>
     </div>
   );
 };
@@ -131,7 +136,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
           setError("동영상이 없습니다.");
         }
       } catch (err) {
-        setError("동영상을 불러오는 데 실패했습니다.");
+        if(axios.isAxiosError(err)) {
+          if (err.response?.status === 404) {
+            setError("동영상이 없습니다.");
+          }else if(err.code?.includes("ECONNABORTED")){
+            setError("동영상을 불러오는 데 시간이 초과되었습니다.");
+          } else{
+            setError("동영상을 불러오는 데 실패했습니다.");
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -164,8 +177,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
 
   return (
     <div>
-      {loading && <p>동영상 불러오는 중...</p>}
-      {error && <p>{error}</p>}
+      {loading && 
+      <div className="flex justify-center">
+        <p>동영상 불러오는 중...</p>
+      </div>}
+      {error && 
+      <div className="flex justify-center">
+        <p>{error}</p>
+      </div>}
       {!loading && !error && videoUrls.length > 0 && (
         <div>
           <video ref={videoRef} className="video-js !w-[100%]" controls />
