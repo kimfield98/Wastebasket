@@ -4,6 +4,7 @@ import '../globals.css'
 import Link from 'next/link';
 import Image from 'next/image';
 import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import { userLoginState } from '../recoil/dataRecoil';
 import Cookies from 'js-cookie';
@@ -11,6 +12,7 @@ import axios from 'axios'
 
 // 네비게이션 바
 export const Navbar = () => {
+  const router = useRouter();
   const [loginState, setLoginState] = useRecoilState(userLoginState);
 
   // 🔄 토큰이 있으면 로그인 상태로 바꾸는 함수
@@ -25,9 +27,9 @@ export const Navbar = () => {
             }
           });
           setLoginState({ isLoggedIn: true, userInfo: response.data });
-          console.log('로그인 정보 주세요', response);
+          console.log('Log: Please provide login information', response);
         } catch (error) {
-          console.error('Error fetching user info:', error);
+          console.error('Log: Error fetching user info:', error);
         }
       }
     };
@@ -36,15 +38,14 @@ export const Navbar = () => {
   }, [setLoginState]);
 
   const handleLogin = async () => {
-
-
     try {
       const currentUrl = window.location.href;
-      const response = await axios.get(`https://worldisaster.com/api/auth/google/url?preLoginUrl=${encodeURIComponent(currentUrl)}`);
+      const encodedUrl = encodeURIComponent(currentUrl);
+      const response = await axios.get(`https://worldisaster.com/api/auth/google/url?preLoginUrl=${encodedUrl}`);
       const { url } = response.data;
       window.location.href = url; // 받아온 URL로 리다이렉트
     } catch (error) {
-      console.error('Error fetching auth URL:', error);
+      console.error('Log: Error fetching auth URL:', error);
     }
   };
 
@@ -58,9 +59,9 @@ export const Navbar = () => {
         }
       });
       setLoginState({ isLoggedIn: false, userInfo: null });
-      alert('로그아웃 성공!');
+      alert('Log-out successful. Hope to see you again soon!');
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Log: Logout failed:', error);
     }
   };
 
@@ -77,21 +78,21 @@ export const Navbar = () => {
         <div className='flex items-center gap-3'>
           {loginState.isLoggedIn ? (
             <>
-              <span className='text-xl'><Link href="/support">후원</Link></span>
-              <span className='text-xl'><Link href="/mypage">내 계정</Link></span>
+              <span className='text-xl'><Link href="/support">Donate</Link></span>
+              <span className='text-xl'><Link href="/mypage">My Page</Link></span>
               <span className='text-xl'>
-                <a onClick={handleLogout} style={{ cursor: 'pointer' }}>로그아웃</a>
+                <a onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</a>
               </span>
             </>
           ) : (
             <>
-              <span className='text-xl'><a onClick={handleLogin} style={{ cursor: 'pointer' }}>로그인</a></span>
+              <span className='text-xl'><a onClick={handleLogin} style={{ cursor: 'pointer' }}>Login</a></span>
             </>
           )}
         </div>
       </nav>
     </>
-  )
-}
+  );
+};
 
 export default Navbar;
