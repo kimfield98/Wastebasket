@@ -249,8 +249,12 @@ const Mypage: React.FC<MypageProps> = () => {
       );
 
       console.log("회원 탈퇴가 성공적으로 처리되었습니다:", response.data);
-      alert('회원 탈퇴 성공!');
-      // You can redirect the user to a different page or perform any other action after successful withdrawal.
+      // Check if there is a redirectUrl in the response
+      if (response.data.redirectUrl) {
+        window.location.href = response.data.redirectUrl; // Redirect to the specified URL
+      } else {
+        alert('name님 회원 탈퇴가 완료되었습니다.'); // Change confirmation message
+      }
     } catch (error) {
       console.error("회원 탈퇴에 실패했습니다", error);
     } finally {
