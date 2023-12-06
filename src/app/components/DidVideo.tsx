@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState, createRef, RefObject } from "react";
-import axios, { AxiosError } from "axios";
+import React, { useEffect, useState, createRef, RefObject } from "react";
+import axios from "axios";
 import { Button } from "@nextui-org/react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import { set } from "video.js/dist/types/tech/middleware";
 import { userLoginState } from "../recoil/dataRecoil";
 import { useRecoilValue } from "recoil";
 
@@ -40,12 +39,12 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
 
       // 파일 크기 및 이름 검사 로직
       if (file.size > 10 * 1024 * 1024) {
-        setFileError('파일 크기가 10MB를 초과합니다.');
+        setFileError('File size exceeds 10 MB.');
         return;
       }
 
       if (file.name.length > 12) {
-        setFileError('파일 이름 길이가 12자를 초과합니다.');
+        setFileError('File name exceeds 12 characters.');
         return;
       }
 
@@ -62,7 +61,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
 
   const uploadVideo = async () => {
     if (!file) {
-      setFileError('파일을 선택해주세요.');
+      setFileError('Please select a file to upload.');
       return;
     }
 
@@ -79,14 +78,14 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
         }, timeout: 30000
       });
       console.log(response.data);
-      setFileError('업로드가 완료되었습니다.');
-    } catch (error:any) {
+      setFileError('Upload completed.');
+    } catch (error: any) {
       if (error.code === 'ECONNABORTED') {
-        console.error("업로드 시간 초과",error);
-        setFileError('업로드 시간이 초과되었습니다.');
+        console.error("업로드 시간 초과", error);
+        setFileError('Request timed out during upload.');
       } else {
-        console.error("업로드 실패", error);
-        setFileError('업로드 중 오류가 발생했습니다.');
+        console.error("Upload failed.", error);
+        setFileError('An error during upload.');
       }
     } finally {
       setLoading(false);
@@ -94,34 +93,34 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
     }
   };
 
-  setTimeout(()=>{
+  setTimeout(() => {
     setFileError("")
-  },5000)
+  }, 5000)
 
   return (
     <>
-    {!isLogin ? 
-      <div className="m-2">
-        <div
-          className=" rounded-lg bg-white text-black h-20 flex justify-center items-center border-gray-600/80 border-1 mb-2"
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          {fileName ? 
-          <>
-          선택된 파일: {fileName}
-            <div className="m-2" onClick={DropCancel}>
-              <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-black hover:text-gray-1' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
-              </svg>
-            </div>
-          </>: fileError? <div>{fileError}</div>:<div>파일을 드래그 해주세요.</div>}
-        </div>
-        <div className="flex justify-end">
-          <Button onClick={uploadVideo}>업로드</Button>
-        </div>
-      </div>:null
-    }
+      {!isLogin ?
+        <div className="m-2">
+          <div
+            className=" rounded-lg bg-white text-black h-20 flex justify-center items-center border-gray-600/80 border-1 mb-2"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            {fileName ?
+              <>
+                Selected file: {fileName}
+                <div className="m-2" onClick={DropCancel}>
+                  <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-black hover:text-gray-1' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+                  </svg>
+                </div>
+              </> : fileError ? <div>{fileError}</div> : <div>Please drag a file here.</div>}
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={uploadVideo}>Upload</Button>
+          </div>
+        </div> : null
+      }
     </>
   );
 };
@@ -138,22 +137,22 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
       setLoading(true);
       setError("");
       try {
-        const response = await axios(`https://worldisaster.com/api/upload/${dID}`,{timeout: 5000});
+        const response = await axios(`https://worldisaster.com/api/upload/${dID}`, { timeout: 5000 });
         const data = response.data;
-          if(data.length > 0){
+        if (data.length > 0) {
           setVideoData(data);
           setVideoRefs(videoData.map(() => createRef()));
         } else {
-          setError("동영상이 없습니다.");
+          setError("No videos to display.");
         }
       } catch (err) {
-        if(axios.isAxiosError(err)) {
+        if (axios.isAxiosError(err)) {
           if (err.response?.status === 404) {
-            setError("동영상이 없습니다.");
-          }else if(err.code?.includes("ECONNABORTED")){
-            setError("동영상을 불러오는 데 시간이 초과되었습니다.");
-          } else{
-            setError("동영상을 불러오는 데 실패했습니다.");
+            setError("No videos to display.");
+          } else if (err.code?.includes("ECONNABORTED")) {
+            setError("Request timed out while loading video.");
+          } else {
+            setError("Failed to load video.");
           }
         }
       } finally {
@@ -167,7 +166,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
   useEffect(() => {
     videoData.forEach((video: any, index: number) => {
       console.log(video.current)
-      if(video.current){
+      if (video.current) {
         videojs(video.current, {
           controls: true,
           sources: [{
@@ -177,20 +176,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
         });
       }
     })
-  },[dID]);
+  }, [dID]);
 
   return (
     <>
-      {loading && <div className="flex justify-center"><p>동영상 불러오는 중...</p></div>}
+      {loading && <div className="flex justify-center"><p>Loading video...</p></div>}
       <div className="flex justify-center"><p>{error}</p></div>
       {!loading && !error && videoData.length > 0 && (
         <div className="flex overflow-x-scroll snap-x snap-mandatory">
           {videoData.map((video: any, index: number) => (
             <div key={index} className="mx-60 snap-center w-80 bg-blue-500 flex-shrink-0">
-              <video 
+              <video
                 ref={videoRefs[index]}
-                className="video-js !w-full !h-[500px]" 
-                controls 
+                className="video-js !w-full !h-[500px]"
+                controls
               >
               </video>
             </div>
