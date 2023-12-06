@@ -74,7 +74,7 @@ const EarthCesium = () => {
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
     if (!activeAnimation?.entity.point) return;
-    console.log(activeAnimation)
+    console.log(activeAnimation) // 디버깅 목적으로 보이며, 삭제 요망
     if (activeAnimation) {
       // 현재 애니메이션 중단 및 크기 복원
       activeAnimation.stop();
@@ -125,7 +125,7 @@ const EarthCesium = () => {
       case 'Extratropical Cyclone':
         return "DARKORCHID";
       case 'Heat Wave':
-        return "RED2";     
+        return "RED2";
       default:
         return "WHITE";
     }
@@ -168,9 +168,9 @@ const EarthCesium = () => {
         style: IonWorldImageryStyle.AERIAL_WITH_LABELS,
       }).then((imageryProvider) => {
         viewer.scene.imageryLayers.addImageryProvider(imageryProvider);
-        console.log(`layout추가 성공`)
+        console.log(`Log: Layout loaded successfully.`)
       }).catch((err) => {
-        console.log(`layout추가 실패: ${err}`);
+        console.log(`Log: Failed to load layout: ${err}`);
       });
 
       // viewer 정리 로직 추가
@@ -191,9 +191,9 @@ const EarthCesium = () => {
       ]);
       setData(oldData.data.concat(newData.data));
       setCustom(new CustomDataSource('Disasters'));
-      console.log(`데이터 로드 성공`);
+      console.log(`Log: Data load successful.`);
     } catch (err) {
-      console.log('데이터 로드 실패', err);
+      console.log('Log: Data load failed.', err);
     }
   }
 
@@ -228,13 +228,13 @@ const EarthCesium = () => {
           item.dStatus === 'ongoing' ? (
             entityToAdd = new Entity({
               position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
-                point: {
-                  pixelSize: 10,
-                  outlineWidth: 2,
-                  outlineColor: item.dAlertLevel=="Green"? Color.LIMEGREEN:item.dAlertLevel=="Orange"? Color.YELLOW:Color.TOMATO,
-                  color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
-                  scaleByDistance: new NearFarScalar(10e3, 3, 10e6, 0.7)
-                },
+              point: {
+                pixelSize: 10,
+                outlineWidth: 2,
+                outlineColor: item.dAlertLevel == "Green" ? Color.LIMEGREEN : item.dAlertLevel == "Orange" ? Color.YELLOW : Color.TOMATO,
+                color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
+                scaleByDistance: new NearFarScalar(10e3, 3, 10e6, 0.7)
+              },
               properties: item,
             })) : (
             entityToAdd = new Entity({
@@ -383,15 +383,15 @@ const EarthCesium = () => {
 
   const applyBlinkingEffect = (entity: Entity) => {
     if (!entity.point?.pixelSize) return;
-  
+
     let growing = true; // 크기가 커지고 있는지 여부를 나타내는 플래그
     const originalSize = entity.point.pixelSize.getValue(JulianDate.now());
     const maxSize = originalSize * 5; // 최대 크기
     let currentSize = originalSize;
-  
+
     const onTickListener = () => {
       if (!entity.point) return;
-  
+
       if (growing) {
         currentSize += 1.5; // 점점 커지게 함
         if (currentSize >= maxSize) growing = false; // 최대 크기에 도달하면 줄어드는 것으로 전환
@@ -399,14 +399,14 @@ const EarthCesium = () => {
         currentSize -= 1.5; // 점점 작아지게 함
         if (currentSize <= originalSize) growing = true; // 원래 크기로 돌아오면 다시 커지는 것으로 전환
       }
-  
+
       entity.point.pixelSize = new ConstantProperty(currentSize);
     };
-  
+
     if (activeAnimation) {
       activeAnimation.stop();
     }
-  
+
     viewerRef.current?.clock.onTick.addEventListener(onTickListener);
 
     // 애니메이션 상태 업데이트

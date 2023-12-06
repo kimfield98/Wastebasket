@@ -28,7 +28,7 @@ export const AlertModule = () => {
     /* 소켓 연결이 있을 때만 사용 */
     if (socketRef.current) {
       socketRef.current.on('connect', () => {
-        console.log('Alerts 웹소켓 연결 성공');
+        console.log('Log: Alerts websocket connection successful');
       });
 
       socketRef.current.on('disaster-alert', (message) => {
@@ -73,7 +73,7 @@ export const AlertModule = () => {
               <span style={{ color: alertLevelColor }}> ({dAlertLevel})</span>.
               {' '}
               <Link href={earthURL}>
-                  Click <span style={{ color: 'yellow' }}>HERE</span> for details.
+                Click <span style={{ color: 'yellow' }}>HERE</span> for details.
               </Link>
             </div>
           );
@@ -92,7 +92,7 @@ export const AlertModule = () => {
       });
 
       socketRef.current.on('disconnect', () => {
-        // console.log('Disconnected from server'); // Debug-only
+        console.log('Log: Alerts websocket disconnected from server'); // Debug-only
       });
     }
 
