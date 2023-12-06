@@ -3,6 +3,8 @@
 import '../globals.css'
 import Link from 'next/link';
 import React, { useEffect, useRef } from 'react';
+import { useRecoilState} from 'recoil';
+import { DataType } from '../recoil/dataRecoil';
 
 import { io, Socket } from 'socket.io-client';
 import { toast, ToastContainer } from 'react-toastify';
@@ -36,19 +38,14 @@ export const AlertModule = () => {
           dSource: data.dSource, // "GDACS"
           dStatus: data.dStatus, // "real-time"
           dAlertLevel: data.dAlertLevel, // "Green"
-          dSeverity: data.dSeverity, // "Magnitude 4.5M, Depth:28.8km"
           dCountry: data.dCountry, // "United States"
-          dCountryCode: data.dCountryCode, // "us"
-          dCountryIso3: data.dCountryIso3, // "USA"
           dType: data.dType, // "Earthquake"
-          dTypeCode: data.dTypeCode, // "EQ"
           dDate: data.dDate, // "Fri, 01 Dec 2023 17:54:39 GMT"
           dLatitude: data.dLatitude, // "52.0898"
           dLongitude: data.dLongitude, // "173.2261"
           dTitle: data.dTitle, // "Green earthquake alert (Magnitude 4.5M, Depth:28.843km) in United States 01/12/2023 17:54 UTC, Few people affected in 100km."
           dDescription: data.dDescription, // "On 12/1/2023 5:54:39 PM, an earthquake occurred in United States potentially affecting Few people affected in 100km. The earthquake had Magnitude 4.5M, Depth:28.843km."
           dUrl: data.dUrl, // "https://www.gdacs.org/report.aspx?eventtype=EQ&eventid=1403291"
-          objectId: data.objectId // 177
         }
 
         const earthURL = `https://worldisaster.com/earth?lon=${result.dLongitude}&lat=${result.dLatitude}&height=500000&did=${result.dID}`

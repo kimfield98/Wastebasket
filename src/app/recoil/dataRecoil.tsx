@@ -10,11 +10,11 @@ export interface DataType{
   dAlertLevel: string|null;
   dCountry: string;
   dDistrict: string|null;
-  dType: string;
-  dDate: string;
+  dType: string|null;
+  dDate: string|null;
   dLatitude: number;
   dLongitude: number;
-  dTitle: string;
+  dTitle: string|null;
   dDescription: string;
   dUrl: string;
 }
@@ -46,6 +46,11 @@ export interface UserType {
 export const dataState = atom<DataType[]>({
   key: 'dataState',
   default: [] as DataType[],
+});
+
+export const yearState = atom<string>({
+  key: 'yearState',
+  default: '2023' ,
 });
 
 export const filterState = atom<FilterType>({

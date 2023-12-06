@@ -149,7 +149,7 @@ const EarthCesium = () => {
       });
 
       viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0; // 최소 확대 거리 (미터 단위)
-      viewer.scene.screenSpaceCameraController.maximumZoomDistance = 18090749.93102962; // 최대 확대 거리 (미터 단위)
+      viewer.scene.screenSpaceCameraController.maximumZoomDistance = 30000000; // 최대 확대 거리 (미터 단위)
       viewer.scene.screenSpaceCameraController.enableTilt = false; // 휠클릭 회전 활성화 여부
       viewer.scene.screenSpaceCameraController.enableLook = true; // 우클릭 회전 활성화 여부
       viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK); // 더블클릭 이벤트 제거

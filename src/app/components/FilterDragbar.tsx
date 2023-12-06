@@ -3,17 +3,16 @@
 import React, { useState } from "react";
 import { Slider } from "@nextui-org/react";
 import { useRecoilState } from "recoil";
-import { filterState } from '../recoil/dataRecoil';
+import { filterState, yearState } from '../recoil/dataRecoil';
 
 
 export const FilterDragbar = () => {
   const [filtering, setFiltering] = useRecoilState(filterState);
-  const [selectYear, setSelectYear] = useState<number>(filtering.selectedYear);
+  const [selectedYear, setSelectedYear] = useRecoilState(yearState);
 
 
   // 연도 선택 핸들러
   const handleYearChange = (year: number) => {
-    setSelectYear(year);
     setFiltering({ ...filtering, selectedYear: year });
   };
 
@@ -25,7 +24,7 @@ export const FilterDragbar = () => {
           maxValue={2023}
           minValue={2000}
           getValue={(year) => `${year} / 2023`}
-          value={selectYear}
+          value={filtering.selectedYear}
           onChange={(newYear)=>{
               const year = Array.isArray(newYear) ? newYear[0] : newYear;
               handleYearChange(year);

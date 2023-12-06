@@ -50,12 +50,12 @@ export default function Home() {
       ))}
       </div>
       <div style={{ display:'flex', flexDirection:'column', alignItems:'center', zIndex: 2, color: '#fff', textAlign:"center"}}>
-        <h1 className='text-[1.5rem] w-[100vw] sm:text-[2.5rem] md:text-[3.5rem]  lg:text-[4.5rem] sm:break-words xl:text-[5.5rem] !'>세계 재난재해 아카이브</h1>
-        <h1 className='text-[1.5rem] w-[100vw] sm:text-[2.5rem] md:text-[3.5rem]  lg:text-[4.5rem] sm:break-words xl:text-[5.5rem]'>및 실시간 알림 </h1>
+        <h1 className='text-[1rem] w-[100vw] sm:text-[2rem] md:text-[3rem]  lg:text-[4rem] sm:break-words xl:text-[5rem]'>REAL-TIME GLOBAL DISASTER</h1>
+        <h1 className='text-[1rem] w-[100vw] sm:text-[2rem] md:text-[3rem]  lg:text-[4rem] sm:break-words xl:text-[5rem]'>ALERTS & ARCHIVE</h1>
         <div className='mt-8'>
           <Link href='/earth'>
             <span className=' rounded-full bg-slate-300/50 inline-block sm:text-[1.5rem] border-2 sm:px-[15px] sm:py-[10px] px-[10px] py-[5px] text-[1rem] hover:bg-sky-800/50'>
-            지구로 이동하기
+            Launch Earth
             </span>
           </Link>
         </div>
