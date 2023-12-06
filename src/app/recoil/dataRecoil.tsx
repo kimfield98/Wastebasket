@@ -10,8 +10,8 @@ export interface DataType{
   dAlertLevel: string|null;
   dCountry: string;
   dDistrict: string|null;
-  dType: string|null;
-  dDate: string|null;
+  dType: string;
+  dDate: string;
   dLatitude: number;
   dLongitude: number;
   dTitle: string|null;
