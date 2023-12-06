@@ -140,8 +140,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
       try {
         const response = await axios(`https://worldisaster.com/api/upload/${dID}`,{timeout: 5000});
         const data = response.data;
+          if(data.length > 0){
           setVideoData(data);
           setVideoRefs(videoData.map(() => createRef()));
+        } else {
+          setError("동영상이 없습니다.");
+        }
       } catch (err) {
         if(axios.isAxiosError(err)) {
           if (err.response?.status === 404) {
@@ -178,7 +182,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
   return (
     <>
       {loading && <div className="flex justify-center"><p>동영상 불러오는 중...</p></div>}
-      {error && <div className="flex justify-center"><p>{error}</p></div>}
+      <div className="flex justify-center"><p>{error}</p></div>
       {!loading && !error && videoData.length > 0 && (
         <div className="flex overflow-x-scroll snap-x snap-mandatory">
           {videoData.map((video: any, index: number) => (

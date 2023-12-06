@@ -41,7 +41,7 @@ const DidLeftSidebar: React.FC<didDetailProps>= ({ onClose, dID }) => {
       
   return (
     <div id="drageRight" style={{ width: `${width}px` }} className='min-w-full custom-scrollbar absolute left-0 top-0 z-20 flex flex-col h-screen md:min-w-[30%] md:max-w-[50%] overflow-auto bg-dark-2 px-4 pb-5'>
-      <div className='absolute right-0 top-0 w-3 cursor-ew-resize hover:bg-slate-500 ' onMouseDown={startResize}></div>
+      <div className='absolute right-0 top-0 w-3 h-full cursor-ew-resize hover:bg-slate-500 ' onMouseDown={startResize}></div>
       <div className='bg-dark-2 w-[100%] sticky pt-20 pb-4 top-0 text-heading3-bold text-light-1 select-none z-10 flex place-content-between'>
         <div className='inline-flex'>Disaster Detail
           <img className='rounded-xl w-8' src={`/Disaster/${detailData.dType}.png`} alt="disaster" />

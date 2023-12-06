@@ -29,8 +29,6 @@ export const FilterTag = () => {
     setSelectDisasters(updatedDisasters);
     setFiltering({ ...filtering, selectedDisaster: updatedDisasters });
   };
-  
-  console.log(selectDisasters)
 
   return (
       <div className="flex gap-3 flex-wrap">
