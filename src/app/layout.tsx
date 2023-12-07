@@ -33,8 +33,10 @@ export default function RootLayout({
       </Head>
       <body className={inter.className}>
         <RecoidContextProvider>
-          <Navbar/>
-          {children}
+          <div className='w-[100vw] h-[100vh] overflow-hidden'>
+            <Navbar/>
+            {children}
+          </div>
         </RecoidContextProvider>
       </body>
     </html>

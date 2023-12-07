@@ -70,19 +70,6 @@ const EarthCesium = () => {
   const [activeAnimation, setActiveAnimation] = useState<AnimationState | null>(null);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
-  // 디테일 사이드바 토글
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    if (!activeAnimation?.entity.point) return;
-    console.log(activeAnimation) // 디버깅 목적으로 보이며, 삭제 요망
-    if (activeAnimation) {
-      // 현재 애니메이션 중단 및 크기 복원
-      activeAnimation.stop();
-      activeAnimation.entity.point.pixelSize = new ConstantProperty(activeAnimation.originalSize);
-    }
-  }
-
-
   // 재난 타입에 따른 색상 지정
   function getColorForDisasterType(type: any) {
     switch (type) {
@@ -233,7 +220,7 @@ const EarthCesium = () => {
                 outlineWidth: 2,
                 outlineColor: item.dAlertLevel == "Green" ? Color.LIMEGREEN : item.dAlertLevel == "Orange" ? Color.YELLOW : Color.TOMATO,
                 color: Color.fromCssColorString(getColorForDisasterType(item.dType)),
-                scaleByDistance: new NearFarScalar(10e3, 3, 10e6, 0.7)
+                scaleByDistance: new NearFarScalar(10e3, 1, 10e6, 0.7)
               },
               properties: item,
             })) : (
@@ -286,7 +273,7 @@ const EarthCesium = () => {
   useEffect(() => {
     if (!custom || !viewerRef.current) return;
     applyFilters();
-  }, [dataFilter, data])
+  }, [dataFilter, data])  
 
   // 클릭 이벤트 관리
   useEffect(() => {
@@ -320,17 +307,44 @@ const EarthCesium = () => {
           dStatus: properties._dStatus?._value,
           dDate: properties._dDate?._value,
         };
-        // pickedObject.id._point._pixelSize._value
+
         tooltip.innerHTML = `
-          <div className="select-none "> 
-            <div>type: ${disasterData.dType}</div>
-            <div>Country: ${disasterData.dCountry}</div>
-            <div>Data: ${disasterData.dDate}</div>
-            <div>Status: ${disasterData.dStatus}</div>
-          </div>`;
+        <div style="
+          background-color: rgba(255, 255, 255, 0.9); 
+          border-radius: 8px; 
+          padding: 10px; 
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          font-family: Arial, sans-serif;
+          max-width: 200px;
+          line-height: 1.4;
+        ">
+          <img src="./Disaster/${disasterData.dType}.png" alt="${disasterData.dType}" style="width: 36px; height: 36px; margin-bottom: 10px;">
+          <table>
+            <tbody>
+              <tr>
+                <td style="color: #666;">Type:</td>
+                <td style="color: #000;">${disasterData.dType}</td>
+              </tr>
+              <tr>
+                <td style="color: #666;">Country:</td>
+                <td style="color: #000;">${disasterData.dCountry}</td>
+              </tr>
+              <tr>
+                <td style="color: #666;">Date:</td>
+                <td style="color: #000;">${disasterData.dDate}</td>
+              </tr>
+              <tr>
+                <td style="color: #666;">Status:</td>
+                <td style="color: #000;">${disasterData.dStatus}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>`;
+      
+
         tooltip.style.display = 'block';
-        tooltip.style.bottom = `${window.innerHeight - movement.endPosition.y - 50}px`;
-        tooltip.style.left = `${movement.endPosition.x}px`;
+        tooltip.style.bottom = `${window.innerHeight - movement.endPosition.y -50}px`;
+        tooltip.style.left = `${movement.endPosition.x + window.innerWidth/3}px`;
       } else {
         tooltip.style.display = 'none';
       }
@@ -465,14 +479,18 @@ const EarthCesium = () => {
   }, [search.get('lon'), search.get('lat'), search.get('height'), search.get('did')]);
 
   return (
-    <>
-      <div id="cesiumContainer" ref={cesiumContainer}>
+    <div className=" grid grid-cols-3">
+      <div className=' col-span-1'>
+        <DidLeftSidebar dID={dIdValue} />
       </div>
-      {showSidebar && <DidLeftSidebar onClose={toggleSidebar} dID={dIdValue} />}
-      <AlertModule />
-      <ChatToggleComponent />
-      <FilterBtnComponent />
-    </>
+      <div className=' col-span-2'>
+        <div className='grid h-[100vh] mt-[7rem]' ref={cesiumContainer}>
+          <AlertModule />
+          <ChatToggleComponent />
+          <FilterBtnComponent />
+        </div>
+      </div>
+    </div>
   );
 };
 

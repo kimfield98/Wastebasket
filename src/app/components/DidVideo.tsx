@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef, RefObject } from "react";
+import React, { useEffect, useState,useRef, createRef, RefObject } from "react";
 import axios from "axios";
 import { Button } from "@nextui-org/react";
 import videojs from "video.js";
@@ -126,9 +126,11 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
 };
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [videoData, setVideoData] = useState<VideoData[]>([]);
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string>("");
   const [videoRefs, setVideoRefs] = useState<RefObject<HTMLVideoElement>[]>([]);
 
 
@@ -141,7 +143,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
         const data = response.data;
         if (data.length > 0) {
           setVideoData(data);
-          setVideoRefs(videoData.map(() => createRef()));
+          setCurrentVideoUrl(data[0].video_url);
         } else {
           setError("No videos to display.");
         }
@@ -164,19 +166,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
   }, [dID]);
 
   useEffect(() => {
-    videoData.forEach((video: any, index: number) => {
-      console.log(video.current)
-      if (video.current) {
-        videojs(video.current, {
-          controls: true,
-          sources: [{
-            src: video.video_url,
-            type: 'video/mp4'
-          }]
+    if (videoRef.current && videoData.length > 0){
+      if (!videojs.getPlayers()[videoRef.current.id]) {
+        videojs(videoRef.current, {
+          sources: [{ src: currentVideoUrl, type: "application/x-mpegURL"}],
         });
+      } else {
+        const player = videojs.getPlayers()[videoRef.current.id];
+        player.src({ src: currentVideoUrl, type: "application/x-mpegURL"});
       }
-    })
-  }, [dID]);
+    }
+
+    return ()=>{
+      if (videoRef.current && videojs.getPlayers()[videoRef.current.id]) {
+        videojs.getPlayers()[videoRef.current.id].dispose();
+      }
+    }
+  }, [currentVideoUrl,dID]);
 
   return (
     <>
@@ -184,16 +190,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
       <div className="flex justify-center"><p>{error}</p></div>
       {!loading && !error && videoData.length > 0 && (
         <div className="flex overflow-x-scroll snap-x snap-mandatory">
-          {videoData.map((video: any, index: number) => (
-            <div key={index} className="mx-60 snap-center w-80 bg-blue-500 flex-shrink-0">
-              <video
-                ref={videoRefs[index]}
-                className="video-js !w-full !h-[500px]"
-                controls
-              >
-              </video>
-            </div>
-          ))}
+          <div key={0} className="mx-60 snap-center w-80 bg-blue-500 flex-shrink-0">
+            <video
+              ref={videoRef}
+              className="video-js !w-full !h-[500px]"
+              controls
+            >
+            </video>
+          </div>
         </div>
       )}
     </>
