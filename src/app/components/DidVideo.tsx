@@ -170,6 +170,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
       if (!videojs.getPlayers()[videoRef.current.id]) {
         videojs(videoRef.current, {
           sources: [{ src: currentVideoUrl, type: "application/x-mpegURL"}],
+        });
       } else {
         const player = videojs.getPlayers()[videoRef.current.id];
         player.src({ src: currentVideoUrl, type: "application/x-mpegURL"});
