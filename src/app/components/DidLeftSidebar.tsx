@@ -3,17 +3,15 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { DataType, dataState } from '../recoil/dataRecoil';
-import Link from 'next/link';
 import DidVideo from './DidVideo';
 import DidArticle from './DidAirticle';
-import { Accordion, AccordionItem } from '@nextui-org/react';
+import { Accordion, AccordionItem } from "@nextui-org/accordion"
 
 interface didDetailProps {
-  onClose?: () => void;
   dID: string;
 }
 
-const DidLeftSidebar: React.FC<didDetailProps> = ({ onClose, dID }) => {
+const DidLeftSidebar: React.FC<didDetailProps> = ({ dID }) => {
   const data = useRecoilValue(dataState);
   const filteredData = data.filter((item) => item.dID === dID);
   const detailData: DataType = filteredData[0];

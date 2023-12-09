@@ -205,3 +205,16 @@ select {
   /* 표시할 줄 수 */
   -webkit-box-orient: vertical;
 }
+
+.animate-slide-up{
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up{
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
