@@ -3,7 +3,7 @@
 import '../globals.css'
 import Link from 'next/link';
 import React, { useEffect, useRef } from 'react';
-import { useRecoilState} from 'recoil';
+import { useRecoilState } from 'recoil';
 import { DataType } from '../recoil/dataRecoil';
 
 import { io, Socket } from 'socket.io-client';
@@ -69,11 +69,11 @@ export const AlertModule = () => {
 
           return (
             <div>
-              {dCountry}: new {dType}
-              <span style={{ color: alertLevelColor }}> ({dAlertLevel})</span>.
-              {' '}
               <Link href={earthURL}>
-                Click <span style={{ color: 'yellow' }}>HERE</span> for details.
+                {dCountry}: new {dType}
+                <span style={{ color: alertLevelColor }}> ({dAlertLevel})</span>.
+                {' '}
+                Click <span style={{ color: 'yellow' }}>here</span> for details.
               </Link>
             </div>
           );

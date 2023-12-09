@@ -86,7 +86,8 @@ export const Navbar = () => {
             </>
           ) : (
             <>
-              <span className='text-xl'><a onClick={handleLogin} style={{ cursor: 'pointer' }}>Login</a></span>
+              {/* <span className='text-xl'><a onClick={handleLogin} style={{ cursor: 'pointer' }}>Login</a></span> */}
+              <span className='text-xl'><a href="https://worldisaster.com/api/auth/google">Login</a></span>
             </>
           )}
         </div>
