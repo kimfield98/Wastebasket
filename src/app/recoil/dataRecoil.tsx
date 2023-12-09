@@ -41,18 +41,37 @@ export interface UserType {
   } | null,
 }
 
+export interface PostAlerInfo {
+  objectId: string;
+  alertEmail: string;
+  alertDistrictName: string;
+  alertCountryName: string;
+  alertLatitude: number;
+  alertLongitude: number;
+  alertRadius: number;
+  alertlevelRed: boolean;
+  alertlevelOrange: boolean;
+  alertlevelGreen: boolean;
+  createAt: string;
+  memo: string;
+  open: boolean;
+}
+
 
 //////// atom ////////
+// 국가 데이터 상태 정의
 export const dataState = atom<DataType[]>({
   key: 'dataState',
   default: [] as DataType[],
 });
 
+// 국가 년도 상태 정의
 export const yearState = atom<number>({
   key: 'yearState',
   default: 2023 ,
 });
 
+// 필터 상태 정의
 export const filterState = atom<FilterType>({
   key: 'filterState',
   default: {
@@ -63,6 +82,7 @@ export const filterState = atom<FilterType>({
   }
 })
 
+// 로그인 했는지 여부
 export const userLoginState = atom<UserType>({
   key: 'userLoginState',
   default: {
@@ -84,6 +104,26 @@ export const filterButtonState = atom<{
   key: 'filterButtonState',
   default: {
     top: 'initial-top-value', // 초기값 설정
+  },
+});
+
+// 알람 정보 상태 정의<
+export const mailAlarmState = atom<PostAlerInfo>({
+  key: 'mailAlarmState',
+  default: {
+    objectId: '',
+    alertEmail: '',
+    alertDistrictName: '' ,
+    alertCountryName: '',
+    alertLatitude: 0,
+    alertLongitude: 0,
+    alertRadius: 100,
+    alertlevelRed: false,
+    alertlevelOrange: false,
+    alertlevelGreen: false,
+    createAt: "",
+    memo: "",
+    open: false,
   },
 });
 

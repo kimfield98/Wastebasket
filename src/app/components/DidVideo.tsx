@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useRef, createRef, RefObject } from "react";
 import axios from "axios";
-import { Button } from "@nextui-org/react";
-import videojs from "video.js";
+import { Button } from "@nextui-org/button";
+import videojs from "video.js"
 import "video.js/dist/video-js.css";
 import { userLoginState } from "../recoil/dataRecoil";
 import { useRecoilValue } from "recoil";
@@ -25,7 +25,8 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
   const [fileName, setFileName] = useState<string>("");
   const [fileError, setFileError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const isLogin = useRecoilValue(userLoginState);
+  const isLogin2 = useRecoilValue(userLoginState);
+  const isLogin = true;
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -99,7 +100,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ dID }) => {
 
   return (
     <>
-      {!isLogin ?
+      {isLogin ?
         <div className="m-2">
           <div
             className=" rounded-lg bg-white text-black h-20 flex justify-center items-center border-gray-600/80 border-1 mb-2"
@@ -166,23 +167,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
   }, [dID]);
 
   useEffect(() => {
-    if (videoRef.current && videoData.length > 0){
+    videoData.map((video, index) => {
+      const videoRef = createRef<HTMLVideoElement>();
+      setVideoRefs((prev) => [...prev, videoRef]);
+      if (!videoRef.current) return;
       if (!videojs.getPlayers()[videoRef.current.id]) {
         videojs(videoRef.current, {
-          sources: [{ src: currentVideoUrl, type: "application/x-mpegURL"}],
+          sources: [{ src: video.video_url, type: "application/x-mpegURL"}],
         });
       } else {
         const player = videojs.getPlayers()[videoRef.current.id];
-        player.src({ src: currentVideoUrl, type: "application/x-mpegURL"});
+        player.src({ src: video.video_url, type: "application/x-mpegURL"});
       }
-    }
+    })
 
     return ()=>{
-      if (videoRef.current && videojs.getPlayers()[videoRef.current.id]) {
-        videojs.getPlayers()[videoRef.current.id].dispose();
-      }
+      videoRefs.map((video, index) => {
+        if (video.current && videojs.getPlayers()[video.current.id]) {
+          videojs.getPlayers()[video.current.id].dispose();
+        }
+      })
     }
-  }, [currentVideoUrl,dID]);
+  }, [videoData,dID]);
 
   return (
     <>
@@ -190,14 +196,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ dID }) => {
       <div className="flex justify-center"><p>{error}</p></div>
       {!loading && !error && videoData.length > 0 && (
         <div className="flex overflow-x-scroll snap-x snap-mandatory">
-          <div key={0} className="mx-60 snap-center w-80 bg-blue-500 flex-shrink-0">
-            <video
-              ref={videoRef}
-              className="video-js !w-full !h-[500px]"
-              controls
-            >
-            </video>
-          </div>
+          {videoRefs.map((video, index) => (
+            <div key={index} className="mx-60 snap-center w-80 bg-blue-500 flex-shrink-0">
+              <video
+                ref={video}
+                className="video-js !w-full !h-[500px]"
+                controls
+              >
+              </video>
+            </div>
+          ))}
         </div>
       )}
     </>
