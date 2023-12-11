@@ -66,6 +66,27 @@ interface AnimationState {
   originalSize: number;
 }
 
+const FilterStatusDisplay = () => {
+  const dataFilter = useRecoilValue(filterState);
+
+  const getFilterStatusText = () => {
+    if (dataFilter.selectedLive) {
+      return "실시간";
+    } else if (dataFilter.selectedYear) {
+      return `아카이브 - ${dataFilter.selectedYear}`;
+    } else {
+      return "No active filters";
+    }
+  };
+  return (
+    <div className="absolute top-10 left-[66%] rounded-2xl bg-gray-300 transform -translate-x-1/2 mt-4 text-center text-lg font-semibold z-10 p-2">
+      <div className="bg-white p-3 rounded-xl shadow-sm">
+        <span className="text-black">{getFilterStatusText()}</span>
+      </div>
+    </div>
+  );
+};
+
 const EarthCesium = () => {
   const cesiumContainer = useRef(null);
   const router = useRouter();
@@ -798,6 +819,7 @@ const EarthCesium = () => {
 
   return (
     <div className="grid grid-cols-3 ">
+      <FilterStatusDisplay/>
       <div>
         <DidLeftSidebar dID={dIdValue} />
       </div>
