@@ -23,7 +23,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import DidLeftSidebar from './DidLeftSidebar';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { dataState, DataType, filterState, mailAlarmState, PostAlerInfo,userLoginState } from '../recoil/dataRecoil';
+import { dataState, DataType, filterState, mailAlarmState, PostAlerInfo,userLoginState, clickAlertInfo } from '../recoil/dataRecoil';
 import { AlertModule } from './AlertModule';
 import axios from 'axios';
 import ChatToggleComponent from './ChatToggle';
@@ -38,7 +38,7 @@ interface disasterInfoHover {
   dDate: string;
 }
 
-interface alartInfoHover {
+interface alertInfoHover {
   alertCountryName: string;
   alertRadius: number;
   alertlevelRed: boolean;
@@ -82,6 +82,7 @@ const EarthCesium = () => {
   const [mailAlarmInfo,setMailAlarmInfo] = useRecoilState(mailAlarmState);
   const [alertData, setAlertData] = useState<PostAlerInfo[]>([]);
   const isLogin= useRecoilValue(userLoginState);
+  const setClickalert = useRecoilState(clickAlertInfo)
 
 
   // 재난 타입에 따른 색상 지정
@@ -210,18 +211,62 @@ const EarthCesium = () => {
 
   const token = Cookies.get('access-token');
 
-  const alartLoadData = async () => {
+  const alertLoadData = async () => {
     if(!isLogin) return;
     try {
       const response = await axios('https://worldisaster.com/api/emailAlerts/',
       {
         headers: {Authorization: `Bearer ${token}`}
       });
-      console.log('Log: Alert data load successful.', response.data[0].alertLatitude);
       setAlertData(response.data);
+      console.log("Log: Alert data load success.");
     } catch (err) {
       console.log('Log: Alert data load failed.', err);
+    } finally {
+      applyAlertData();
     }
+  }
+
+  // 알람핀을 유동
+  const applyAlertData=()=>{
+    const viewer = viewerRef.current;
+    if (!viewer || !custom) return;
+  
+    // 기존에 존재하는 'alert' 타입의 엔티티들을 찾아서 삭제
+    const existingAlertEntities = custom.entities.values.filter(e => e.properties?.type._value !== 'disaster');
+    existingAlertEntities.forEach(entity => custom.entities.remove(entity));
+  
+    // 새로운 'alertData'를 바탕으로 알람 엔티티들을 추가
+    alertData.forEach(alert => {
+      if (alert.alertLongitude && alert.alertLatitude) {
+        const alertPointEntity = new Entity({
+          position: Cartesian3.fromDegrees(alert.alertLongitude, alert.alertLatitude),
+          point: {
+            pixelSize: 10,
+            color: Color.RED,
+            outlineColor: Color.WHITE,
+            outlineWidth: 2
+          },
+          properties: {...alert, type: 'alert'}
+        });
+
+        const alertEllipseEntity = new Entity({
+          position: Cartesian3.fromDegrees(alert.alertLongitude, alert.alertLatitude),
+          ellipse: {
+            semiMinorAxis: alert.alertRadius * 1000,
+            semiMajorAxis: alert.alertRadius * 1000,
+            height: 0,
+            material: Color.RED.withAlpha(0.1),
+            outline: true,
+            outlineColor: Color.RED.withAlpha(0.5)
+          }
+        });
+
+        custom.entities.add(alertPointEntity);
+        custom.entities.add(alertEllipseEntity);
+        console.log("Log: Alert data apply success.")
+      }
+    });
   }
 
   const applyFilters = () => {
@@ -248,37 +293,6 @@ const EarthCesium = () => {
 
     custom.entities.removeAll();
 
-    
-    if (alertData){
-    alertData.forEach((item:PostAlerInfo) => {
-      if (item.alertLongitude && item.alertLatitude) {
-        const alertPointEntity = new Entity({
-          position: Cartesian3.fromDegrees(Number(item.alertLongitude), Number(item.alertLatitude),),
-          point: {
-              pixelSize: 10,
-              color: Color.RED,
-              outlineColor: Color.WHITE,
-              outlineWidth: 2
-            },
-          properties: {...item, type:'alert'}
-        });
-        const alertEllipseEntity = new Entity({
-          position: Cartesian3.fromDegrees(Number(item.alertLongitude), Number(item.alertLatitude),),
-        ellipse: {
-          semiMinorAxis : item.alertRadius*1000,
-          semiMajorAxis : item.alertRadius*1000,
-          height: 0,
-          material: Color.RED.withAlpha(0.2),
-          outline : true,
-          outlineColor : new Color(255, 0, 0, 127),
-        },
-      });
-        custom.entities.add(alertPointEntity)
-        custom.entities.add(alertEllipseEntity)
-      }
-    });
-  }
-
     filteredData.forEach((item: DataType) => {
       if (item.dLongitude && item.dLatitude) {
         let entityToAdd;
@@ -297,7 +311,7 @@ const EarthCesium = () => {
             entityToAdd = new Entity({
               position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
               model: {
-                uri: `/pin/${getColorForDisasterType(item.dType)}.glb`,
+                uri: `/pin.glb`,
                 minimumPixelSize: 100,
                 maximumScale: 80000,
                 heightReference: HeightReference.CLAMP_TO_GROUND,
@@ -324,11 +338,18 @@ const EarthCesium = () => {
 
   useEffect(() => {
     loadData();
-    alartLoadData();
-    // if (isLogin.isLoggedIn) {
-    //   alartLoadData();
-    // }
+    alertLoadData()
   }, []);
+  
+  useEffect(()=>{
+    if (!custom || !viewerRef.current) return;
+    alertLoadData()
+  },[mailAlarmInfo])
+
+  useEffect(()=>{
+    alertLoadData()
+    console.log(3)
+  },[mailAlarmInfo])
 
   useEffect(() => {
     if (!custom || !viewerRef.current) return;
@@ -388,55 +409,59 @@ const EarthCesium = () => {
 
         // 알림 데이터일 경우랑 재난일 경우 구분하기
         if (properties._type && properties._type._value === "alert"){
-          const alartrData: alartInfoHover = {
+          const alertrData: alertInfoHover = {
             alertCountryName: properties._alertCountryName?._value,
             alertRadius: properties._alertRadius?._value,
-            alertlevelRed: properties._alertlLevelRed?._value,
+            alertlevelRed: properties._alertLevelRed?._value,
             alertlevelOrange: properties._alertLevelOrange?._value,
             alertlevelGreen: properties._alertLevelGreen?._value,
             createAt: properties._createdAt?._value,
           };
-          console.log(properties)
           tooltipContent.innerHTML = `
-          <div>
-            <table>
+          <div style="
+          background-color: rgba(255, 255, 255, 0.9); 
+          border-radius: 8px; 
+          padding: 10px; 
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          font-family: Arial, sans-serif;
+          max-width: 200px;
+          line-height: 1.4;
+        ">
+            <table style="padding:2px;">
               <tbody>
                 <tr>
                   <td style="color: #666;">Country :</td>
-                  <td style="color: #000;">${alartrData.alertCountryName}</td>
+                  <td style="color: #000;">${alertrData.alertCountryName}</td>
                 </tr>
                 <tr>
                   <td style="color: #666;">Radius :</td>
-                  <td style="color: #000;">${alartrData.alertRadius}</td>
+                  <td style="color: #000;">${alertrData.alertRadius} km</td>
                 </tr>
                 <tr>
                   <td style="color: #666;">AlertLevel :</td>
                   <td style="color: #000;">
                   <div style="display: flex; align-items: center; justify-content: center;">
-                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alartrData.alertlevelRed ? "red" : "gray"}; border-radius: 50%;"></span>
-                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alartrData.alertlevelOrange ? "orange" : "gray"}; border-radius: 50%;"></span>
-                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alartrData.alertlevelGreen ? "green" : "gray"}; border-radius: 50%;"></span>
+                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelRed ? "red" : "gray"}; border-radius: 50%;"></span>
+                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelOrange ? "orange" : "gray"}; border-radius: 50%;"></span>
+                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelGreen ? "green" : "gray"}; border-radius: 50%;"></span>
                   </div>
                   </td>
                 </tr>
                 <tr>
                   <td style="color: #666;">CreateAt:</td>
-                  <td style="color: #000;">${alartrData.createAt.slice(0,10)}</td>
+                  <td style="color: #000;">${alertrData.createAt.slice(0,10)}</td>
                 </tr>
               </tbody>
             </table>
           </div>`;
         tooltipContent.style.display = 'block';
-        tooltipContent.style.bottom = `${window.innerHeight - movement.endPosition.y -50}px`;
-        tooltipContent.style.left = `${movement.endPosition.x + window.innerWidth/3}px`;
         // 툴팁 위치 조정
-        adjustTooltipPosition(movement.endPosition);
       } else {
         tooltipContent.style.display = 'none';
       }
       if(properties._type && properties._type._value === "disaster") {
 
-        const disasterData: disasterInfoHover = {
+        const tDisasterData: disasterInfoHover = {
           dId: properties._dID?._value,
           dType: properties._dType?._value,
           dCountry: properties._dCountry?._value,
@@ -445,25 +470,33 @@ const EarthCesium = () => {
         };
 
         tooltip.innerHTML = `
-          <div>
-            <img src="./Disaster/${disasterData.dType}.png" alt="${disasterData.dType}" style="width: 36px; height: 36px; margin-bottom: 10px;">
+        <div style="
+        background-color: rgba(255, 255, 255, 0.9); 
+        border-radius: 8px; 
+        padding: 10px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        max-width: 200px;
+        line-height: 1.4;
+      ">
+            <img src="./Disaster/${tDisasterData.dType}.png" alt="${tDisasterData.dType}" style="width: 36px; height: 36px; margin-bottom: 10px;">
             <table>
               <tbody>
                 <tr>
                   <td style="color: #666;">Type:</td>
-                  <td style="color: #000;">${disasterData.dType}</td>
+                  <td style="color: #000;">${tDisasterData.dType}</td>
                 </tr>
                 <tr>
                   <td style="color: #666;">Country:</td>
-                  <td style="color: #000;">${disasterData.dCountry}</td>
+                  <td style="color: #000;">${tDisasterData.dCountry}</td>
                 </tr>
                 <tr>
                   <td style="color: #666;">Date:</td>
-                  <td style="color: #000;">${disasterData.dDate}</td>
+                  <td style="color: #000;">${tDisasterData.dDate}</td>
                 </tr>
                 <tr>
                   <td style="color: #666;">Status:</td>
-                  <td style="color: #000;">${disasterData.dStatus}</td>
+                  <td style="color: #000;">${tDisasterData.dStatus}</td>
                 </tr>
               </tbody>
             </table>
@@ -471,13 +504,11 @@ const EarthCesium = () => {
       
 
         tooltip.style.display = 'block';
-        tooltip.style.bottom = `${window.innerHeight - movement.endPosition.y -50}px`;
-        tooltip.style.left = `${movement.endPosition.x + window.innerWidth/3}px`;
         // 툴팁 위치 조정
-        adjustTooltipPosition(movement.endPosition);
       } else {
         tooltip.style.display = 'none';
       }
+      adjustTooltipPosition(movement.endPosition, tooltip, tooltipContent);
     } else {
       tooltip.style.display = 'none';
       tooltipContent.style.display = 'none';
@@ -485,26 +516,34 @@ const EarthCesium = () => {
   }, ScreenSpaceEventType.MOUSE_MOVE);
 
     // 툴팁 위치 조정 함수
-    const adjustTooltipPosition = (position:any) => {
-      const tooltipWidth = tooltip.offsetWidth;
-      const tooltipHeight = tooltip.offsetHeight;
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-
-      // 화면 가장자리에서 툴팁이 벗어나지 않도록 조정
-      let left = position.x;
-      let top = window.innerHeight - position.y;
+    const adjustTooltipPosition = (position: any, tooltipElement:any, tooltipContentElement:any) => {
+      const adjustPosition = (element:any) => {
+        const elementWidth = element.offsetWidth;
+        const elementHeight = element.offsetHeight;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+    
+      let left = position.x+ window.innerWidth/3+10;
+      let top =  position.y- elementHeight;
 
       // 오른쪽 가장자리 처리
-      if (left + tooltipWidth > windowWidth) {
-        left = windowWidth - tooltipWidth;
+      if (left + elementWidth > windowWidth) {
+        left = windowWidth - elementWidth;
       }
 
       // 하단 가장자리 처리
-      if (top + tooltipHeight > windowHeight) {
-        top = windowHeight - tooltipHeight;
+      if (top + elementHeight > windowHeight) {
+        top = windowHeight - elementHeight;
       }
-    }
+        
+        // 툴팁 위치 설정
+        element.style.left = `${left}px`;
+        element.style.top = `${top}px`;
+      };
+        // 각 툴팁 요소에 대해 위치 조정
+    adjustPosition(tooltipElement);
+    adjustPosition(tooltipContentElement);
+  };
 
     return () => {
       handler.destroy();
@@ -608,7 +647,7 @@ const EarthCesium = () => {
         const properties = pickedObject.id.properties;
         // 'alert' 타입인 경우 처리하지 않음
         if (properties._type && properties._type._value === "disaster") {     
-          const disasterData = {
+          const clickDisasterData = {
             dId: properties._dID?._value,
             dType: properties._dType?._value,
             dCountry: properties._dCountry?._value,
@@ -621,10 +660,31 @@ const EarthCesium = () => {
             objectId: properties._objectId?._value,
           };
           const camaraHeight = Ellipsoid.WGS84.cartesianToCartographic(viewer.camera.position).height;
-          router.push(`/earth?lon=${disasterData.dLongitude}&lat=${disasterData.dLatitude}&height=${camaraHeight}&did=${disasterData.dId}`, undefined);
-          setDIdValue(disasterData.dId);
+          router.push(`/earth?lon=${clickDisasterData.dLongitude}&lat=${clickDisasterData.dLatitude}&height=${camaraHeight}&did=${clickDisasterData.dId}`, undefined);
+          setDIdValue(clickDisasterData.dId);
           setIsUserInput(true)
           setClickedEntity(pickedObject.id);
+        } else if (properties._type && properties._type._value === "alert"){
+          const properties = pickedObject.id.properties;
+          const clickAlertData = {
+            alertDistrictName: properties.alertDistrictName?._value,
+            alertCountryName: properties._alertCountryName?._value,
+            alertRadius: properties.alertRadius?._value,
+            alertlevelRed: properties.alertLevelRed?._value,
+            alertlevelOrange: properties.alertLevelOrange?._value,
+            alertlevelGreen: properties.alertLevelGreen?._value,
+            alertLatitude: properties.alertLatitude?._value,
+            alertLongitude: properties.alertLongitude?._value,
+            objectId: properties.objectId?._value,
+            alertEmail:  properties.alertEmail?._value,
+            createAt: properties.createAt?._value,
+            memo: properties.memo?._value,
+            open: true,
+            edit: true,
+          };
+          if (clickAlertData.alertLatitude < -65 && clickAlertData.alertLatitude > 70 && clickAlertData.alertLongitude < -180 && clickAlertData.alertLongitude > 180) return;
+          setShowAlertTab(true);
+          setMailAlarmInfo(clickAlertData)
         }
       }
     }, ScreenSpaceEventType.LEFT_CLICK);

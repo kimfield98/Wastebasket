@@ -10,7 +10,6 @@ export const MailAlertModul = () => {
   const [alertInfo, setAlertInfo] = useRecoilState(mailAlarmState);
   const [placeName, setPlaceName] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [alertData, setAlertData] = useState<PostAlerInfo[]>([]);
   const [alertrange, setAlertRange] = useState<number>(alertInfo.alertRadius); // 알람 범위
   const [alertLevelRed, setAlertLevelRed] = useState<boolean>(alertInfo.alertlevelRed); // 알람 레벨RED
   const [alertLevelOrange, setAlertLevelOrange] = useState<boolean>(alertInfo.alertlevelOrange); // 알람 레벨RED
@@ -38,11 +37,15 @@ export const MailAlertModul = () => {
     if (isDokdo) {
       return "Dokdo, South Korea";
     }
-      return 'ocean'; // 위치를 찾을 수 없음
+      return ', ocean'; // 위치를 찾을 수 없음
     } catch (error) {
       return 'Unknown Location';
     }
   }
+
+  useEffect(()=>{
+    setAlertRange(alertInfo.alertRadius);
+  },[alertInfo.alertRadius])
 
   useEffect(() => {
     async function updateLocationName() {
@@ -59,6 +62,7 @@ export const MailAlertModul = () => {
     }
     updateLocationName();
   },[alertInfo.alertLatitude, alertInfo.alertLongitude]);
+
   const handleRange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAlertRange(Number(e.target.value));
     setAlertInfo({...alertInfo, alertRadius: Number(e.target.value)});
@@ -112,34 +116,35 @@ export const MailAlertModul = () => {
             </div>
             <div className="mt-2">Radius
               <div className=" flex justify-center gap-6 flex-col items-center">
-                <input className='w-[80%] ' type='range' min={100} max={2000} step={100} defaultValue={100} onChange={handleRange}/>
-                <label className='text-heading5-bold'>{alertrange}km</label>
+                <input className='w-[80%] ' type='range' min={100} max={2000} step={100} defaultValue={100} onChange={handleRange} value={alertInfo.edit ? alertInfo.alertRadius:undefined} disabled={alertInfo.edit}/>
+                <label className='text-heading5-bold'>{alertInfo.edit? alertInfo.alertRadius:alertrange}km</label>
               </div>
             </div>
             <div className="mt-2">Level
               <div className="flex justify-center gap-6">
                 <div className='text-heading5'>
                   <span>Red: </span>
-                  <button className="levelbtn" onClick={()=>{setAlertLevelRed(!alertLevelRed)}} style={{ backgroundColor: alertLevelRed? '#006FEE' :'#eee', marginRight:alertLevelRed? '6.59px' :'0px'  }}>{alertLevelRed? "ON":"OFF"}</button>
+                  <button className="levelbtn" onClick={()=>{alertInfo.edit? null:setAlertLevelRed(!alertLevelRed)}} style={alertInfo.edit? {backgroundColor: alertInfo.alertlevelRed? '#006FEE' :'#eee', marginRight:alertLevelRed? '6.59px' :'0px'  }:{ backgroundColor: alertLevelRed? '#006FEE' :'#eee', marginRight:alertLevelRed? '6.59px' :'0px'  }}>{alertInfo.edit? alertInfo.alertlevelRed? "ON":"Off":alertLevelRed? "ON":"OFF"}</button>
                 </div>
                 <div className='text-heading5'>
                   <span>Orange: </span>
-                  <button className="levelbtn" onClick={()=>{setAlertLevelOrange(!alertLevelOrange)}} style={{ backgroundColor: alertLevelOrange? '#006FEE' :'#eee', marginRight:alertLevelOrange? '6.59px' :'0px'  }}>{alertLevelOrange? "ON":"OFF"}</button>
+                  <button className="levelbtn" onClick={()=>{alertInfo.edit? null:setAlertLevelOrange(!alertLevelOrange)}} style={alertInfo.edit? {backgroundColor: alertInfo.alertlevelOrange? '#006FEE' :'#eee', marginRight:alertLevelOrange? '6.59px' :'0px'  }:{ backgroundColor: alertLevelOrange? '#006FEE' :'#eee', marginRight:alertLevelOrange? '6.59px' :'0px'  }}>{alertInfo.edit? alertInfo.alertlevelOrange? "ON":"Off":alertLevelOrange? "ON":"OFF"}</button>
                 </div>
                 <div className='text-heading5'>
                   <span>Green: </span>
-                  <button className="levelbtn" onClick={()=>{setAlertLevelGreen(!alertLevelGreen)}} style={{ backgroundColor: alertLevelGreen? '#006FEE' :'#eee', marginRight:alertLevelGreen? '6.59px' :'0px'  }}>{alertLevelGreen? "ON":"OFF"}</button>
+                  <button className="levelbtn" onClick={()=>{alertInfo.edit? null:setAlertLevelGreen(!alertLevelGreen)}} style={alertInfo.edit? {backgroundColor: alertInfo.alertlevelRed? '#006FEE' :'#eee', marginRight:alertLevelGreen? '6.59px' :'0px'  }:{ backgroundColor: alertLevelGreen? '#006FEE' :'#eee', marginRight:alertLevelGreen? '6.59px' :'0px'  }}>{alertInfo.edit? alertInfo.alertlevelGreen? "ON":"Off":alertLevelGreen? "ON":"OFF"}</button>
                 </div>
               </div>
             </div>
-            <div className="mt-2">
+            {/* <div className="mt-2">
               <div className="text-heading5-bold">Memo</div>
               <textarea className="w-full h-full min-h-unit-20 max-h-40 border-1 border-dark-2 rounded-xl p-2 " placeholder="Please enter a memo."></textarea>
-            </div>
+            </div> */}
             <button
               className="mt-2"
               color="primary"
-              onClick={createHandeler}>
+              onClick={createHandeler}
+              disabled={alertInfo.edit}>
               Create
             </button>
         </div>

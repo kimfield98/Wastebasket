@@ -14,7 +14,9 @@ export default function Home() {
       <div className=' w-[40%] fixed bottom-0 left-0 z-50'>
         <MailAlertList/>
       </div>
-      <DynamicEarthCanvas/>
+      <div className='h-[100vh] flex items-center justify-center'>
+        <DynamicEarthCanvas/>
+      </div>
     </div>
   )
 }
