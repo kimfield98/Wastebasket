@@ -312,8 +312,8 @@ const EarthCesium = () => {
               position: Cartesian3.fromDegrees(Number(item.dLongitude), Number(item.dLatitude)),
               model: {
                 uri: `/pin.glb`,
-                minimumPixelSize: 100,
-                maximumScale: 80000,
+                minimumPixelSize: 1000,
+                maximumScale: 800000,
                 heightReference: HeightReference.CLAMP_TO_GROUND,
               },
               properties: {...item, type:'disaster'}
@@ -565,14 +565,20 @@ const EarthCesium = () => {
 
     // 우클릭 이벤트
     handler.setInputAction((movement:any) => {
+      if (isLogin.isLoggedIn === false) return;
       // 클릭한 스크린 좌표를 카르테시안 좌표로 변환
+      console.log(123)
       const cartesian = viewer.camera.pickEllipsoid(movement.position, viewer.scene.globe.ellipsoid);
       if (cartesian) {
         // 카르테시안 좌표를 위도와 경도로 변환
+        console.log(456)
         const cartographic = Ellipsoid.WGS84.cartesianToCartographic(cartesian);
         const lon = Math.toDegrees(cartographic.longitude).toFixed(4);
         const lat = Math.toDegrees(cartographic.latitude).toFixed(4);
-
+        if (Number(lat) < -65 || Number(lat) > 70 || Number(lat) < -180 || Number(lat) > 180) {
+          alert("Alerts cannot be set for this area.\nPlease select another area.");
+          return;}
+        
         // 여기에 추가적인 로직을 구현할 수 있습니다, 예를 들어, UI 요소에 지역 이름을 표시
         setMailAlarmInfo( {...mailAlarmInfo, alertLongitude:Number(lon), alertLatitude:Number(lat), open:true});
         setShowAlertTab(true);

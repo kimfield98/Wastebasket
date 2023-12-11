@@ -83,6 +83,10 @@ export const MailAlertModul = () => {
         alertLevelGreen: alertLevelGreen,
         // memo: alertInfo.memo,
       }
+      if (!postData.alertLevelGreen && !postData.alertLevelOrange && !postData.alertLevelRed) {
+        alert("Please select an alert level.")
+        return;
+      }
       const response = await axios.post(`https://worldisaster.com/api/emailAlerts/`, postData ,{
         headers: {Authorization: `Bearer ${token}`}
       })
