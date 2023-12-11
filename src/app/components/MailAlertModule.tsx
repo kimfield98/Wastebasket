@@ -5,12 +5,12 @@ import {useRecoilState} from "recoil";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import MailAlertList from './MailAlertList';
+import { Slider } from '@nextui-org/react';
 
 export const MailAlertModul = () => {
   const [alertInfo, setAlertInfo] = useRecoilState(mailAlarmState);
   const [placeName, setPlaceName] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [alertData, setAlertData] = useState<PostAlerInfo[]>([]);
   const [alertrange, setAlertRange] = useState<number>(alertInfo.alertRadius); // 알람 범위
   const [alertLevelRed, setAlertLevelRed] = useState<boolean>(alertInfo.alertlevelRed); // 알람 레벨RED
   const [alertLevelOrange, setAlertLevelOrange] = useState<boolean>(alertInfo.alertlevelOrange); // 알람 레벨RED
@@ -38,11 +38,15 @@ export const MailAlertModul = () => {
     if (isDokdo) {
       return "Dokdo, South Korea";
     }
-      return 'ocean'; // 위치를 찾을 수 없음
+      return ', ocean'; // 위치를 찾을 수 없음
     } catch (error) {
       return 'Unknown Location';
     }
   }
+
+  useEffect(()=>{
+    setAlertRange(alertInfo.alertRadius);
+  },[alertInfo.alertRadius])
 
   useEffect(() => {
     async function updateLocationName() {
@@ -59,6 +63,11 @@ export const MailAlertModul = () => {
     }
     updateLocationName();
   },[alertInfo.alertLatitude, alertInfo.alertLongitude]);
+
+  useEffect(()=>{
+    setAlertRange(100);  
+  },[alertInfo.open])
+
   const handleRange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAlertRange(Number(e.target.value));
     setAlertInfo({...alertInfo, alertRadius: Number(e.target.value)});
@@ -78,6 +87,10 @@ export const MailAlertModul = () => {
         alertLevelOrange: alertLevelOrange,
         alertLevelGreen: alertLevelGreen,
         // memo: alertInfo.memo,
+      }
+      if (!postData.alertLevelGreen && !postData.alertLevelOrange && !postData.alertLevelRed) {
+        alert("Please select an alert level.")
+        return;
       }
       const response = await axios.post(`https://worldisaster.com/api/emailAlerts/`, postData ,{
         headers: {Authorization: `Bearer ${token}`}
@@ -112,34 +125,38 @@ export const MailAlertModul = () => {
             </div>
             <div className="mt-2">Radius
               <div className=" flex justify-center gap-6 flex-col items-center">
-                <input className='w-[80%] ' type='range' min={100} max={2000} step={100} defaultValue={100} onChange={handleRange}/>
-                <label className='text-heading5-bold'>{alertrange}km</label>
+              <Slider label="Select a Radius" color="foreground" size="sm" formatOptions={{style: "unit", unit:"kilometer"}} step={100} minValue={100} maxValue={2000} value={alertInfo.edit ? alertInfo.alertRadius:undefined} isDisabled={alertInfo.edit} marks={[
+                    { value: 100, label: "100km"},{ value: 500, label: "500km"},{ value: 1000, label: "1000km"},{ value: 1500, label: "1500km"},{ value: 2000, label: "2000km"},]}
+                  defaultValue={100}
+                  className="max-w-md"
+                />
               </div>
             </div>
             <div className="mt-2">Level
               <div className="flex justify-center gap-6">
                 <div className='text-heading5'>
                   <span>Red: </span>
-                  <button className="levelbtn" onClick={()=>{setAlertLevelRed(!alertLevelRed)}} style={{ backgroundColor: alertLevelRed? '#006FEE' :'#eee', marginRight:alertLevelRed? '6.59px' :'0px'  }}>{alertLevelRed? "ON":"OFF"}</button>
+                  <button className="levelbtn" onClick={()=>{alertInfo.edit? null:setAlertLevelRed(!alertLevelRed)}} style={alertInfo.edit? {backgroundColor: alertInfo.alertlevelRed? '#006FEE' :'#eee', marginRight:alertLevelRed? '6.59px' :'0px'  }:{ backgroundColor: alertLevelRed? '#006FEE' :'#eee', marginRight:alertLevelRed? '6.59px' :'0px'  }}>{alertInfo.edit? alertInfo.alertlevelRed? "ON":"Off":alertLevelRed? "ON":"OFF"}</button>
                 </div>
                 <div className='text-heading5'>
                   <span>Orange: </span>
-                  <button className="levelbtn" onClick={()=>{setAlertLevelOrange(!alertLevelOrange)}} style={{ backgroundColor: alertLevelOrange? '#006FEE' :'#eee', marginRight:alertLevelOrange? '6.59px' :'0px'  }}>{alertLevelOrange? "ON":"OFF"}</button>
+                  <button className="levelbtn" onClick={()=>{alertInfo.edit? null:setAlertLevelOrange(!alertLevelOrange)}} style={alertInfo.edit? {backgroundColor: alertInfo.alertlevelOrange? '#006FEE' :'#eee', marginRight:alertLevelOrange? '6.59px' :'0px'  }:{ backgroundColor: alertLevelOrange? '#006FEE' :'#eee', marginRight:alertLevelOrange? '6.59px' :'0px'  }}>{alertInfo.edit? alertInfo.alertlevelOrange? "ON":"Off":alertLevelOrange? "ON":"OFF"}</button>
                 </div>
                 <div className='text-heading5'>
                   <span>Green: </span>
-                  <button className="levelbtn" onClick={()=>{setAlertLevelGreen(!alertLevelGreen)}} style={{ backgroundColor: alertLevelGreen? '#006FEE' :'#eee', marginRight:alertLevelGreen? '6.59px' :'0px'  }}>{alertLevelGreen? "ON":"OFF"}</button>
+                  <button className="levelbtn" onClick={()=>{alertInfo.edit? null:setAlertLevelGreen(!alertLevelGreen)}} style={alertInfo.edit? {backgroundColor: alertInfo.alertlevelRed? '#006FEE' :'#eee', marginRight:alertLevelGreen? '6.59px' :'0px'  }:{ backgroundColor: alertLevelGreen? '#006FEE' :'#eee', marginRight:alertLevelGreen? '6.59px' :'0px'  }}>{alertInfo.edit? alertInfo.alertlevelGreen? "ON":"Off":alertLevelGreen? "ON":"OFF"}</button>
                 </div>
               </div>
             </div>
-            <div className="mt-2">
+            {/* <div className="mt-2">
               <div className="text-heading5-bold">Memo</div>
               <textarea className="w-full h-full min-h-unit-20 max-h-40 border-1 border-dark-2 rounded-xl p-2 " placeholder="Please enter a memo."></textarea>
-            </div>
+            </div> */}
             <button
               className="mt-2"
               color="primary"
-              onClick={createHandeler}>
+              onClick={createHandeler}
+              disabled={alertInfo.edit}>
               Create
             </button>
         </div>

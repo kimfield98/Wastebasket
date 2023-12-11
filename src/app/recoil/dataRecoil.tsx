@@ -55,6 +55,7 @@ export interface PostAlerInfo {
   createAt: string;
   memo: string;
   open: boolean;
+  edit: boolean;
 }
 
 
@@ -107,7 +108,7 @@ export const filterButtonState = atom<{
   },
 });
 
-// 알람 정보 상태 정의<
+// 알람 정보 상태 정의
 export const mailAlarmState = atom<PostAlerInfo>({
   key: 'mailAlarmState',
   default: {
@@ -124,8 +125,24 @@ export const mailAlarmState = atom<PostAlerInfo>({
     createAt: "",
     memo: "",
     open: false,
+    edit: false,
   },
 });
+
+// 알람 클릭이벤트 추가
+export const clickAlertInfo = atom({
+  key: 'clickAlertInfo',
+  default: {
+    alertDistrictName: '' ,
+    alertCountryName: '',
+    alertRadius: 0,
+    alertlevelRed: false,
+    alertlevelOrange: false,
+    alertlevelGreen: false,
+    alertLatitude: 0,
+    alertLongitude: 0,
+  }
+})
 
 export default function RecoidContextProvider({ children }: { children: React.ReactNode }) {
   return <RecoilRoot>{children}</RecoilRoot>;

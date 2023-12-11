@@ -6,6 +6,7 @@ import { DataType, dataState } from '../recoil/dataRecoil';
 import DidVideo from './DidVideo';
 import DidArticle from './DidAirticle';
 import { Accordion, AccordionItem } from "@nextui-org/accordion"
+import TenDisaster from './TenDisaster';
 
 interface didDetailProps {
   dID: string;
@@ -76,6 +77,7 @@ const DidLeftSidebar: React.FC<didDetailProps> = ({ dID }) => {
           <span className='flex justify-center mt-60 select-none'>Click a disaster pin to continue.</span>
         )}
       </div>
+      <TenDisaster/>
     </div>
   );
 };
