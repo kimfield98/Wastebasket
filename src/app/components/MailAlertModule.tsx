@@ -5,6 +5,7 @@ import {useRecoilState} from "recoil";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import MailAlertList from './MailAlertList';
+import { Slider } from '@nextui-org/react';
 
 export const MailAlertModul = () => {
   const [alertInfo, setAlertInfo] = useRecoilState(mailAlarmState);
@@ -63,6 +64,10 @@ export const MailAlertModul = () => {
     updateLocationName();
   },[alertInfo.alertLatitude, alertInfo.alertLongitude]);
 
+  useEffect(()=>{
+    setAlertRange(100);  
+  },[alertInfo.open])
+
   const handleRange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAlertRange(Number(e.target.value));
     setAlertInfo({...alertInfo, alertRadius: Number(e.target.value)});
@@ -120,8 +125,11 @@ export const MailAlertModul = () => {
             </div>
             <div className="mt-2">Radius
               <div className=" flex justify-center gap-6 flex-col items-center">
-                <input className='w-[80%] ' type='range' min={100} max={2000} step={100} defaultValue={100} onChange={handleRange} value={alertInfo.edit ? alertInfo.alertRadius:undefined} disabled={alertInfo.edit}/>
-                <label className='text-heading5-bold'>{alertInfo.edit? alertInfo.alertRadius:alertrange}km</label>
+              <Slider label="Select a Radius" color="foreground" size="sm" formatOptions={{style: "unit", unit:"kilometer"}} step={100} minValue={100} maxValue={2000} value={alertInfo.edit ? alertInfo.alertRadius:undefined} isDisabled={alertInfo.edit} marks={[
+                    { value: 100, label: "100km"},{ value: 500, label: "500km"},{ value: 1000, label: "1000km"},{ value: 1500, label: "1500km"},{ value: 2000, label: "2000km"},]}
+                  defaultValue={100}
+                  className="max-w-md"
+                />
               </div>
             </div>
             <div className="mt-2">Level

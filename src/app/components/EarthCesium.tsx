@@ -400,24 +400,36 @@ const EarthCesium = () => {
     }
 
     const tooltip = document.createElement('div') as HTMLDivElement;
-    tooltip.style.display = 'none';
-    tooltip.style.position = 'absolute';
-    tooltip.style.backgroundColor = 'white';
-    tooltip.style.border = '1px solid white';
-    tooltip.style.borderRadius = '10px';
-    tooltip.style.padding = '5px';
-    tooltip.style.color = 'black';
-    document.body.appendChild(tooltip);
+      tooltip.style.display = 'none';
+      tooltip.style.position = 'absolute';
+      tooltip.style.backgroundColor = 'white';
+      tooltip.style.border = '1px solid white';
+      tooltip.style.borderRadius = '10px';
+      tooltip.style.padding = '5px';
+      tooltip.style.color = 'black';
+      document.body.appendChild(tooltip);
 
     const tooltipContent = document.createElement('div') as HTMLDivElement;
-    tooltipContent.style.display = 'none';
-    tooltipContent.style.position = 'absolute';
-    tooltipContent.style.backgroundColor = 'white';
-    tooltipContent.style.border = '1px solid white';
-    tooltipContent.style.borderRadius = '10px';
-    tooltipContent.style.padding = '5px';
-    tooltipContent.style.color = 'black';
-    document.body.appendChild(tooltipContent);
+      tooltipContent.style.display = 'none';
+      tooltipContent.style.position = 'absolute';
+      tooltipContent.style.backgroundColor = 'white';
+      tooltipContent.style.border = '1px solid white';
+      tooltipContent.style.borderRadius = '10px';
+      tooltipContent.style.padding = '5px';
+      tooltipContent.style.color = 'black';
+      document.body.appendChild(tooltipContent);
+
+    const tooltipLatLon = document.createElement('div');
+      tooltipLatLon.style.display = 'none';
+      tooltipLatLon.style.position = 'absolute';
+      tooltipLatLon.style.backgroundColor = 'white';
+      tooltipLatLon.style.border = '1px solid white';
+      tooltipLatLon.style.borderRadius = '10px';
+      tooltipLatLon.style.padding = '5px';
+      tooltipLatLon.style.color = 'black';
+      tooltipLatLon.style.left = '10px';
+      tooltipLatLon.style.top = '10px';
+      document.body.appendChild(tooltipLatLon);
 
     // 핸들러 모음
     const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -430,15 +442,67 @@ const EarthCesium = () => {
 
         // 알림 데이터일 경우랑 재난일 경우 구분하기
         if (properties._type && properties._type._value === "alert"){
-          const alertrData: alertInfoHover = {
-            alertCountryName: properties._alertCountryName?._value,
-            alertRadius: properties._alertRadius?._value,
-            alertlevelRed: properties._alertLevelRed?._value,
-            alertlevelOrange: properties._alertLevelOrange?._value,
-            alertlevelGreen: properties._alertLevelGreen?._value,
-            createAt: properties._createdAt?._value,
+            const alertrData: alertInfoHover = {
+              alertCountryName: properties._alertCountryName?._value,
+              alertRadius: properties._alertRadius?._value,
+              alertlevelRed: properties._alertLevelRed?._value,
+              alertlevelOrange: properties._alertLevelOrange?._value,
+              alertlevelGreen: properties._alertLevelGreen?._value,
+              createAt: properties._createdAt?._value,
+            };
+            tooltipContent.innerHTML = `
+            <div style="
+            background-color: rgba(255, 255, 255, 0.9); 
+            border-radius: 8px; 
+            padding: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            max-width: 200px;
+            line-height: 1.4;
+          ">
+              <table style="padding:2px;">
+                <tbody>
+                  <tr>
+                    <td style="color: #666;">Country :</td>
+                    <td style="color: #000;">${alertrData.alertCountryName}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #666;">Radius :</td>
+                    <td style="color: #000;">${alertrData.alertRadius} km</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #666;">AlertLevel :</td>
+                    <td style="color: #000;">
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                      <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelRed ? "red" : "gray"}; border-radius: 50%;"></span>
+                      <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelOrange ? "orange" : "gray"}; border-radius: 50%;"></span>
+                      <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelGreen ? "green" : "gray"}; border-radius: 50%;"></span>
+                    </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color: #666;">CreateAt:</td>
+                    <td style="color: #000;">${alertrData.createAt.slice(0,10)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>`;
+          tooltipContent.style.display = 'block';
+          // 툴팁 위치 조정
+        } else {
+          tooltipContent.style.display = 'none';
+        }
+        if(properties._type && properties._type._value === "disaster") {
+
+          const tDisasterData: disasterInfoHover = {
+            dId: properties._dID?._value,
+            dType: properties._dType?._value,
+            dCountry: properties._dCountry?._value,
+            dStatus: properties._dStatus?._value,
+            dDate: properties._dDate?._value,
           };
-          tooltipContent.innerHTML = `
+
+          tooltip.innerHTML = `
           <div style="
           background-color: rgba(255, 255, 255, 0.9); 
           border-radius: 8px; 
@@ -448,92 +512,59 @@ const EarthCesium = () => {
           max-width: 200px;
           line-height: 1.4;
         ">
-            <table style="padding:2px;">
-              <tbody>
-                <tr>
-                  <td style="color: #666;">Country :</td>
-                  <td style="color: #000;">${alertrData.alertCountryName}</td>
-                </tr>
-                <tr>
-                  <td style="color: #666;">Radius :</td>
-                  <td style="color: #000;">${alertrData.alertRadius} km</td>
-                </tr>
-                <tr>
-                  <td style="color: #666;">AlertLevel :</td>
-                  <td style="color: #000;">
-                  <div style="display: flex; align-items: center; justify-content: center;">
-                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelRed ? "red" : "gray"}; border-radius: 50%;"></span>
-                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelOrange ? "orange" : "gray"}; border-radius: 50%;"></span>
-                    <span style="margin: 10px; height: 10px; width: 10px; background-color: ${alertrData.alertlevelGreen ? "green" : "gray"}; border-radius: 50%;"></span>
-                  </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="color: #666;">CreateAt:</td>
-                  <td style="color: #000;">${alertrData.createAt.slice(0,10)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>`;
-        tooltipContent.style.display = 'block';
-        // 툴팁 위치 조정
-      } else {
-        tooltipContent.style.display = 'none';
-      }
-      if(properties._type && properties._type._value === "disaster") {
-
-        const tDisasterData: disasterInfoHover = {
-          dId: properties._dID?._value,
-          dType: properties._dType?._value,
-          dCountry: properties._dCountry?._value,
-          dStatus: properties._dStatus?._value,
-          dDate: properties._dDate?._value,
-        };
-
-        tooltip.innerHTML = `
-        <div style="
-        background-color: rgba(255, 255, 255, 0.9); 
-        border-radius: 8px; 
-        padding: 10px; 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        font-family: Arial, sans-serif;
-        max-width: 200px;
-        line-height: 1.4;
-      ">
-            <img src="./Disaster/${tDisasterData.dType}.png" alt="${tDisasterData.dType}" style="width: 36px; height: 36px; margin-bottom: 10px;">
-            <table>
-              <tbody>
-                <tr>
-                  <td style="color: #666;">Type:</td>
-                  <td style="color: #000;">${tDisasterData.dType}</td>
-                </tr>
-                <tr>
-                  <td style="color: #666;">Country:</td>
-                  <td style="color: #000;">${tDisasterData.dCountry}</td>
-                </tr>
-                <tr>
-                  <td style="color: #666;">Date:</td>
-                  <td style="color: #000;">${tDisasterData.dDate}</td>
-                </tr>
-                <tr>
-                  <td style="color: #666;">Status:</td>
-                  <td style="color: #000;">${tDisasterData.dStatus}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>`;
-      
-
-        tooltip.style.display = 'block';
-        // 툴팁 위치 조정
-      } else {
+              <img src="./Disaster/${tDisasterData.dType}.png" alt="${tDisasterData.dType}" style="width: 36px; height: 36px; margin-bottom: 10px;">
+              <table>
+                <tbody>
+                  <tr>
+                    <td style="color: #666;">Type:</td>
+                    <td style="color: #000;">${tDisasterData.dType}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #666;">Country:</td>
+                    <td style="color: #000;">${tDisasterData.dCountry}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #666;">Date:</td>
+                    <td style="color: #000;">${tDisasterData.dDate}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #666;">Status:</td>
+                    <td style="color: #000;">${tDisasterData.dStatus}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>`;
+            
+          tooltip.style.display = 'block';
+          // 툴팁 위치 조정
+        } else {
+          tooltip.style.display = 'none';
+        } 
+      }else{
         tooltip.style.display = 'none';
+        tooltipContent.style.display = 'none';
+        const ellipsoid = viewer.scene.globe.ellipsoid;
+        const cartesian = viewer.camera.pickEllipsoid(movement.endPosition, ellipsoid);
+        if (cartesian) {
+          // 위도와 경도 계산
+          const cartographic = Ellipsoid.WGS84.cartesianToCartographic(cartesian);
+          const longitude = Math.toDegrees(cartographic.longitude).toFixed(2);
+          const latitude = Math.toDegrees(cartographic.latitude).toFixed(2);
+          // Check if latitude is within the specified range
+          const isLatitudeInRange = Number(latitude) >= -65 && Number(latitude) <= 70;
+
+          // Update tooltipLatLon with conditional styling
+          tooltipLatLon.innerHTML = `위도: <span style="color: ${isLatitudeInRange ? 'black' : 'red'};">${latitude}°</span>, 경도: ${longitude}°`;
+          tooltipLatLon.style.display = 'block';
+          tooltipLatLon.style.left = `500px`;
+          tooltipLatLon.style.top = `200px`;
+        } else {
+          tooltipLatLon.style.display = 'none';
+          tooltip.style.display = 'none';
+          tooltipContent.style.display = 'none';
+        }
       }
-      adjustTooltipPosition(movement.endPosition, tooltip, tooltipContent);
-    } else {
-      tooltip.style.display = 'none';
-      tooltipContent.style.display = 'none';
-    }
+    adjustTooltipPosition(movement.endPosition, tooltip, tooltipContent);
   }, ScreenSpaceEventType.MOUSE_MOVE);
 
     // 툴팁 위치 조정 함수
