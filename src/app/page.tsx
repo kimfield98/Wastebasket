@@ -11,11 +11,6 @@ export default function Home() {
         <span>Project Icon</span>
         <span>Contact Icon</span>
       </div>
-      <div>
-        <span>Footer</span>
-        <span>Phone</span>
-        <span>Email</span>
-      </div>
     </div>
   )
 }
