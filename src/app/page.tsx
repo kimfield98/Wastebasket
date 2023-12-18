@@ -2,13 +2,6 @@ export default function Home() {
   return (
     <div>
       <div>
-        <span>Navbar</span>
-        <span>Icon</span><span>kimfield</span>
-        <span>Resume Tab</span>
-        <span>Project Tab</span>
-        <span>Contact Tab</span>
-      </div>
-      <div>
         <span>Main Section</span>
         <span>Img</span>
         <span>Title</span>
