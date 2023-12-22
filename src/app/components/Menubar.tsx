@@ -24,11 +24,11 @@ export default function Menubar () {
   return (
     <div className="menubar">
       <div className="absolute top-10 right-10 cursor-pointer text-2xl hover:font-bold" onClick={()=>setActiveMenu(false)}>X</div>
-      <Link href="/resume" className="text-2xl hover:font-bold">Resume</Link>
+      <Link href="/resume" className="text-2xl hover:font-bold" onClick={()=>setActiveMenu(false)}>Resume</Link>
       <p className="line"></p>
-      <Link href="/projects" className="text-2xl hover:font-bold">Project</Link>
+      <Link href="/projects" className="text-2xl hover:font-bold" onClick={()=>setActiveMenu(false)}>Project</Link>
       <p className="line"></p>
-      <Link href="/contact" className="text-2xl hover:font-bold">Contact</Link>
+      <Link href="/contact" className="text-2xl hover:font-bold" onClick={()=>setActiveMenu(false)}>Contact</Link>
     </div>
   );
 }
