@@ -5,36 +5,9 @@
 @import './reset.css';
 @import './common.css';
 
-:root {
-  --foreground-light: var(--color-black);
-  --foreground-dark: var(--color-white);
-  --background-light: var(--color-gray-0);
-  --background-dark: var(--color-gray-7);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: var(--foreground-dark);
-    --background-start-rgb: var(--background-dark);
-    --background-end-rgb: var(--background-dark);
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --foreground-rgb: var(--foreground-light);
-    --background-start-rgb: var(--background-light);
-    --background-end-rgb: var(--background-light);
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgb(var(--background-end-rgb))
-  ) rgb(var(--background-start-rgb));
+  color: var(--color-gray-7);
+  background-color: var(--color-gray-0);
 }
 
 /* navbar */
@@ -42,78 +15,47 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px 33px;
+  padding: 22px 60px;
 }
-.logo {
-  font-size: var(--font-medium);
-  font-weight: var(--font-bold);
-}
-.nav_icon {
-  cursor: pointer;
-}
-
-.navbar_left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+.navbar_left,
 .navbar_right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* circle */
-.circle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--color-green);
-  border: 1px solid var(--color-gray-7);
-  border-radius: 50%;
-}
 
-/* line */
-.line {
-  height: 25px;
-  border-right: 1px solid var(--color-black);
-}
-
-/* main */
+/* mainpage */
 .main {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 150px;
-}
-.main_right_top {
-  display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  padding: 50px;
 }
-.main_right_bottom {
-  display: flex;
-  margin-top: 30px;
-  gap: 10px;
+@media (min-width: 768px) {
+  .main {
+    flex-direction: row;
+    gap: 30px;
+    padding: 150px;
+  }
 }
-.main_icon0 {
+
+.main_left, .main_right {
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .main_left, .main_right {
+    width: auto;
+  }
+}
+
+.main_image {
   background-image: url('../../public/Image/김필드.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-}
-.main_icon1 {
-  cursor: pointer;
-  background-color: var(--color-orange);
-}
-.main_icon2 {
-  cursor: pointer;
-  background-color: var(--color-red);
-}
-.main_icon3 {
-  cursor: pointer;
-  background-color: var(--color-blue);
 }
 
 /* footer */
@@ -146,6 +88,31 @@ body {
   }
 }
 
-.footer_icon {
-  cursor: pointer;
+/* page */
+.contentContainer {
+  padding: 100px 30px;
+}
+.contentTitle {
+  font-size: var(--font-large);
+  font-weight: bolder;
+}
+.contentBox {
+  padding: 30px;
+  border-bottom: 1px solid var(--color-gray-3);
+}
+
+/* etc */
+.circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--color-gray-7);
+  border-radius: 50%;
+}
+.line {
+  height: 25px;
+  border-right: 1px solid var(--color-black);
+}
+.active {
+  color: var(--color-green);
 }

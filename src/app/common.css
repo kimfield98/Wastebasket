@@ -40,4 +40,16 @@
   --animation-duration: 300ms;
 }
 
-/* button */
+/* color */
+.green {
+  background-color: var(--color-green);
+}
+.orange {
+  background-color: var(--color-orange);
+}
+.red {
+  background-color: var(--color-red);
+}
+.blue {
+  background-color: var(--color-blue);
+}
