@@ -2,18 +2,13 @@
 
 import { RecoilRoot, atom } from "recoil";
 
-const ResumeState = atom<boolean>({
-  key: 'textState',
-  default: false,
+export const activeTabState = atom({
+  key: 'activeTabState',
+  default: 'none',
 });
 
-const ProjectState = atom<boolean>({
-  key: 'projectState',
-  default: false,
-});
-
-const ContactState = atom<boolean>({
-  key: 'contactState',
+export const activeMenuState = atom({
+  key: 'activeMenuState',
   default: false,
 });
 

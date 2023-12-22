@@ -7,11 +7,11 @@ export default function Footer () {
       </div>
       <div className="footer_item">
         <p className="text-lg font-bold">Email</p>
-        <a href="mailto:kimfield98@gmail.com" className="footer_icon">kimfield98@gmail.com</a>
+        <a href="mailto:kimfield98@gmail.com">kimfield98@gmail.com</a>
       </div>
       <div className="footer_item">
         <p className="text-lg font-bold">Link</p>
-        <a href="https://github.com/kimfield98/Portfolio_kimfield" target="_blank" rel="noopener noreferrer" className="footer_icon">github</a>
+        <a href="https://github.com/kimfield98/Portfolio_kimfield" target="_blank" rel="noopener noreferrer">github</a>
       </div>
       <div className="footer_item">
         <p className="text-sm">© 2023 Kimfield. All Rights Reserved.</p>
