@@ -4,6 +4,7 @@
 
 @import './reset.css';
 @import './common.css';
+@import './projects.css';
 
 body {
   color: var(--color-gray-7);

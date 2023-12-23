@@ -39,17 +39,3 @@
   /* Animation */
   --animation-duration: 300ms;
 }
-
-/* color */
-.green {
-  background-color: var(--color-green);
-}
-.orange {
-  background-color: var(--color-orange);
-}
-.red {
-  background-color: var(--color-red);
-}
-.blue {
-  background-color: var(--color-blue);
-}
