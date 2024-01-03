@@ -1,0 +1,3 @@
+{
+  "mongoURL": "mongodb+srv://admin:admin@forumcluster0.7noojpp.mongodb.net/reactBlog?retryWrites=true&w=majority"
+}
