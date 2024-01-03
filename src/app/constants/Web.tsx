@@ -1,1 +1,0 @@
-export const WebportfolioDescription = "Web Portfolio에 대한 자세한 설명";

@@ -1,1 +1,0 @@
-export const AltudyDescription = "Altudy 프로젝트에 대한 자세한 설명";
