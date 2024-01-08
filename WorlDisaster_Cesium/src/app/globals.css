@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+:root {
+
+  background-color: black;
+  color: white;
+}
+
+ul li {
+  display: inline-block;
+  padding-left: 0.5rem
+}
+
+.main-container {
+  @apply flex min-h-screen flex-1 flex-col items-center bg-dark-1 px-6 pb-10 pt-28 max-md:pb-32 sm:px-10;
+}
+
+nav.with-shadow {
+  border-bottom: 1px solid rgba(155, 189, 227, 0.354);
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 1);
+}
+
+.navbar {
+  @apply fixed top-0 z-30 flex w-full items-center justify-between bg-dark-2 bg-opacity-70 px-6 py-3;
+}
+
+.leftsidebar {
+  @apply sticky left-0 top-0 z-20 flex h-screen w-fit flex-col justify-between overflow-auto border-r border-r-dark-4 bg-dark-2 pb-5 pt-28 lg:flex md:hidden sm:hidden;
+}
+
+.rightsidebar {
+  @apply sticky right-0 top-0 z-20 flex h-screen w-fit flex-col justify-between gap-12 overflow-auto border-l border-l-dark-4 bg-dark-2 px-10 pb-6 pt-28 lg:flex xl:hidden;
+}
+
+.btn {
+  @apply rounded-3xl bg-primary-500 px-8 py-2 !text-small-regular text-light-1 max-xs:w-full !important;
+}
+
+.cardcover {
+  width: 50%;
+  height: 100%;
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #5c5c7b;
+  background-color: #CCE3FD;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+@layer utilities {
+  .css-invert {
+    @apply invert-[50%] brightness-200;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #09090a;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #5c5c7b;
+    border-radius: 50px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #7878a3;
+  }
+}
+
+#toolbar {
+  background: rgba(42, 42, 42, 0.8);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+#toolbar input {
+  vertical-align: middle;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+/* 초원 custom */
+
+/* title */
+.main-title {
+  padding: 0 5px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.content-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.content-subtitle {
+  font-size: 14px;
+}
+
+/* box */
+.content-box1 {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0;
+  background-color: #f5f7f9;
+}
+
+.content-box2 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px;
+  margin: 20px 0;
+  background-color: #f5f7f9;
+}
+
+select {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: large;
+}
+
+/* 선택된 국가 항목 스타일 */
+#selectedNations option:checked {
+  background-color: #d0d7de;
+}
+
+/* 선택된 규모 항목 스타일 */
+#selectedLevels option:checked {
+  background-color: #d0d7de;
+}
+
+/* button */
+.button-box {
+  display: flex;
+  margin: 0 auto;
+}
+
+.levelbtn {
+  padding: 5px 10px;
+  background-color: #d0d7de;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.saveBtn {
+  padding: 5px 10px;
+  background-color: #d0d7de;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.saveBtn:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  color: white;
+  background-color: #006FEE;
+}
+
+.deleteBtn {
+  padding: 5px 10px;
+  background-color: #d0d7de;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.deleteBtn:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  color: white;
+  background-color: #006FEE;
+}
+
+.border {
+  border: none;
+  border-bottom: 1px solid black;
+  font-weight: bold;
+}
+
+.truncate {
+  max-height: 4.5em;
+  /* 3줄의 높이 (1줄당 대략 1.5em) */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  /* 표시할 줄 수 */
+  -webkit-box-orient: vertical;
+}
+
+.animate-slide-up{
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up{
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
