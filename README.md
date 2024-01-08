@@ -10,5 +10,5 @@
 |<img width="460" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/3a9743bd-6ba4-4320-ad49-10281983017f">|
 
 
-📖 [기술 블로그](https://kimfield.tistory.com/)
-📒 [회고](https://velog.io/@kimfield/)
+⌨️ [기술 블로그](https://kimfield.tistory.com/)
+💭 [회고](https://velog.io/@kimfield/)
