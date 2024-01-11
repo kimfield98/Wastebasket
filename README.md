@@ -4,6 +4,11 @@
 
 ## 📌 진행중인 프로젝트
 
+|제목|설명|인원|기간|기술|Github|예시|
+|:---|:---|:---|:---|:---|:---|:---|
+| MomYakSon | 우리 동네 병원/약국<br>정보 공유 플랫폼 | 개인 | 2023.01.12- | React, Firebase | <a href="https://github.com/kimfield98/project3-MomYakSon" target="_blank">Repository</a> | <img height="150" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/b678ea17-9ff5-463d-acd5-a8693a287922"> |
+
+
 - 랜덤 런치 매칭 서비스 앱 (기획 단계) | 2023.01.15 ~
 
 <br>
@@ -18,7 +23,7 @@
 | 인원 | 5 | 5 |
 | 기간 | 23.11.14-23.12.15 | 23.05.22-23.06.15 |
 | 기술 | **Next.js, TypeScript, Recoil** | **Django, Python, JavaScript** |
-| Github | <a href="https://github.com/kimfield98/WorlDisaster" target="_blank">Repository</a> | <a href="https://github.com/kimfield98/Altudy" target="_blank">Repository</a> |
+| Github | <a href="https://github.com/kimfield98/project2-WorlDisaster" target="_blank">Repository</a> | <a href="https://github.com/kimfield98/project1-Altudy" target="_blank">Repository</a> |
 | Blog | <a href="https://velog.io/@kimfield/%ED%9A%8C%EA%B3%A0-%EC%9D%B4%EB%B2%88-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90%EC%84%9C%EB%8A%94-%EB%AC%B4%EC%97%87%EC%9D%84-%ED%96%88%EB%82%98%EC%9A%94-w90bl2mg" target="_blank">회고</a> | <a href="https://velog.io/@kimfield/%ED%9A%8C%EA%B3%A0-%EC%9D%B4%EB%B2%88-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90%EC%84%9C%EB%8A%94-%EB%AC%B4%EC%97%87%EC%9D%84-%ED%96%88%EB%82%98%EC%9A%94" target="_blank">회고</a> |
 | 예시 | <img height="200" alt="네비게이션바" src="https://github.com/kimfield98/kimfield98/assets/141253939/88a7e5a3-9573-48ef-ba54-bce142ff86b0"> | <img height="200" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/5b5e0095-8f7c-4945-a071-523eaa9a662a"> |
 
