@@ -9,11 +9,17 @@ import reset from "styled-reset"
 import { useEffect, useState } from "react"
 import LoadingScreen from "./components/loading-screen"
 import { auth } from "./firebase"
+import { styled } from "styled-components"
+import ProtectedRoute from "./components/potected-route"
 
 const router = createBrowserRouter([
   {
     path:"/",
-    element:<Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "",
@@ -47,6 +53,12 @@ const GlobalStyles = createGlobalStyle`
   }
 `
 
+const Wrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+`;
+
 function App() {
   const [isLoding, setLoging] = useState(true)
   const init = async() => {
@@ -59,10 +71,10 @@ function App() {
     init()
   }, [])
   return (
-    <>
+    <Wrapper>
       <GlobalStyles />
       {isLoding ? <LoadingScreen /> : <RouterProvider router={router} />}
-    </>
+    </Wrapper>
   )
 }
 
