@@ -6,7 +6,7 @@
 
 |제목|설명|인원|기간|기술|Github|예시|
 |:---|:---|:---|:---|:---|:---|:---|
-| MomYakSon | 우리 동네 병원/약국<br>정보 공유 플랫폼 | 개인 | 2023.01.12- | React, Firebase | <a href="https://github.com/kimfield98/project3-MomYakSon" target="_blank">Repository</a> | <img height="150" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/b678ea17-9ff5-463d-acd5-a8693a287922"> |
+| MomYakSon | 우리 동네 병원/약국<br>정보 공유 플랫폼 | 개인 | 24.01.15-24.01.21 | React, Firebase | <a href="https://github.com/kimfield98/project3-MomYakSon" target="_blank">Repository</a> | <img height="150" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/b678ea17-9ff5-463d-acd5-a8693a287922"> |
 
 
 - 랜덤 런치 매칭 서비스 앱 (기획 단계) | 2023.01.15 ~
