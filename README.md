@@ -7,8 +7,7 @@
 |제목|설명|인원|기간|기술|Github|예시|
 |:---|:---|:---|:---|:---|:---|:---|
 | 엄마손은약손<br>MomYakSon | 우리 동네 병원/약국<br>정보 공유 플랫폼 | 개인 | 24.01.15-24.01.21 | React, Firebase | <a href="https://github.com/kimfield98/project3-MomYakSon" target="_blank">Repository</a> | <img height="150" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/b678ea17-9ff5-463d-acd5-a8693a287922"> |
-| 밥버디<br>BabBuddy | 랜덤 런치 매칭<br>서비스 플랫폼 | 5 | 24.01.15-24.02.08 | Next.js, TypeScript<br>React-Query | <a href="https://github.com/c4fiber/BobBuddy" target="_blank">Repository</a> | <img height="150" alt="메인" src="https://github.com/kimfield98/kimfield98/assets/141253939/0bd56ae5-fd59-45aa-a32b-7c9b16bb6448"> |
-
+| 밥버디<br>BobBuddy | 랜덤 런치 매칭<br>서비스 플랫폼 | 5 | 24.01.15-24.02.08 | Next.js, TypeScript<br>React-Query | <a href="https://github.com/c4fiber/BobBuddy" target="_blank">Repository</a> | <img height="150" alt="메인" src="https://github.com/kimfield98/kimfield98/assets/141253939/318df768-af8c-48e0-a487-2dc9644bc052"> |
 
 <br>
 
