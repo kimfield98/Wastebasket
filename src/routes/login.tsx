@@ -40,16 +40,16 @@ export default function Login() {
 
   return (
     <Wrapper>
-      <Title>Login</Title>
+      <Title>엄마손은약손</Title>
       <Form onSubmit={onSubmit}>
-        <Input onChange={onChange} name="email" value={email} placeholder="Email" type="email" required />
-        <Input onChange={onChange} name="password" value={password} placeholder="Password" type="password" required />
-        <Input type="submit" value={isLoading ? "Loading..." : "Login"} />
+        <Input onChange={onChange} name="email" value={email} placeholder="이메일을 입력하세요" type="email" required />
+        <Input onChange={onChange} name="password" value={password} placeholder="비밀번호를 입력하세요" type="password" required />
+        <Input type="submit" value={isLoading ? "Loading..." : "로그인"}/>
       </Form>
       {error !== "" ? <Error>{error}</Error> : null}
       <Switcher>
-        Don't have an account?{" "}
-        <Link to="/create-account">Create one &rarr;</Link>
+        아직 계정이 없으신가요?{" "}
+        <Link to="/create-account">회원 가입</Link>
       </Switcher>
     </Wrapper>
   )

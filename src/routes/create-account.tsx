@@ -51,17 +51,17 @@ export default function CreateAccount() {
 
   return (
     <Wrapper>
-      <Title>Join</Title>
+      <Title>회원가입</Title>
       <Form onSubmit={onSubmit}>
-        <Input onChange={onChange} name="name" value={name} placeholder="Name" type="text" required />
-        <Input onChange={onChange} name="email" value={email} placeholder="Email" type="email" required />
-        <Input onChange={onChange} name="password" value={password} placeholder="Password" type="password" required />
-        <Input type="submit" value={isLoading ? "Loading..." : "Create Account"} />
+        <Input onChange={onChange} name="name" value={name} placeholder="이름을 입력해주세요" type="text" required />
+        <Input onChange={onChange} name="email" value={email} placeholder="이메일을 입력해주세요" type="email" required />
+        <Input onChange={onChange} name="password" value={password} placeholder="비밀번호를 입력해주세요" type="password" required />
+        <Input type="submit" value={isLoading ? "Loading..." : "회원가입"} />
       </Form>
       {error !== "" ? <Error>{error}</Error> : null}
       <Switcher>
-        Already have an account?{" "}
-        <Link to="/login">Login &rarr;</Link>
+        이미 계정이 있으신가요?{" "}
+        <Link to="/login">로그인</Link>
       </Switcher>
     </Wrapper>
   )

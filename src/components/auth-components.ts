@@ -1,12 +1,13 @@
 import { styled } from "styled-components"
 
 export const Wrapper = styled.div`
-  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  width: 420px;
-  padding: 50px 0px;
+  margin: 0 30px;
+  width: 100%;
+  height: 100%;
 `
 
 export const Form = styled.form`
@@ -24,26 +25,27 @@ export const Title = styled.h1`
 
 export const Input = styled.input`
   padding: 10px 20px;
+  width: 100%;
   border-radius: 50px;
   border: none;
-  width: 100%;
   font-size: 16px;
   &[type="submit"] {
     cursor: pointer;
+    background-color: #8acaef;
     &:hover {
-      opacity: 0.8;
+      transform: scale(1.1);
     }
   }
 `
 
 export const Error = styled.span`
   font-weight: 600;
-  color: tomato;
+  color: #f14f62;
 `
 
 export const Switcher = styled.span`
   margin-top: 20px;
   a {
-    color: #1d9bf0;
+    color: #3fb5eb;
   }
 `
