@@ -51,7 +51,7 @@ export default function CreateAccount() {
 
   return (
     <Wrapper>
-      <Title>회원가입</Title>
+      <Title>회원가입<span></span></Title>
       <Form onSubmit={onSubmit}>
         <Input onChange={onChange} name="name" value={name} placeholder="이름을 입력해주세요" type="text" required />
         <Input onChange={onChange} name="email" value={email} placeholder="이메일을 입력해주세요" type="email" required />

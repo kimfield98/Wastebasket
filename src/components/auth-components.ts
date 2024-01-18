@@ -20,21 +20,43 @@ export const Form = styled.form`
 `
 
 export const Title = styled.h1`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 10px;
   font-size: 42px;
+  font-weight: 600;
+  color: #3fb5eb;
+  span {
+    display: inline-block;
+    margin-left: 5px;
+    width: 40px;
+    height: 40px;
+    background-image: url("/logo.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 `
 
 export const Input = styled.input`
-  padding: 10px 20px;
+  padding: 15px 20px;
   width: 100%;
   border-radius: 50px;
   border: none;
   font-size: 16px;
+  font-weight: 600;
   &[type="submit"] {
     cursor: pointer;
     background-color: #8acaef;
+    color: #ffffff;
     &:hover {
-      transform: scale(1.1);
+      background-color: #3fb5eb;
     }
+  }
+  &:focus {
+    outline: none;
+    border: 2px solid #3fb5eb;
   }
 `
 
@@ -46,6 +68,9 @@ export const Error = styled.span`
 export const Switcher = styled.span`
   margin-top: 20px;
   a {
+    border-bottom: 1px solid #3fb5eb;
     color: #3fb5eb;
+    font-weight: 600;
+    text-decoration: none;
   }
 `

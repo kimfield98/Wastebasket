@@ -40,7 +40,7 @@ export default function Login() {
 
   return (
     <Wrapper>
-      <Title>엄마손은약손</Title>
+      <Title>엄마손은약손<span></span></Title>
       <Form onSubmit={onSubmit}>
         <Input onChange={onChange} name="email" value={email} placeholder="이메일을 입력하세요" type="email" required />
         <Input onChange={onChange} name="password" value={password} placeholder="비밀번호를 입력하세요" type="password" required />
