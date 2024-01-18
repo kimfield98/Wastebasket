@@ -1,41 +1,45 @@
+// Navigation bar //
+
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { auth } from "../firebase";
 
 const Wrapper = styled.div`
-  display: grid;
-  gap: 20px;
-  grid-template-columns: 1fr 4fr;
-  padding: 50px 0px;
+  position: relative;
   height: 100%;
   width: 100%;
-  max-width: 860px;
 `
 
 const Menu = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 100px;
+  position: absolute;
+  bottom: 0;
+  padding: 12px;
+  width: 100%;
+  z-index: 1000;
+  background-color: #8acaef;
 `
 
 const MenuItem = styled.div`
   cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
-  border: 2px solid white;
+  align-items: center;
+  border: 2px solid #ffffff;
   height: 50px;
   width: 50px;
   border-radius: 50%;
   svg {
     width: 30px;
-    fill: white;
+    fill: #3fb5eb;
   }
   &.log-out {
-    border-color: tomato;
+    border-color: #f14f62;
     svg {
-      fill: tomato;
+      fill: #f14f62;
     }
   }
 `
@@ -60,8 +64,8 @@ export default function Layout() {
         </Link>
         <Link to="/profile">
           <MenuItem>
-            <svg fill="none" strokeWidth={1.5} stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
             </svg>
           </MenuItem>
         </Link>

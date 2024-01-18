@@ -47,16 +47,20 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
   body {
-    background-color: black;
-    color: white;
+    background-color: #1d1d1f;
+    color: #24292F;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 `
 
 const Wrapper = styled.div`
-  height: 100vh;
   display: flex;
   justify-content: center;
+  margin: 100px auto;
+  width: 540px;
+  height: 960px;
+  background-color: #f5f7f9;
+  overflow: hidden;
 `;
 
 function App() {
