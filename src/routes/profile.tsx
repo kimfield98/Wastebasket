@@ -16,9 +16,10 @@ import Tweet from "../components/tweet"
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   gap: 20px;
+  padding: 0 20px;
 `
 
 const AvatarUpload = styled.label`
@@ -26,7 +27,7 @@ const AvatarUpload = styled.label`
   overflow: hidden;
   height: 80px;
   border-radius: 50%;
-  background-color: #1d9bf0;
+  background-color: #8acaef;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -45,7 +46,9 @@ const AvatarInput = styled.input`
 `
 
 const Name = styled.span`
-  font-size: 22px;
+  margin: 0 auto 10px;
+  font-size: 24px;
+  font-weight: 600;
 `
 
 const Tweets = styled.div`
