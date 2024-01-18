@@ -56,15 +56,16 @@ const GlobalStyles = createGlobalStyle`
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin: 100px auto;
+  margin: 0 auto;
+  padding: 30px 0 0;
   width: 390px;
   height: 844px;
   background-color: #f5f7f9;
-  overflow: hidden;
+  overflow-y: hidden;
 `;
 
 function App() {
-  const [isLoding, setLoging] = useState(true)
+  const [isLoading, setLoging] = useState(true)
   const init = async() => {
     // wait for firebase
     await auth.authStateReady()
@@ -77,7 +78,7 @@ function App() {
   return (
     <Wrapper>
       <GlobalStyles />
-      {isLoding ? <LoadingScreen /> : <RouterProvider router={router} />}
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
     </Wrapper>
   )
 }

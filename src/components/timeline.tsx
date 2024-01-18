@@ -22,9 +22,24 @@ export interface ITweet {
 
 const Wrapper = styled.div`
   display: flex;
-  gap: 10px;
   flex-direction: column;
+  gap: 10px;
+  height: 844px;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #8acaef;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    &:hover {
+      background: #3fb5eb;
+    }
+  }
 `
 
 export default function Timeline() {

@@ -1,27 +1,19 @@
 import { styled } from "styled-components"
 import { ITweet } from "./timeline"
-import { auth, db, storage } from "../firebase"
+import { auth, db } from "../firebase"
 import { deleteDoc, doc } from "firebase/firestore"
-import { deleteObject, ref } from "firebase/storage"
 
 const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
+  margin-right: 10px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 15px;
+  background-color: #eaeef2;
 `
 
 const Column = styled.div`
   &:last-child {
     place-self: end;
   }
-`
-
-const Photo = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 15px;
 `
 
 const Username = styled.span`
@@ -31,11 +23,11 @@ const Username = styled.span`
 
 const Payload = styled.p`
   margin: 10px 0px;
-  font-size: 18px;
+  font-size: 16px;
 `
 
 const DeleteButton = styled.button`
-  background-color: tomato;
+  background-color: #f14f62;
   color: white;
   font-weight: 600;
   border: 0;
@@ -46,33 +38,56 @@ const DeleteButton = styled.button`
   cursor: pointer;
 `
 
-export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
+const FlexBetweenBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`
+
+const DateText = styled.span`
+  display: block;
+  color: #555;
+  font-size: 12px;
+  margin-top: 8px;
+`
+
+export default function Tweet({ username, tweet, userId, id, createdAt }: ITweet) {
   const user = auth.currentUser
   const onDelete = async () => {
-    const ok = confirm("Are you sure you want to delete this tweet?")
+    const ok = confirm("이 게시글을 삭제하시겠습니까?")
     if (!ok || user?.uid !== userId) return
     try {
       await deleteDoc(doc(db, "tweets", id))
-      if (photo) {
-        const photoRef = ref(storage, `tweets/${user.uid}/${id}`)
-        await deleteObject(photoRef)
-      }
     } catch (e) {
       console.log(e)
-    } finally {
-      //
     }
-  };
+  }
+
+  // JavaScript의 내장 국제화 API인 Intl을 사용하여 날짜와 시간 포맷
+  const dateTimeFormat = new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Seoul'
+  })
+
+  const formattedDate = dateTimeFormat.format(new Date(createdAt))
   return (
     <Wrapper>
       <Column>
-        <Username>{username}</Username>
-        <Payload>{tweet}</Payload>
-        {user?.uid === userId ? (
-          <DeleteButton onClick={onDelete}>Delete</DeleteButton>
-        ) : null}
+        <FlexBetweenBox>
+          <Username>{username}</Username>
+          {user?.uid === userId
+            ? (<DeleteButton onClick={onDelete}>Delete</DeleteButton>)
+            : null
+          }
+        </FlexBetweenBox>
+      <Payload>{tweet}</Payload>
+      <DateText>{formattedDate}</DateText>
       </Column>
-      <Column>{photo ? <Photo src={photo} /> : null}</Column>
     </Wrapper>
   )
 }
