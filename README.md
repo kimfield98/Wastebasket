@@ -10,7 +10,7 @@
 | 기술 | **Next.js, TypeScript**<br>Springboot, Java, PostgreSQL | **Next.js, TypeScript, Recoil**<br>Nest.js, PostgreSQL | **HTML, CSS, JavaScript**<br>Django, Python |
 | Github | <a href="https://github.com/cece-09/BobBuddy_frontend" target="_blank">Repository</a> | <a href="https://github.com/kimfield98/project2-WorlDisaster" target="_blank">Repository</a> | <a href="https://github.com/kimfield98/project1-Altudy" target="_blank">Repository</a> |
 | Blog | - | <a href="https://velog.io/@kimfield/%ED%9A%8C%EA%B3%A0-%EC%9D%B4%EB%B2%88-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90%EC%84%9C%EB%8A%94-%EB%AC%B4%EC%97%87%EC%9D%84-%ED%96%88%EB%82%98%EC%9A%94-w90bl2mg" target="_blank">회고</a> | <a href="https://velog.io/@kimfield/%ED%9A%8C%EA%B3%A0-%EC%9D%B4%EB%B2%88-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90%EC%84%9C%EB%8A%94-%EB%AC%B4%EC%97%87%EC%9D%84-%ED%96%88%EB%82%98%EC%9A%94" target="_blank">회고</a> |
-| 예시 | <img height="170" alt="메인" src="https://github.com/kimfield98/kimfield98/assets/141253939/13081574-78d9-4368-b58a-2ed4919ecfe7"> | <img height="170" alt="네비게이션바" src="https://github.com/kimfield98/kimfield98/assets/141253939/88a7e5a3-9573-48ef-ba54-bce142ff86b0"> | <img height="170" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/5b5e0095-8f7c-4945-a071-523eaa9a662a"> |
+| 예시 | <img height="150" alt="메인" src="https://github.com/kimfield98/kimfield98/assets/141253939/13081574-78d9-4368-b58a-2ed4919ecfe7"> | <img height="150" alt="네비게이션바" src="https://github.com/kimfield98/kimfield98/assets/141253939/88a7e5a3-9573-48ef-ba54-bce142ff86b0"> | <img height="150" alt="메인1" src="https://github.com/kimfield98/kimfield98/assets/141253939/5b5e0095-8f7c-4945-a071-523eaa9a662a"> |
 
 <br>
 <br>
