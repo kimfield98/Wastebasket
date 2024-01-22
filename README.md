@@ -21,7 +21,7 @@
 |:---:|:---:|:---:|
 | 제목 | Chomentum | MomYakSon |
 | 기능 | 시계, 배경, 날씨, TODO | 회원가입, 로그인, 게시판 |
-| 기간 | 24.01.21- | 24.01.15-24.01.18 |
+| 기간 | | 24.01.15-24.01.18 |
 | 기술 | **VanillaJS** | **React, Firebase** |
 | Github | <a href="https://github.com/kimfield98/vanillajs-chrome-app" target="_blank">Repository</a> | <a href="https://github.com/kimfield98/project3-momyakson" target="_blank">Repository</a> |
 | 예시 | <img height="170" alt="" src=""> | <img height="170" alt="메인" src="https://github.com/kimfield98/kimfield98/assets/141253939/48a5ee57-82ee-464a-a406-6fb7ab623faf"> |
