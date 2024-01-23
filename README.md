@@ -5,7 +5,7 @@
 |목차|**프로젝트 1**|**프로젝트 2**|**프로젝트 3**|**프로젝트 4**|
 |:---:|:---:|:---:|:---:|:---:|
 | 제목 | BobBuddy | MomYakSon | WorlDisaster | Altudy |
-| 설명 | 랜덤 매칭 플랫폼 | 우리 동네 병원/약국 정보 공유 플랫폼 | 세계 재난 재해 구독 알림 웹사이트 | 알고리즘 스터디 그룹 활동 관리 웹사이트 |
+| 설명 | 랜덤 매칭 플랫폼 | 동네 병원/약국 정보 공유 플랫폼 | 세계 재난재해 구독 알림 웹사이트 | 알고리즘 스터디 그룹 활동 관리 웹사이트 |
 | 인원 | 5 | 개인 | 5 | 5 |
 | 기간 | 24.01.15-진행중 | 24.01.15-24.01.18 | 23.11.14-23.12.15 | 23.05.22-23.06.15 |
 | 기술 | **Next.js, TypeScript**<br>Springboot, Java, PostgreSQL | **React, Firebase** | **Next.js, TypeScript, Recoil**<br>Nest.js, PostgreSQL | **HTML, CSS, JavaScript**<br>Django, Python |
