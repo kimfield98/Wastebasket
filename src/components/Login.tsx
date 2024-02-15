@@ -3,6 +3,9 @@ import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useUserInfo } from "@/stores/userStore";
+import axios from "axios";
+
+const LOGIN_API = "http://localhost:3000/auth/login"
 
 type FormData = {
   email: string;
@@ -28,8 +31,17 @@ export default function LoginComponent() {
     formState: { errors }
   } = useForm<FormData>({resolver: zodResolver(LoginSchema)})
 
-  const submitData = (data: FormData) => {
-    console.log("일한다!", data)
+  async function handleLogin() {
+    try {
+      const res = await axios.post(LOGIN_API,{
+        email: 'kimfield98@gmail.com',
+        password: "1111111111",
+      })
+      console.log(res)
+      window.location.replace("/")
+    } catch (error) {
+      alert("로그인이 실패했습니다. 다시 시도하세요")
+    }
   }
 
   return (
@@ -37,7 +49,7 @@ export default function LoginComponent() {
       <header>
         <h2>로그인</h2>
       </header>
-      <form onSubmit={handleSubmit(submitData)}>
+      <form onSubmit={handleSubmit(handleLogin)}>
         <div>
           <label>이메일</label>
           <input type="email" {...register("email")} />
