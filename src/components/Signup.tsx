@@ -3,7 +3,6 @@ import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios";
-import { useUserInfo } from "@/stores/userStore";
 
 const SIGNUP_API = "http://localhost:3000/auth/signup"
 
@@ -53,7 +52,6 @@ export default function SignupComponent() {
         password: inputData.password,
       })
       const { id, name, email } = res.data
-      useUserInfo.getState().setUser({ id, name, email})
       console.log(res)
       window.location.replace("/login")
     } catch (error) {

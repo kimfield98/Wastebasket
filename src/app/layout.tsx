@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="w-[375px] mx-auto">
+        <div className="w-[375px] mx-auto font-Pretendard">
           {children}
         </div>
       </body>

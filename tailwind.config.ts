@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+	      Pretendard: ["Pretendard"],
+	    },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -3,6 +3,10 @@ import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios";
+import Link from "next/link";
+import Image from 'next/image'
+import { Input } from "@/components/ui/input"
+
 const LOGIN_API = "http://localhost:3000/auth/login"
 
 type FormData = {
@@ -11,6 +15,8 @@ type FormData = {
 }
 
 export default function LoginComponent() {
+
+  // 유저이면 메인 페이지로 리다이렉트 시키는 코드
 
   const LoginSchema: ZodType<FormData> = z
     .object({
@@ -29,13 +35,14 @@ export default function LoginComponent() {
     formState: { errors }
   } = useForm<FormData>({resolver: zodResolver(LoginSchema)})
 
-  async function handleLogin() {
+  async function handleLogin(inputData: FormData) {
     try {
       const res = await axios.post(LOGIN_API,{
-        email: 'kimfield98@gmail.com',
-        password: "1111111111",
+        email: inputData.email,
+        password: inputData.password,
       })
       console.log(res)
+      // 토큰 쿠키에 저장하는 코드
       window.location.replace("/")
     } catch (error) {
       alert("로그인이 실패했습니다. 다시 시도하세요")
@@ -43,25 +50,70 @@ export default function LoginComponent() {
   }
 
   return (
-    <section>
+    <section className="flex flex-col items-center h-screen pt-[96px] pb-[74px] bg-white font-semibold">
       <header>
-        <h2>로그인</h2>
+        <h2 className="mb-[35px] text-xl">로그인</h2> 
       </header>
       <form onSubmit={handleSubmit(handleLogin)}>
         <div>
-          <label>이메일</label>
-          <input type="email" {...register("email")} />
+          <Input
+            id="email"
+            type="email"
+            required
+            placeholder="이메일 주소를 입력해주세요."
+            className="bg-white mb-[16px] font-medium focus:outline-none"
+            {...register("email")}
+          />
           {errors.email && <span>{errors.email.message}</span>}
         </div>
         <div>
-          <label>비밀번호</label>
-          <input type="password" {...register("password")} />
+          <Input
+            type="password"
+            id="password"
+            required
+            placeholder="비밀번호를 입력해주세요."
+            className="bg-white mb-[5px] font-medium focus:outline-none"
+            {...register("password")}
+          />
           {errors.password && <span>{errors.password.message}</span>}
         </div>
-        <div>
-          <button type="submit">로그인</button>
-        </div>
+        <Link href="/">
+          <div className="flex justify-end w-[292px] text-sm/[18px] text=[#111D48]">비밀번호를 잊으셨나요?</div>
+        </Link>
+        <button type="submit" className="w-[292px] h-[52px] mt-4 bg-[#111D48] rounded text-white">로그인</button>
       </form>
+      <hr className="w-[292px] bg-[#C7C9CD] border-[0.1px] my-[16px]"></hr>
+      <button className="flex justify-center items-center w-[292px] h-[52px] mb-4 bg-[#FEE500] rounded">
+        <Image
+          src={"/Button/kakao.png"}
+          width={24}
+          height={24}
+          alt={"카카오 로고"}
+        />
+        <span className="ml-1">카카오로 3초만에 시작하기</span>
+      </button>
+      <button className="flex justify-center items-center w-[292px] h-[52px] mb-4 bg-[#000000] rounded text-white">
+        <Image
+          src={"/Button/google.png"}
+          width={24}
+          height={24}
+          alt={"구글 로고"}
+        />
+        <span className="ml-1">구글로 시작하기</span>
+      </button>
+      <button className="flex justify-center items-center w-[292px] h-[52px] bg-[#000000] rounded text-white">
+        <Image
+          src={"/Button/apple.png"}
+          width={24}
+          height={24}
+          alt={"애플 로고"} 
+        />
+        <span className="ml-1">Apple로 시작하기</span>
+      </button>
+      <div className="mt-8">
+        <span className="text-sm/[18px] text-[#91959D] font-medium">회원이 아니신가요? </span>
+        <Link href="/signup"><span className="text-sm/[18px] text-[#747474] ">회원가입</span></Link>
+      </div>
     </section>
   );
 }
