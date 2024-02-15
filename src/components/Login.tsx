@@ -50,7 +50,7 @@ export default function LoginComponent() {
   }
 
   return (
-    <section className="flex flex-col items-center h-screen pt-[96px] pb-[74px] bg-white font-semibold">
+    <section className="flex flex-col items-center pt-[96px] pb-[74px] bg-white font-semibold">
       <header>
         <h2 className="mb-[35px] text-xl">로그인</h2> 
       </header>
@@ -61,7 +61,7 @@ export default function LoginComponent() {
             type="email"
             required
             placeholder="이메일 주소를 입력해주세요."
-            className="bg-white mb-[16px] font-medium focus:outline-none"
+            className="bg-white h-[56px]  mb-[16px] font-medium focus:outline-none"
             {...register("email")}
           />
           {errors.email && <span>{errors.email.message}</span>}
@@ -72,7 +72,7 @@ export default function LoginComponent() {
             id="password"
             required
             placeholder="비밀번호를 입력해주세요."
-            className="bg-white mb-[5px] font-medium focus:outline-none"
+            className="bg-white h-[56px]  mb-[5px] font-medium focus:outline-none"
             {...register("password")}
           />
           {errors.password && <span>{errors.password.message}</span>}
