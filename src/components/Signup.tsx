@@ -3,6 +3,7 @@ import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios";
+import { useUserInfo } from "@/stores/userStore";
 
 const SIGNUP_API = "http://localhost:3000/auth/signup"
 
@@ -44,13 +45,15 @@ export default function SignupComponent() {
     formState: { errors }
   } = useForm<FormData>({resolver: zodResolver(SignupSchema)})
 
-  async function handleSignup() {
+  async function handleSignup(inputData:FormData) {
     try {
       const res = await axios.post(SIGNUP_API,{
-        name: '김초원',
-        email: 'kimfield98@gmail.com',
-        password: "1111111111",
+        name: inputData.name,
+        email: inputData.email,
+        password: inputData.password,
       })
+      const { id, name, email } = res.data
+      useUserInfo.getState().setUser({ id, name, email})
       console.log(res)
       window.location.replace("/login")
     } catch (error) {

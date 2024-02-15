@@ -1,13 +1,13 @@
 import { create } from 'zustand'
-import { UserInfo } from './type/userStore.types'
+import { User, UserInfo } from './type/userStore.types'
 
-const User = {
-  id: "0",
+const initialUserState: User = {
+  id: "",
   name: "",
   email: "",
 }
 
-export const useUserInfo  = create((set) => ({
-  user: User,
-  setUser: (user: UserInfo) => {set({ user })}
+export const useUserInfo  = create<{ user: User; setUser: (user: User) => void }>((set) => ({
+  user: initialUserState,
+  setUser: (user: User) => {set({ user })}
 }))

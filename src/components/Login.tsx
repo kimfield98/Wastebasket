@@ -2,9 +2,7 @@
 import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useUserInfo } from "@/stores/userStore";
 import axios from "axios";
-
 const LOGIN_API = "http://localhost:3000/auth/login"
 
 type FormData = {
