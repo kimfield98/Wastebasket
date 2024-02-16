@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { useUserStore } from "@/stores/userStore";
 
 const LOGIN_API = "http://13.125.226.155:3000/auth/login"
+const LOGIN_API2 = "http://13.124.118.158:6583/auth/login";
 
 type FormData = {
   email: string;
@@ -38,7 +39,7 @@ export default function LoginComponent() {
 
   async function handleLogin(inputData: FormData) {
     try {
-      const res = await axios.post(LOGIN_API,{
+      const res = await axios.post(LOGIN_API2,{
         email: inputData.email,
         password: inputData.password,
       },{

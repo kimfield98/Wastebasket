@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { Input } from "@/components/ui/input"
 
 const SIGNUP_API = "http://13.125.226.155:3000/auth/signup"
+const SIGNUP_API2 = "http://13.124.118.158:6583/auth/signup";
 
 type FormData = {
   name: string;
@@ -59,14 +60,16 @@ export default function SignupComponent() {
   } = useForm<FormData>({resolver: zodResolver(SignupSchema)})
 
   async function handleSignup(inputData:FormData) {
-    axios
-      .post(SIGNUP_API, {
+    const res = axios
+      .post(SIGNUP_API2, {
         name: inputData.name,
         email: inputData.email,
         password: inputData.password
       })
       .then(() => {
+        console.log(res);
         console.log('보냈다')
+        window.location.replace('/login')
       })
       .catch((error) => alert("뭔가 잘못됐어"))
       .finally(() => {
@@ -165,7 +168,6 @@ export default function SignupComponent() {
           </div>
           <div>
             <button
-            onClick={handlebutton}
             className="w-[292px] h-[52px] mt-4 bg-[#393F7B] rounded text-white"
             >
               다음

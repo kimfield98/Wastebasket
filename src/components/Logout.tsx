@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useUserStore } from "@/stores/userStore";
 
 const LOGOUT_API = "http://13.125.226.155:3000/auth/logout";
+const LOGOUT_API2 = "http://13.124.118.158:6583/auth/logout";
 
 export default function LogoutComponent() {
 
@@ -13,7 +14,7 @@ export default function LogoutComponent() {
   async function handleLogout() {
     const { accessToken, refreshToken } = useUserStore.getState();
     try {
-      await axios.post(LOGOUT_API, {
+      await axios.post(LOGOUT_API2, {
         accessToken,
         refreshToken
       }, {
