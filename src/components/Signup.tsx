@@ -71,9 +71,9 @@ export default function SignupComponent() {
         console.log('보냈다')
         window.location.replace('/login')
       })
-      .catch((error) => alert("뭔가 잘못됐어"))
+      .catch((error) => alert("이미 존재하는 계정입니다."))
       .finally(() => {
-        console.log('대답 좀 줘')
+        console.log('회원가입')
       });
   }
 

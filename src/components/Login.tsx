@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
 import { useUserStore } from "@/stores/userStore";
+import { useEffect } from "react";
 
 const LOGIN_API = "http://13.125.226.155:3000/auth/login"
 const LOGIN_API2 = "http://13.124.118.158:6583/auth/login";
@@ -19,6 +20,11 @@ type FormData = {
 export default function LoginComponent() {
 
   // 유저이면 메인 페이지로 리다이렉트 시키는 코드
+  useEffect(() => {
+    if(useUserStore.getState().accessToken !== null) {
+      window.location.replace('/')
+    }
+  },[])
 
   const LoginSchema: ZodType<FormData> = z
     .object({

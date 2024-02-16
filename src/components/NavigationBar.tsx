@@ -16,10 +16,12 @@ export default function NavigationBar() {
   
   return (
     <div className="flex justify-end items-center w-full h-14 py-3 px-4 bg-white">
-      {isButton && 
-      <Button className="h-8 w-[67px] text-sm bg-[#393F7B]">
-        로그인
-      </Button>
+      {isButton &&
+      <Link href="/login">
+        <Button className="h-8 w-[67px] text-sm bg-[#393F7B]">
+          로그인
+        </Button>
+      </Link>
       }
       {!isButton &&
       <Link href="/mypage">
