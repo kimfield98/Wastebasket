@@ -6,6 +6,7 @@ import axios from "axios";
 import Link from "next/link";
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
+import { useUserStore } from "@/stores/userStore";
 
 const LOGIN_API = "http://13.125.226.155:3000/auth/login"
 
@@ -44,8 +45,12 @@ export default function LoginComponent() {
         headers: {
           'Content-Type':'application/json',
       }})
-      console.log(res)
-      // 토큰 쿠키에 저장하는 코드
+      console.log('로그인 성공')
+      
+      const { accessToken, refreshToken } = res.data;
+      useUserStore.getState().setAccessToken(accessToken);
+      useUserStore.getState().setRefreshToken(refreshToken);
+      
       window.location.replace("/")
     } catch (error) {
       alert("로그인이 실패했습니다. 다시 시도하세요")
@@ -53,7 +58,7 @@ export default function LoginComponent() {
   }
 
   return (
-    <section className="flex flex-col items-center min-h-screen pt-[96px] pb-[74px] bg-white">
+    <section className="flex flex-col items-center min-h-screen w-[375px] bg-white pt-[96px] pb-[74px]">
       <header>
         <h2 className="mb-[35px] text-xl text-[22px] font-extrabold">로그인</h2> 
       </header>
