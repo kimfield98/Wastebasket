@@ -7,8 +7,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
+import { headers } from "next/headers";
 
-const SIGNUP_API = "http://localhost:3000/auth/signup"
+const SIGNUP_API = "http://13.125.226.155:3000/auth/signup"
 
 type FormData = {
   name: string;
@@ -64,8 +65,11 @@ export default function SignupComponent() {
         name: inputData.name,
         email: inputData.email,
         password: inputData.password,
-      })
-      const { id, name, email } = res.data
+      },{
+        headers: {
+          'Content-Type':'application/json',
+      }}
+      )
       console.log(res)
       window.location.replace("/login")
     } catch (error) {
@@ -74,43 +78,43 @@ export default function SignupComponent() {
   }
 
   return (
-    <section className="flex flex-col items-center min-h-screen pt-[96px] pb-[74px] bg-white font-semibold">
+    <section className="flex flex-col items-center min-h-screen pt-[96px] pb-[74px] bg-white">
       <header>
-        <h2 className="mb-[35px] text-xl">회원가입</h2> 
+        <h2 className="mb-[35px] text-xl text-[22px] font-extrabold">회원가입</h2> 
       </header>
       {isShowSocialButton &&
       <div>
-        <button className="flex justify-center items-center w-[292px] h-[52px] mb-4 bg-[#FEE500] rounded">
+        <button className="flex justify-center items-center w-[292px] h-[52px] mb-4 bg-[#FEE500] rounded text-[15px] leading-5 font-bold">
           <Image
             src={"/Button/kakao.png"}
             width={24}
             height={24}
             alt={"카카오 로고"}
           />
-          <span className="ml-1">카카오로 3초만에 시작하기</span>
+          <span className="ml-[4px]">카카오로 3초만에 시작하기</span>
         </button>
-        <button className="flex justify-center items-center w-[292px] h-[52px] mb-4 bg-[#000000] rounded text-white">
+        <button className="flex justify-center items-center w-[292px] h-[52px] mb-4 bg-[#000000] rounded text-white text-[16px] leading-5 font-medium">
           <Image
             src={"/Button/google.png"}
             width={24}
             height={24}
             alt={"구글 로고"}
           />
-          <span className="ml-1">구글로 시작하기</span>
+          <span className="ml-[8px]">구글로 시작하기</span>
         </button>
-        <button className="flex justify-center items-center w-[292px] h-[52px] bg-[#000000] rounded text-white">
+        <button className="flex justify-center items-center w-[292px] h-[52px] bg-[#000000] rounded text-white text-[16px] leading-5 font-medium">
           <Image
             src={"/Button/apple.png"}
             width={24}
             height={24}
             alt={"애플 로고"} 
           />
-          <span className="ml-1">Apple로 시작하기</span>
+          <span className="ml-[8px]">Apple로 시작하기</span>
         </button>
-        <hr className="w-[292px] bg-[#C7C9CD] border-[0.1px] my-[16px]"></hr>
+        <hr className="w-[292px] bg-[#C7C9CD] border-[0.01px] my-[16px]"></hr>
         <button
           onClick={handleSocialbutton}
-          className="w-[292px] h-[52px] mt-4 bg-[#393F7B] rounded text-white"
+          className="w-[292px] h-[52px] bg-[#393F7B] rounded text-white"
         >
         이메일 주소로 시작하기
         </button>
@@ -125,7 +129,7 @@ export default function SignupComponent() {
               type="name"
               required
               placeholder="닉네임을 입력해주세요."
-              className="bg-white h-[56px] mb-[16px] font-medium focus:outline-none"
+              className="bg-white h-[56px] mb-[16px] text-[16px] font-medium focus:outline-none"
               {...register("name")}
             />
             {errors.name && <span>{errors.name.message}</span>}
@@ -136,7 +140,7 @@ export default function SignupComponent() {
               type="email"
               required
               placeholder="이메일 주소를 입력해주세요."
-              className="bg-white h-[56px]  mb-[16px] font-medium focus:outline-none"
+              className="bg-white h-[56px]  mb-[16px] text-[16px] font-medium focus:outline-none"
               {...register("email")}
             />
             {errors.email && <span>{errors.email.message}</span>}
@@ -147,7 +151,7 @@ export default function SignupComponent() {
               id="password"
               required
               placeholder="비밀번호를 입력해주세요."
-              className="bg-white h-[56px]  mb-[16px]  font-medium focus:outline-none"
+              className="bg-white h-[56px]  mb-[16px] text-[16px] font-medium focus:outline-none"
               {...register("password")}
             />{errors.password && <span>{errors.password.message}</span>}
           </div>
@@ -157,34 +161,32 @@ export default function SignupComponent() {
               id="repassword"
               required
               placeholder="비밀번호를 다시 입력해주세요."
-              className="bg-white h-[56px]  mb-[5px] font-medium focus:outline-none"
+              className="bg-white h-[56px]  mb-[5px] text-[16px] font-medium focus:outline-none"
               {...register("confirmPassword")}
             />
             {errors.confirmPassword && <span>{errors.confirmPassword.message}</span>}
           </div>
           <div>
-            <Link href="/agree">
-              <button
-              onClick={handlebutton}
-              className="w-[292px] h-[52px] mt-4 bg-[#393F7B] rounded text-white"
-              >
-                다음
-              </button>
-            </Link>
+            <button
+            onClick={handlebutton}
+            className="w-[292px] h-[52px] mt-4 bg-[#393F7B] rounded text-white"
+            >
+              다음
+            </button>
           </div>
         </form>
         <hr className="w-[292px] bg-[#C7C9CD] border-[0.1px] my-[16px]"></hr>
-        <button className="flex justify-center items-center w-[292px] min-h-[52px] mb-4 bg-[#FEE500] rounded">
+        <button className="flex justify-center items-center w-[292px] min-h-[52px] mb-4 bg-[#FEE500] rounded text-[15px] leading-5 font-bold">
           <Image
             src={"/Button/kakao.png"}
             width={24}
             height={24}
             alt={"카카오 로고"}
           />
-          <span className="ml-1">카카오로 3초만에 시작하기</span>
+          <span className="ml-[4px]">카카오로 3초만에 시작하기</span>
         </button>
         {!isShowButton &&
-        <button onClick={handlebutton} className="w-[292px] min-h-[52px] bg-[#000000] rounded text-white">다른 방법으로 시작하기</button>
+        <button onClick={handlebutton} className="w-[292px] min-h-[52px] bg-[#000000] rounded text-white text-[15px]">다른 방법으로 시작하기</button>
         }
         {isShowButton &&
         <div>
