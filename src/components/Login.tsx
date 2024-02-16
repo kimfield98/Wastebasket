@@ -38,8 +38,8 @@ export default function LoginComponent() {
   async function handleLogin(inputData: FormData) {
     try {
       const res = await axios.post(LOGIN_API,{
-        email: 'kimfield98@gmail.com',
-        password: '1111111111',
+        email: inputData.email,
+        password: inputData.password,
       },{
         headers: {
           'Content-Type':'application/json',

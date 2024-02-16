@@ -7,7 +7,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
-import { headers } from "next/headers";
 
 const SIGNUP_API = "http://13.125.226.155:3000/auth/signup"
 
@@ -60,21 +59,19 @@ export default function SignupComponent() {
   } = useForm<FormData>({resolver: zodResolver(SignupSchema)})
 
   async function handleSignup(inputData:FormData) {
-    try {
-      const res = await axios.post(SIGNUP_API,{
+    axios
+      .post(SIGNUP_API, {
         name: inputData.name,
         email: inputData.email,
-        password: inputData.password,
-      },{
-        headers: {
-          'Content-Type':'application/json',
-      }}
-      )
-      console.log(res)
-      window.location.replace("/login")
-    } catch (error) {
-      alert("회원가입이 실패했습니다. 다시 시도하세요")
-    }
+        password: inputData.password
+      })
+      .then(() => {
+        console.log('보냈다')
+      })
+      .catch((error) => alert("뭔가 잘못됐어"))
+      .finally(() => {
+        console.log('대답 좀 줘')
+      });
   }
 
   return (
