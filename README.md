@@ -1,20 +1,6 @@
-// spread
-
-let person = {
-	anme: "kimfield",
-	age: 26
-}
-
-let person2 = {...person}
-let person3 = person
-
-console.log(person2) // { name: "kimfield", age: 26 }
-console.log(person3) // { name: "kimfield", age: 26 }
-
-// 값은 똑같지만, 복사 매커니즘이 달라요-
-// person2 는 객체가 복사되어 두 개인 상태!
-// person3 은 객체의 주소값만 복사! 객체는 하나, 참조하는 변수가 2개
-
-let a = [1,2]
-let b = [...a,3]
-console.log(1,2,3)
+- 리액트는 왜 나왔을까?
+    1. `document.getElementById(””)` 매번 선택하는 거 .. 불편해
+    2. 자바스크립트와 HTML 파일이 매번 따로 생기면 관리가 힘들어요 (JSX 등장)
+    3. 새 페이지 들어갈 때마다 새로고침이 된다? 좋지 않아요 (SPA 등장) 
+    
+    → ??? : 내가 해결해줄게 (코드 재활용성 컴포넌트로 증가시켜줄게)
