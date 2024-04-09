@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  background-color: #E6EDF3;
+}
+
+.point-color {
+  color: #758A94;
+}
