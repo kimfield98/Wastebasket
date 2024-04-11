@@ -1,19 +1,20 @@
-// Destructuring
+// spread
 
 let person = {
-	name: "kimfield",
+	anme: "kimfield",
 	age: 26
 }
 
-let name = person.name
-let age = person['age']
-// let { name, age } = person
-// 위와 같이 표현도 가능해요! 구조 분해 할당
+let person2 = {...person}
+let person3 = person
 
-console.log(name, age) // 'kimfield', 26
+console.log(person2) // { name: "kimfield", age: 26 }
+console.log(person3) // { name: "kimfield", age: 26 }
 
-let array = [1,2,3,4]
-let [a,b,...rest] = array
+// 값은 똑같지만, 복사 매커니즘이 달라요-
+// person2 는 객체가 복사되어 두 개인 상태!
+// person3 은 객체의 주소값만 복사! 객체는 하나, 참조하는 변수가 2개
 
-console.log(a,b) // 1,2
-console.log(rest) // [3,4]
+let a = [1,2]
+let b = [...a,3]
+console.log(1,2,3)
