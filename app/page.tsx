@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className='flex flex-col items-center justify-center h-screen pb-24'>
+    <main className='flex flex-col items-center justify-center h-screen pb-24 bg-[#E6ECF4]'>
       <div style={{ position: 'relative', width: '300px', height: '500px' }}>
         <Image
           alt='스플래시 이미지'
