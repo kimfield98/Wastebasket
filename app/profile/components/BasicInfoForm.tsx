@@ -43,10 +43,15 @@ function BasicInfoForm() {
             <DrawerDescription className='mb-5'>
               비밀번호를 입력해주세요.
             </DrawerDescription>
-            <Input type='password' placeholder='기존 비밀번호를 입력해주세요' />
+            <Input 
+              type='password' 
+              placeholder='기존 비밀번호를 입력해주세요' 
+              className="w-full"
+            />
             <Input
               type='password'
               placeholder='새로운 비밀번호를 입력해주세요'
+              className="w-full"
             />
           </DrawerHeader>
           <DrawerFooter>

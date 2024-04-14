@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BasicInfoForm from "./BasicInfoForm";
+import PreferenceInfoForm from "./PreferenceInfoForm";
 
 const ProfilePage = () => {
   return (
@@ -14,7 +15,9 @@ const ProfilePage = () => {
           <TabsContent value='basic'>
             <BasicInfoForm />
           </TabsContent>
-          <TabsContent value='preference'>Change your preference here.</TabsContent>
+          <TabsContent value='preference'>
+            <PreferenceInfoForm />
+          </TabsContent>
         </Tabs>
         <Button className='bg-[#5F7A85]'>저장</Button>
       </form>
