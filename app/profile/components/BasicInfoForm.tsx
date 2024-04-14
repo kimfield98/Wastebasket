@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 function BasicInfoForm() {
   return (
     <div className='flex flex-col items-center'>
-      <Avatar className='mb-10 w-14 h-14'>
+      <Avatar className="w-14 h-14 my-3">
         <AvatarImage src='https://picsum.photos/250/250' />
         <AvatarFallback>
           <svg
