@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+function Home() {
   return (
     <main className='flex flex-col items-center justify-center h-screen pb-24 bg-[#E6ECF4]'>
       <div style={{ position: 'relative', width: '300px', height: '500px' }}>
@@ -26,3 +26,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default Home;

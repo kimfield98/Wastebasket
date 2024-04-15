@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BasicInfoForm from "./BasicInfoForm";
 import PreferenceInfoForm from "./PreferenceInfoForm";
 
-const ProfilePage = () => {
+function ProfilePage() {
   return (
     <div className="flex flex-col items-center w-80">
       <form>
