@@ -1,10 +1,10 @@
 "use client";
 import FormButton from "@/components/FormButton";
 import FormInput from "@/components/FormInput";
-// import SocialLoginComponent from "@/components/SocialLogin";
 import Link from "next/link";
 import { useFormState } from "react-dom";
 import { onSubmit } from "./actions";
+import SocialButtons from "@/components/SocailButtons";
 
 export default function LoginPage() {
   const [state, dispatch] = useFormState(onSubmit, null);
@@ -33,7 +33,7 @@ export default function LoginPage() {
           text='로그인'
         />
       </form>
-      {/* <SocialLoginComponent /> */}
+      <SocialButtons />
       <Link href='/create-account'>
         <span>아직 계정이 없으신가요?</span>
         <span className='font-semibold'> 회원가입</span>
