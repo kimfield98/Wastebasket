@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 const checkUserName = (userName: string) => !userName.includes(" ");
+const checkPasswords = ({password, passwordConfirm}:{password: string, passwordConfirm: string}) => password === passwordConfirm;
 
 const formSchema = z.object({
   username: z
@@ -22,7 +23,10 @@ const formSchema = z.object({
     passwordConfirm: z
     .string()
     .min(6, { message: "비밀번호는 6자 이상이어야 합니다." }),
-}).refine(({password, passwordConfirm}) => password === passwordConfirm, "비밀번호가 일치하지 않습니다." );
+}).refine(checkPasswords, { 
+    message: "비밀번호가 일치하지 않습니다.",
+    path: ["passwordConfirm"]
+  });
 
 export async function createAccount(prevState: any, formData: FormData) {
   const data = {
