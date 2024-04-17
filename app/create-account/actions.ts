@@ -2,6 +2,10 @@
 
 import { z } from "zod";
 
+function checkUserName(userName: string) {
+  return !userName.includes(" ");
+}
+
 const formSchema = z.object({
   username: z
     .string({
@@ -10,7 +14,7 @@ const formSchema = z.object({
     })
     .min(3, { message: "이름은 2자 이상이어야 합니다." })
     .max(10, { message: "이름은 10자 이하여야 합니다." })
-    .refine((userName) => !userName.includes(" "), "이름에 공백이 포함되어 있습니다."),
+    .refine(checkUserName, "이름에 공백이 포함되어 있습니다."),
   email: z
     .string({ required_error: "이메일을 입력해주세요." })
     .email({ message: "올바른 이메일 형식이 아닙니다." }),
