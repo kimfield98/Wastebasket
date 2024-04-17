@@ -3,7 +3,6 @@
 import { useFormStatus } from "react-dom";
 
 interface FormButtonProps {
-  loading: boolean;
   text: string;
 }
 
