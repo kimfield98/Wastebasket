@@ -1,6 +1,6 @@
 import FormButton from "@/components/FormButton";
 import FormInput from "@/components/FormInput";
-import SocialLoginComponent from "@/components/SocialLogin";
+// import SocialLoginComponent from "@/components/SocialLogin";
 import Link from "next/link";
 
 export default function CreateAccountPage() {
