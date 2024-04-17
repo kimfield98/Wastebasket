@@ -14,14 +14,12 @@ export default function SMSLogin() {
           type="number"
           placeholder="전화번호"
           required
-          errors={[]}
         />
         <FormInput
           name="verificationCode"
           type="number"
           placeholder="인증번호"
           required
-          errors={[]}
         />
         <FormButton text="인증" />
       </form>

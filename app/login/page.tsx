@@ -16,7 +16,7 @@ export default function LogIn() {
         <h2 className="text-xl">이메일과 비밀번호를 입력해주세요</h2>
       </div>
       <form action={action} className="flex flex-col gap-3">
-        <FormInput name="email" type="email" placeholder="이메일" required errors={[]} />
+        <FormInput name="email" type="email" placeholder="이메일" required />
         <FormInput
           name="password"
           type="password"
