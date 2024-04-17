@@ -28,7 +28,6 @@ export default function LoginPage() {
           className='w-72 border rounded-md p-2'
         />
         <FormButton
-          className='w-72 sm:w-72 h-10 bg-lime-600 rounded-md text-white font-semibold'
           text='로그인'
         />
       </form>

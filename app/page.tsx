@@ -1,8 +1,9 @@
+import FormButton from "@/components/FormButton";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className='w-screen flex flex-col items-center justify-between h-screen pt-56 pb-32 dark:bg-zinc-950 dark:text-gray-200'>
+    <main className='w-screen flex flex-col items-center justify-between h-screen py-56 dark:bg-zinc-950 dark:text-gray-200'>
       <div className='flex flex-col items-center gap-1 sm:gap-2'>
         <div className='text-7xl sm:text-8xl'>🌳</div>
         <div className='text-3xl sm:text-4xl font-semibold'>KIMFIELD WORLD</div>
@@ -11,9 +12,8 @@ export default function Home() {
       <div className='flex flex-col items-center gap-3 sm:gap-5'>
         <Link
           href='/create-account'
-          className='flex items-center justify-center w-full sm:w-72 h-14 bg-lime-600 rounded-full text-white text-lg font-semibold'
         >
-          <button>시작하기</button>
+          <FormButton text="시작하기" />
         </Link>
         <Link href='/login'>
           <span>이미 계정이 있으신가요?</span>

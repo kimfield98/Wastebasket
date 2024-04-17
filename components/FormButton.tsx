@@ -1,8 +1,16 @@
+"use client";
+
+import { useFormStatus } from "react-dom";
+
 interface FormButtonProps {
-  className: string;
   text: string;
 }
 
-export default function FormButton({ className, text }: FormButtonProps) {
-  return <button className={className}>{text}</button>;
+export default function FormButton({ text }: FormButtonProps) {
+  const { pending } = useFormStatus();
+  return (
+    <button disabled={pending} className="primary-btn disabled:bg-neutral-400  disabled:text-neutral-300 disabled:cursor-not-allowed w-72 sm:w-72 h-10 bg-lime-600 rounded-md text-white font-semibold">
+      {pending ? "로딩 중 ..." : text}
+    </button>
+  );
 }
