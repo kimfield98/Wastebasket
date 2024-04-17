@@ -19,10 +19,10 @@ const formSchema = z.object({
   password: z
     .string({ required_error: "비밀번호를 입력해주세요." })
     .min(6, { message: "비밀번호는 6자 이상이어야 합니다." }),
-  confirm_password: z
+    passwordConfirm: z
     .string()
     .min(6, { message: "비밀번호는 6자 이상이어야 합니다." }),
-});
+}).refine(({password, passwordConfirm}) => password === passwordConfirm, "비밀번호가 일치하지 않습니다." );
 
 export async function createAccount(prevState: any, formData: FormData) {
   const data = {
