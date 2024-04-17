@@ -1,4 +1,5 @@
 import SocialLoginComponent from "@/components/socialLogin";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -13,6 +14,10 @@ export default function LoginPage() {
         <button className="w-72 sm:w-72 h-10 bg-lime-600 rounded-md text-white font-semibold">로그인</button>
       </form>
       <SocialLoginComponent />
+      <Link href='/create-account'>
+        <span>아직 계정이 없으신가요?</span>
+        <span className='font-semibold'> 회원가입</span>
+      </Link>
     </div>
   );
 }
