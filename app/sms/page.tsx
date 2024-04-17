@@ -23,7 +23,7 @@ export default function SMSLogin() {
           required
           errors={[]}
         />
-        <FormButton loading={false} text="인증" />
+        <FormButton text="인증" />
       </form>
     </div>
   );
