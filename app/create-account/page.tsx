@@ -10,15 +10,17 @@ export default function CreateAccount() {
         <h2 className="text-xl">가입을 위한 정보를 입력해주세요.</h2>
       </div>
       <form className="flex flex-col gap-3">
-      <FormInput type="text" placeholder="이름" required errors={[]} />
-        <FormInput type="email" placeholder="이메일" required errors={[]} />
+      <FormInput name="name" type="text" placeholder="이름" required errors={[]} />
+        <FormInput name="email" type="email" placeholder="이메일" required errors={[]} />
         <FormInput
+          name="password"
           type="password"
           placeholder="비밀번호"
           required
           errors={[]}
         />
         <FormInput
+          name="passwordConfirm"
           type="password"
           placeholder="비밀번호 확인"
           required
