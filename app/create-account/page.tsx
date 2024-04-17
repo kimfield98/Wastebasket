@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function CreateAccountPage() {
   return (
-    <div className='flex flex-col gap-5 items-center justify-between h-screen py-32'>
+    <div className='flex flex-col gap-5 items-center justify-between h-screen py-32 dark:bg-zinc-950 dark:text-gray-200'>
       <div className='flex flex-col gap-1 items-center'>
         <div className='text-3xl font-semibold'>회원가입</div>
         <div className='text-lg'>가입을 위한 정보를 입력해주세요.</div>
