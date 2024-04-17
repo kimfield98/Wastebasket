@@ -28,7 +28,7 @@ export default function LoginPage() {
           text='로그인'
         />
       </form>
-      <SocialLoginComponent />
+      {/* <SocialLoginComponent /> */}
       <Link href='/create-account'>
         <span>아직 계정이 없으신가요?</span>
         <span className='font-semibold'> 회원가입</span>

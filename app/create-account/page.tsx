@@ -40,7 +40,7 @@ export default function CreateAccountPage() {
           text='회원가입'
         />
       </form>
-      <SocialLoginComponent />
+      {/* <SocialLoginComponent /> */}
       <Link href='/login'>
         <span>이미 계정이 있으신가요?</span>
         <span className='font-semibold'> 로그인</span>
