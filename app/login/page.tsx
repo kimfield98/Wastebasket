@@ -20,12 +20,14 @@ export default function LoginPage() {
           type='email'
           placeholder='이메일을 입력해주세요'
           className='w-72 border rounded-md p-2'
+          errors={state?.fieldErrors?.email}
         />
         <FormInput
           name='password'
           type='password'
           placeholder='비밀번호를 입력해주세요'
           className='w-72 border rounded-md p-2'
+          errors={state?.fieldErrors?.password}
         />
         <FormButton
           text='로그인'

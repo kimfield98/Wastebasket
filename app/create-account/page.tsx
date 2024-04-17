@@ -20,24 +20,28 @@ export default function CreateAccountPage() {
           placeholder='이름을 입력해주세요'
           className='w-72 border rounded-md p-2'
           name='name'
+          errors={state?.fieldErrors?.name}
         />
         <FormInput
           type='email'
           placeholder='이메일을 입력해주세요'
           className='w-72 border rounded-md p-2'
           name='email'
+          errors={state?.fieldErrors?.email}
         />
         <FormInput
           type='password'
           placeholder='비밀번호를 입력해주세요'
           className='w-72 border rounded-md p-2'
           name='password'
+          errors={state?.fieldErrors?.password}
         />
         <FormInput
           type='password'
           placeholder='비밀번호를 다시 입력해주세요'
           className='w-72 border rounded-md p-2'
           name='ConfirmPassword'
+          errors={state?.fieldErrors?.confirmPassword}
         />
         <FormButton
           text='회원가입'
