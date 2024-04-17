@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className='w-screen flex flex-col items-center justify-between h-screen pt-56 pb-32'>
+    <main className='w-screen flex flex-col items-center justify-between h-screen pt-56 pb-32 dark:bg-zinc-950 dark:text-gray-200'>
       <div className="flex flex-col items-center gap-1 sm:gap-2">
         <div className="text-7xl sm:text-8xl">🌳</div>
         <div className="text-3xl sm:text-4xl font-semibold">KIMFIELD WORLD</div>
