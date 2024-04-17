@@ -2,9 +2,7 @@
 
 import { z } from "zod";
 
-function checkUserName(userName: string) {
-  return !userName.includes(" ");
-}
+const checkUserName = (userName: string) => !userName.includes(" ");
 
 const formSchema = z.object({
   username: z
