@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <div className='flex flex-col items-center justify-between h-screen py-52'>
+    <div className='flex flex-col gap-10 items-center justify-between h-screen py-44 dark:bg-zinc-950 dark:text-gray-200'>
       <div className="flex flex-col gap-1 items-center">
         <div className="text-3xl font-semibold">로그인</div>
         <div className="text-lg">이메일과 비밀번호를 입력해주세요.</div>

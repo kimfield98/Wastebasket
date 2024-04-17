@@ -8,7 +8,7 @@ export default function SocialLoginComponent() {
         <div className='w-72 h-px bg-gray-300' />
         <div className='flex flex-col gap-3 my-5'>
           <Link
-            className='flex gap-1 items-center justify-center w-72 h-10 bg-gray-800 rounded-md text-white font-semibold'
+            className='flex gap-1 items-center justify-center w-72 h-10 bg-gray-800 rounded-md text-white dark:bg-gray-200 dark:text-gray-900 font-semibold'
             href='/'
           >
             <svg
@@ -27,7 +27,7 @@ export default function SocialLoginComponent() {
             <span>깃허브로 함께하기</span>
           </Link>
           <Link
-            className='flex gap-1 items-center justify-center w-72 h-10 bg-gray-800 rounded-md text-white font-semibold'
+            className='flex gap-1 items-center justify-center w-72 h-10 bg-gray-800 rounded-md text-white dark:bg-gray-200 dark:text-gray-900 font-semibold'
             href='/sms'
           >
             <ChatBubbleOvalLeftEllipsisIcon className='size-6' />
