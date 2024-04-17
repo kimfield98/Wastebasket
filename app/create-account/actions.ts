@@ -10,7 +10,7 @@ export const checkPasswords = ({
   confirmPassword: string;
 }) => password === confirmPassword;
 
-export const CreateAccountSchema = z
+const CreateAccountSchema = z
   .object({
     name: z
       .string({
