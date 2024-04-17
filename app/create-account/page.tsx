@@ -17,14 +17,12 @@ export default function CreateAccount() {
           type="password"
           placeholder="비밀번호"
           required
-          errors={[]}
         />
         <FormInput
           name="passwordConfirm"
           type="password"
           placeholder="비밀번호 확인"
           required
-          errors={[]}
         />
         <FormButton text="회원가입" />
       </form>
