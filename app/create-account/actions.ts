@@ -43,6 +43,11 @@ export async function createAccount(prevState: any, formData: FormData) {
   if (!result.success) {
     return result.error.flatten();
   } else {
-    console.log("회원가입 성공", result.data);
+    // 유저이름이 이미 있는지 확인
+    // 이메일이 이미 있는지 확인
+    // 비밀번호 해싱
+    // DB에 저장
+    // 로그인
+    // 리다이렉트
   }
 }
