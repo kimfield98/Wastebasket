@@ -1,5 +1,5 @@
-import FormButton from "@/components/form-btn";
-import FormInput from "@/components/form-input";
+import Button from "@/components/button";
+import Input from "@/components/input";
 
 export default function SMSLogin() {
   return (
@@ -9,19 +9,19 @@ export default function SMSLogin() {
         <h2 className="text-xl">전화번호 인증을 진행해주세요</h2>
       </div>
       <form className="flex flex-col gap-3">
-        <FormInput
+        <Input
           name="phoneNumber"
           type="number"
           placeholder="전화번호"
           required
         />
-        <FormInput
+        <Input
           name="verificationCode"
           type="number"
           placeholder="인증번호"
           required
         />
-        <FormButton text="인증" />
+        <Button text="인증" />
       </form>
     </div>
   );
