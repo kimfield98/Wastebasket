@@ -8,10 +8,11 @@ import { useState } from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
-import { Button, List, ListItem } from '@mui/material';
+import { Button, Drawer, List, ListItem, TextField, Typography } from '@mui/material';
 
 export default function Profile() {
   const [toggleStatus, setToggleStatues] = useState('basic');
+  const [open, setOpen] = useState(false);
 
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -19,6 +20,53 @@ export default function Profile() {
   ) => {
     setToggleStatues(newAlignment);
   };
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
+
+  const DrawerList = (
+    <Box
+      sx={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 300 
+      }}
+      role='presentation'
+      onClick={toggleDrawer(false)}
+    >
+      <TextField
+          id='name'
+          label='이름'
+          placeholder='이름을 입력해주세요'
+          sx={{
+            width: '80%',
+            maxWidth: '400px',
+          }}
+        />
+        <Button
+          sx={{
+            marginTop: '30px',
+            width: '80%',
+            maxWidth: '400px',
+            color: 'white',
+            bgcolor: '#758A94',
+            ':focus': {
+              backgroundColor: '#758A94',
+            },
+            ':hover': {
+              backgroundColor: '#758A94',
+            },
+          }}
+          variant='contained'
+          size='large'
+        >
+          변경하기
+        </Button>
+    </Box>
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -50,7 +98,7 @@ export default function Profile() {
               <List>
                 <ListItem disablePadding>
                   <ListItemButton>
-                    <ListItemText primary='이름' />
+                    <ListItemText primary='이름' onClick={toggleDrawer(true)} />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
@@ -105,6 +153,9 @@ export default function Profile() {
           비밀번호 변경
         </Button>
       </div>
+      <Drawer anchor='bottom' open={open} onClose={toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
     </ThemeProvider>
   );
 }
