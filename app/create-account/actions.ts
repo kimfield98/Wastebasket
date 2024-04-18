@@ -1,6 +1,6 @@
 "use server";
 
-import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX } from "@/lib/constants";
+import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, PASSWORD_REGEX_ERROR } from "@/lib/constants";
 import { z } from "zod";
 
 const checkPasswords = ({password, passwordConfirm}:{password: string, passwordConfirm: string}) => password === passwordConfirm;
@@ -22,7 +22,7 @@ const formSchema = z.object({
     .min(PASSWORD_MIN_LENGTH, { message: "비밀번호는 6자 이상이어야 합니다." })
     .regex(
       PASSWORD_REGEX,
-      "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."
+      PASSWORD_REGEX_ERROR
     ),
     passwordConfirm: z
     .string()
