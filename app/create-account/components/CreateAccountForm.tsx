@@ -1,10 +1,15 @@
+"use client";
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import LoginLink from '@/app/login/components/LoginLink';
+import { useFormState } from 'react-dom';
+import { createAccount } from '../actions';
 
 function CreateAccountForm() {
+  const [state, dispatch] = useFormState(createAccount, null);
   return (
-    <form className='flex flex-col items-center text-[#5f7a85]'>
+    <form action={dispatch} className='flex flex-col items-center text-[#5f7a85]'>
       <Input name='userName' type='text' placeholder='이름을 입력해주세요' />
       <Input name='email' type='email' placeholder='이메일을 입력해주세요' />
       <Input
