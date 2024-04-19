@@ -11,7 +11,7 @@ const test = async () => {
     },
   });
   console.log(user);
-}
+};
 test();
 
 export default db;
