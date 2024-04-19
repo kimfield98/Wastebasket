@@ -8,6 +8,9 @@ import {
 import db from "@/lib/db";
 import { z } from "zod";
 import bycript from "bcrypt";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const checkPasswords = ({
   password,
@@ -84,7 +87,15 @@ export async function createAccount(prevState: any, formData: FormData) {
       select: { id: true },
     });
     // DB에 저장
+    const cookie = await getIronSession(cookies(), {
+      cookieName: "user",
+      password: process.env.COOKIE_PASSWORD!,
+    });
+    //@ts-ignore
+    cookie.id = user.id;
+    await cookie.save();
     // 로그인
     // 리다이렉트
+    redirect("/profile");
   }
 }
