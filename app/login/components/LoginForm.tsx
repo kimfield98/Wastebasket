@@ -13,7 +13,12 @@ function LoginForm() {
       action={dispatch}
       className='flex flex-col items-center text-[#5f7a85]'
     >
-      <Input name='email' type='email' placeholder='이메일을 입력해주세요' errors={state?.fieldErrors.email} />
+      <Input
+        name='email'
+        type='email'
+        placeholder='이메일을 입력해주세요'
+        errors={state?.fieldErrors.email}
+      />
       <Input
         name='password'
         type='password'

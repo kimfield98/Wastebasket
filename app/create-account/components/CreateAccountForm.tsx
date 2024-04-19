@@ -8,14 +8,23 @@ import { createAccount } from '../actions';
 
 function CreateAccountForm() {
   const [state, dispatch] = useFormState(createAccount, null);
-  console.log('CreateAccountForm', state);
   return (
     <form
       action={dispatch}
       className='flex flex-col items-center text-[#5f7a85]'
     >
-      <Input name='username' type='text' placeholder='이름을 입력해주세요' errors={state?.fieldErrors.username} />
-      <Input name='email' type='email' placeholder='이메일을 입력해주세요' errors={state?.fieldErrors.email} />
+      <Input
+        name='username'
+        type='text'
+        placeholder='이름을 입력해주세요'
+        errors={state?.fieldErrors.username}
+      />
+      <Input
+        name='email'
+        type='email'
+        placeholder='이메일을 입력해주세요'
+        errors={state?.fieldErrors.email}
+      />
       <Input
         name='password'
         type='password'
