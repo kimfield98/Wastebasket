@@ -17,7 +17,7 @@ export default function CreateAccount() {
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input
-          name="userName"
+          name="username"
           type="text"
           placeholder="이름"
           required
