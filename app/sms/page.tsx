@@ -19,8 +19,7 @@ export default function SMSLogin() {
         <h2 className="text-xl">전화번호 인증을 진행해주세요</h2>
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
-      {state.token ? 
-        (
+        {state.token ? (
           <Input
             key="token"
             name="token"

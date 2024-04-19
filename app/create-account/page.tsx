@@ -16,11 +16,11 @@ export default function CreateAccount() {
         <h2 className="text-xl">가입을 위한 정보를 입력해주세요.</h2>
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
-        <Input 
-          name="userName" 
-          type="text" 
-          placeholder="이름" 
-          required 
+        <Input
+          name="userName"
+          type="text"
+          placeholder="이름"
+          required
           errors={state?.fieldErrors.username}
         />
         <Input
@@ -28,7 +28,8 @@ export default function CreateAccount() {
           type="email"
           placeholder="Email"
           required
-          errors={state?.fieldErrors.email}/>
+          errors={state?.fieldErrors.email}
+        />
         <Input
           name="password"
           type="password"
