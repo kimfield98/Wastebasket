@@ -7,6 +7,7 @@ import {
 } from "@/lib/constants";
 import db from "@/lib/db";
 import { z } from "zod";
+import bycript from "bcrypt";
 
 const checkPasswords = ({
   password,
@@ -73,6 +74,15 @@ export async function createAccount(prevState: any, formData: FormData) {
     return result.error.flatten();
   } else {
     // 비밀번호 해싱
+    const hashedPassword = await bycript.hash(result.data.password, 12);
+    const user = await db.user.create({
+      data: {
+        username: result.data.username,
+        email: result.data.email,
+        password: hashedPassword,
+      },
+      select: { id: true },
+    });
     // DB에 저장
     // 로그인
     // 리다이렉트
