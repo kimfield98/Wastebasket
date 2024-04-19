@@ -1,19 +1,20 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import CreateAccountLink from '@/app/create-account/components/CreateAccountLink';
 
-function LoginPage() {
+function LoginForm() {
   return (
-    <form className='flex flex-col items-center'>
-      <Input type='email' placeholder='이메일을 입력해주세요' />
-      <Input type='password' placeholder='비밀번호를 입력해주세요' />
-      <Button className='w-80 my-5 bg-[#5F7A85]'>로그인</Button>
-      <Link href='/create-account' className='text-[#758A94] font-semibold'>
-        아직 계정이 없으신가요?{' '}
-        <span className='font-semibold underline'>회원가입</span>
-      </Link>
+    <form className='flex flex-col items-center text-[#5f7a85]'>
+      <Input name='email' type='email' placeholder='이메일을 입력해주세요' />
+      <Input
+        name='password'
+        type='password'
+        placeholder='비밀번호를 입력해주세요'
+      />
+      <Button className='my-10'>로그인</Button>
+      <CreateAccountLink />
     </form>
   );
 }
 
-export default LoginPage;
+export default LoginForm;
