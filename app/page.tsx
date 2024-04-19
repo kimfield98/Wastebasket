@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import LoginLink from './login/components/LoginLink';
+import '@/lib/db';
 
 function Home() {
   return (
