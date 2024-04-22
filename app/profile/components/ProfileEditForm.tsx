@@ -14,10 +14,11 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
+import { logout } from '../actions';
 
 function ProfilePage() {
   return (
-    <form className='flex flex-col items-center'>
+    <form action={logout} className='flex flex-col items-center'>
       <Avatar className='w-14 h-14 mb-10'>
         <AvatarImage src='https://picsum.photos/250/250' />
         <AvatarFallback>
@@ -47,7 +48,7 @@ function ProfilePage() {
       </Tabs>
       <Button className='mt-5'>저장</Button>
       <Drawer>
-        <DrawerTrigger className='inline-flex items-center justify-center my-5 w-80 h-10 bg-[#758A94] text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'>
+        <DrawerTrigger className='inline-flex items-center justify-center mt-5 w-80 h-10 bg-[#758A94] text-white whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'>
           비밀번호 수정
         </DrawerTrigger>
         <DrawerContent>
@@ -86,6 +87,7 @@ function ProfilePage() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+      <Button className='mt-5'>로그아웃</Button>
     </form>
   );
 }
