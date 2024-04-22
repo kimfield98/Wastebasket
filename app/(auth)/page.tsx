@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LoginLink from './login/components/LoginLink';
 import '@/lib/db';
+import blurDataURL from '../../public/밥버디.png';
 
 function Home() {
   return (
@@ -9,15 +10,14 @@ function Home() {
       <div style={{ position: 'relative', width: '300px', height: '500px' }}>
         <Image
           alt='스플래시 이미지'
-          src='/밥버디.png'
-          blurDataURL='/assets/밥버디.png'
+          src='https://raw.githubusercontent.com/kimfield98/MYPJT3-BOBBUDDY/main/public/%EB%B0%A5%EB%B2%84%EB%94%94.png'
           placeholder='blur'
           quality={100}
-          fill
-          sizes='100vw'
-          style={{
-            objectFit: 'cover',
-          }}
+          layout='responsive' // 이미지 사이즈 조정
+          width={300} // 변경할 이미지의 너비
+          height={500} // 변경할 이미지의 높이
+          priority // 우선 순위 설정
+          blurDataURL={blurDataURL.src}
         />
       </div>
       <div className='flex flex-col gap-10 items-center text-[#5f7a85]'>
