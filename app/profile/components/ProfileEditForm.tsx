@@ -15,8 +15,27 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { logout } from '../actions';
+import getSession from '@/lib/session';
+import db from '@/lib/db';
+import { notFound } from 'next/navigation';
 
-function ProfilePage() {
+async function getUser() {
+  const session = await getSession();
+  if(session.id) {
+    const user = await db.user.findUnique({
+      where: {
+        id: session.id,
+      },
+    });
+    if (user) {
+      return user;
+    }
+  }
+  notFound();
+}
+
+async function ProfilePage() {
+  const user = await getUser();
   return (
     <form action={logout} className='flex flex-col items-center'>
       <Avatar className='w-14 h-14 mb-10'>
@@ -40,10 +59,10 @@ function ProfilePage() {
           <TabsTrigger value='preference'>추가 정보</TabsTrigger>
         </TabsList>
         <TabsContent value='basic'>
-          <BasicInfoForm />
+          <BasicInfoForm user={user} />
         </TabsContent>
         <TabsContent value='preference'>
-          <PreferenceInfoForm />
+          <PreferenceInfoForm user={user} />
         </TabsContent>
       </Tabs>
       <Button className='mt-5'>저장</Button>
