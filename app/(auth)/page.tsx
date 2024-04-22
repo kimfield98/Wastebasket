@@ -6,7 +6,7 @@ import blurDataURL from '../../public/밥버디.png';
 
 function Home() {
   return (
-    <main className='flex flex-col items-center justify-center h-screen pb-24 bg-[#E6ECF4]'>
+    <main className='flex flex-col items-center justify-between h-screen py-32 bg-[#E6ECF4]'>
       <div style={{ position: 'relative', width: '300px', height: '500px' }}>
         <Image
           alt='스플래시 이미지'
