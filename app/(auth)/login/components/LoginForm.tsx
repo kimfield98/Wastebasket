@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import CreateAccountLink from '@/app/create-account/components/CreateAccountLink';
+import CreateAccountLink from '@/app/(auth)/create-account/components/CreateAccountLink';
 import { useFormState } from 'react-dom';
 import { login } from '../actions';
 

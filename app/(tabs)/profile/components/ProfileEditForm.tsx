@@ -21,7 +21,7 @@ import { notFound } from 'next/navigation';
 
 async function getUser() {
   const session = await getSession();
-  if(session.id) {
+  if (session.id) {
     const user = await db.user.findUnique({
       where: {
         id: session.id,
