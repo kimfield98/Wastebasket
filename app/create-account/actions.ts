@@ -1,7 +1,32 @@
 'use server';
 
+import db from '@/lib/db';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
+
+const checkUniqueUsername = async (username: string) => {
+  const user = await db.user.findUnique({
+    where: { username },
+    select: { id: true },
+  });
+  if (user) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const checkUniqueEmail = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+  if (user) {
+    return false;
+  } else {
+    return true;
+  }
+};
 
 export const checkPasswords = ({
   password,
@@ -20,11 +45,17 @@ const formSchema = z
       })
       .toLowerCase()
       .trim()
-      .min(2, { message: '이름은 2자 이상입니다.' }),
+      .min(2, { message: '이름은 2자 이상입니다.' })
+      .refine(checkUniqueUsername, {
+        message: '이미 사용 중인 이름입니다.',
+      }),
     email: z
       .string()
       .email({ message: '올바른 이메일 형식을 입력해주세요.' })
-      .toLowerCase(),
+      .toLowerCase()
+      .refine(checkUniqueEmail, {
+        message: '이미 사용 중인 이메일입니다.',
+      }),
     password: z.string().min(6, { message: '비밀번호는 6자 이상입니다.' }),
     confirmPassword: z
       .string()
