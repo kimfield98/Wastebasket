@@ -16,9 +16,9 @@ const checkEmailExist = async (email: string) => {
     },
   });
   if (user) {
-    return false;
-  } else {
     return true;
+  } else {
+    return false;
   }
 };
 
@@ -32,7 +32,7 @@ const formSchema = z.object({
     })
     .toLowerCase()
     .refine(checkEmailExist, {
-      message: '이미 사용 중인 이메일입니다.',
+      message: '존재하지 않는 이메일입니다.',
     }),
   password: z
     .string({
