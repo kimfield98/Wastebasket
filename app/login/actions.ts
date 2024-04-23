@@ -1,7 +1,27 @@
 'use server';
 
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
+import db from '@/lib/db';
+import { getIronSession } from 'iron-session';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+const checkEmailExist = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+  if (user) {
+    return false;
+  } else {
+    return true;
+  }
+};
 
 const formSchema = z.object({
   email: z
@@ -11,7 +31,10 @@ const formSchema = z.object({
     .email({
       message: '올바른 이메일 형식을 입력해주세요.',
     })
-    .toLowerCase(),
+    .toLowerCase()
+    .refine(checkEmailExist, {
+      message: '이미 사용 중인 이메일입니다.',
+    }),
   password: z
     .string({
       required_error: '비밀번호를 입력해주세요',
@@ -30,7 +53,34 @@ export async function login(prevState: any, formData: FormData) {
   if (!result.success) {
     return result.error.flatten();
   } else {
-    console.log('로그인 성공');
-    redirect('/profile');
+    const user = await db.user.findUnique({
+      where: {
+        email: result.data.email,
+      },
+      select: {
+        id: true,
+        password: true,
+      },
+    });
+    const passwordMatch = await bcrypt.compare(
+      result.data.password,
+      user!.password ?? 'xxxx',
+    );
+    if (passwordMatch) {
+      const cookie = await getIronSession(cookies(), {
+        cookieName: 'my-cookie',
+        password: process.env.COOKIE_PASSWORD!,
+      });
+      cookie.id = user!.id;
+      await cookie.save();
+      redirect('/profile');
+    } else {
+      return {
+        fieldErrors: {
+          password: ['비밀번호가 일치하지 않습니다.'],
+          email: [],
+        },
+      };
+    }
   }
 }
