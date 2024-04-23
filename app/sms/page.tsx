@@ -9,8 +9,20 @@ export default function SMSLogin() {
         <h2 className='text-xl'>전화번호를 입력해주세요.</h2>
       </div>
       <form className='flex flex-col gap-3'>
-        <FormInput type='number' placeholder='전화번호' required errors={[]} />
-        <FormInput type='number' placeholder='인증번호' required errors={[]} />
+        <FormInput
+          name='phone'
+          type='number'
+          placeholder='전화번호'
+          required
+          errors={[]}
+        />
+        <FormInput
+          name='code'
+          type='number'
+          placeholder='인증번호'
+          required
+          errors={[]}
+        />
         <FormButton loading={false} text='인증하기' />
       </form>
     </div>
