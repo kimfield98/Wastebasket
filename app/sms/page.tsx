@@ -1,5 +1,5 @@
-import FormButton from '@/components/form-button';
-import FormInput from '@/components/form-input';
+import Button from '@/components/button';
+import Input from '@/components/input';
 
 export default function SMSLogin() {
   return (
@@ -9,21 +9,21 @@ export default function SMSLogin() {
         <h2 className='text-xl'>전화번호를 입력해주세요.</h2>
       </div>
       <form className='flex flex-col gap-3'>
-        <FormInput
+        <Input
           name='phone'
           type='number'
           placeholder='전화번호'
           required
           errors={[]}
         />
-        <FormInput
+        <Input
           name='code'
           type='number'
           placeholder='인증번호'
           required
           errors={[]}
         />
-        <FormButton text='인증하기' />
+        <Button text='인증하기' />
       </form>
     </div>
   );

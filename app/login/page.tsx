@@ -1,7 +1,7 @@
 'use client';
 
-import FormButton from '@/components/form-button';
-import FormInput from '@/components/form-input';
+import Button from '@/components/button';
+import Input from '@/components/input';
 import SocialLogin from '@/components/social-login';
 import { useFormState } from 'react-dom';
 import { login } from './actions';
@@ -15,21 +15,21 @@ export default function LogIn() {
         <h2 className='text-xl'>이메일과 비밀번호를 입력해주세요.</h2>
       </div>
       <form action={dispatch} className='flex flex-col gap-3'>
-        <FormInput
+        <Input
           name='email'
           type='email'
           placeholder='이메일'
           required
           errors={state?.fieldErrors.email}
         />
-        <FormInput
+        <Input
           name='password'
           type='password'
           placeholder='비밀번호'
           required
           errors={state?.fieldErrors.password}
         />
-        <FormButton text='로그인' />
+        <Button text='로그인' />
       </form>
       <SocialLogin />
     </div>
