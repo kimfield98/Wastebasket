@@ -27,6 +27,7 @@ export default function LogIn() {
           type='password'
           placeholder='비밀번호'
           required
+          minLength={6}
           errors={state?.fieldErrors.password}
         />
         <Button text='로그인' />

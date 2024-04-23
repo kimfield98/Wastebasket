@@ -34,6 +34,7 @@ export default function CreateAccount() {
           type='password'
           placeholder='비밀번호'
           required
+          maxLength={6}
           errors={state?.fieldErrors.password}
         />
         <Input
@@ -41,6 +42,7 @@ export default function CreateAccount() {
           type='password'
           placeholder='비밀번호 확인'
           required
+          minLength={6}
           errors={state?.fieldErrors.confirmPassword}
         />
         <Button text='회원가입' />
