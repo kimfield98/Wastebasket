@@ -1,7 +1,7 @@
-import db from "@/lib/db";
-import getSession from "@/lib/session";
-import { notFound } from "next/navigation";
-import { logout } from "./actions";
+import db from '@/lib/db';
+import getSession from '@/lib/session';
+import { notFound } from 'next/navigation';
+import { logout } from './actions';
 
 async function getUser() {
   const session = await getSession();
