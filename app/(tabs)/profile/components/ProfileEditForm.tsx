@@ -14,10 +14,16 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { logout } from '../actions';
 import getSession from '@/lib/session';
 import db from '@/lib/db';
 import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
+
+export async function logout() {
+  const session = await getSession();
+  await session.destroy();
+  redirect('/login');
+}
 
 async function getUser() {
   const session = await getSession();
@@ -37,7 +43,7 @@ async function getUser() {
 async function ProfilePage() {
   const user = await getUser();
   return (
-    <form action={logout} className='flex flex-col items-center'>
+    <form className='flex flex-col items-center'>
       <Avatar className='w-14 h-14 mb-10'>
         <AvatarImage src='https://picsum.photos/250/250' />
         <AvatarFallback>
@@ -85,7 +91,7 @@ async function ProfilePage() {
               className='w-full'
             />
             <Input
-              name='confirmPassword'
+              name='newPassword'
               type='password'
               placeholder='새로운 비밀번호를 입력해주세요'
               className='w-full'
@@ -106,7 +112,9 @@ async function ProfilePage() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-      <Button className='mt-5'>로그아웃</Button>
+      <Button onClick={logout} className='mt-5'>
+        로그아웃
+      </Button>
     </form>
   );
 }
