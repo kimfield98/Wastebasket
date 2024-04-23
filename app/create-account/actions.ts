@@ -4,6 +4,8 @@ import db from '@/lib/db';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
+import { getIronSession } from 'iron-session';
+import { cookies } from 'next/headers';
 
 const checkUniqueUsername = async (username: string) => {
   const user = await db.user.findUnique({
@@ -88,5 +90,12 @@ export async function createAccount(prevState: any, formData: FormData) {
       },
       select: { id: true },
     });
+    const cookie = await getIronSession(cookies(), {
+      cookieName: 'my-cookie',
+      password: process.env.COOKIE_PASSWORD!,
+    });
+    cookie.id = user.id;
+    await cookie.save();
+    redirect('/profile');
   }
 }
