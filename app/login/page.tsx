@@ -24,7 +24,7 @@ export default function LogIn() {
           required
           errors={[]}
         />
-        <FormButton loading={false} text='로그인' />
+        <FormButton text='로그인' />
       </form>
       <SocialLogin />
     </div>
