@@ -3,9 +3,8 @@
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import db from '@/lib/db';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import getSession from '@/lib/session';
 
 const checkEmailExist = async (email: string) => {
   const user = await db.user.findUnique({
@@ -67,10 +66,7 @@ export async function login(prevState: any, formData: FormData) {
       user!.password ?? 'xxxx',
     );
     if (passwordMatch) {
-      const cookie = await getIronSession(cookies(), {
-        cookieName: 'my-cookie',
-        password: process.env.COOKIE_PASSWORD!,
-      });
+      const cookie = await getSession();
       cookie.id = user!.id;
       await cookie.save();
       redirect('/profile');
