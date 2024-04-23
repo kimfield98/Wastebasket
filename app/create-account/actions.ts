@@ -1,6 +1,7 @@
 'use server';
 
 import db from '@/lib/db';
+import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 
@@ -78,7 +79,14 @@ export async function createAccount(prevState: any, formData: FormData) {
     console.log(result.error.flatten());
     return result.error.flatten();
   } else {
-    console.log('회원가입 성공');
-    redirect('/profile');
+    const hashedPassword = await bcrypt.hash(result.data.password, 12);
+    const user = await db.user.create({
+      data: {
+        username: result.data.username,
+        email: result.data.email,
+        password: hashedPassword,
+      },
+      select: { id: true },
+    });
   }
 }
