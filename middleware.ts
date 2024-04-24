@@ -9,6 +9,8 @@ const publicOnlyUrls: Routes = {
   '/login': true,
   '/sms': true,
   '/create-account': true,
+  '/github/start': true,
+  '/github/complete': true,
 };
 export async function middleware(request: NextRequest) {
   // 헤더 확인 후 쿠키를 가져옴
@@ -25,7 +27,7 @@ export async function middleware(request: NextRequest) {
   } else {
     // 공개 페이지인 경우 제품 페이지로 리다이렉션
     if (exists) {
-      return NextResponse.redirect(new URL('/products', request.url));
+      return NextResponse.redirect(new URL('/profile', request.url));
     }
   }
 }
