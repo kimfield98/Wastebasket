@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id       Int   @id @default(autoincrement())
+  username     String @unique
+  email    String?   @unique
+  password String?
+  phone   String? @unique
+  github_id String? @unique
+  avatar String? @default("https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
