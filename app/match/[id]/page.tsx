@@ -4,7 +4,7 @@ import { formatDate, formatPriceKR } from '@/lib/utils';
 import { UserIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 async function getIsOwner(userId: number) {
   const cookie = await getSession();
@@ -45,6 +45,16 @@ export default async function ProductDetail({
     return notFound();
   }
   const isOwner = await getIsOwner(product.userId);
+
+  async function deleteProduct() {
+    'use server';
+    await db.product.delete({
+      where: {
+        id: id,
+      },
+    });
+    redirect('/match');
+  }
   return (
     <div>
       <div className='relative aspect-square'>
@@ -88,9 +98,11 @@ export default async function ProductDetail({
         </p>
         <p className='flex gap-5'>
           {isOwner ? (
-            <button className='bg-red-500 px-5 py-2 rounded-md text-white font-semibold'>
-              삭제하기
-            </button>
+            <form action={deleteProduct}>
+              <button className='bg-red-500 px-5 py-2 rounded-md text-white font-semibold'>
+                삭제하기
+              </button>
+            </form>
           ) : null}
           <Link
             className='bg-yellow-500 px-5 py-2 rounded-md text-white font-semibold'
