@@ -28,10 +28,12 @@ export default async function Match() {
   const products = await getProducts();
   return (
     <div>
-      <h1>Match</h1>
-      {products.map(product => (
-        <ListProduct key={product.id} {...product} />
-      ))}
+      <div className='text-2xl font-bold mb-5 px-1'>Match</div>
+      <div className='flex flex-col gap-5'>
+        {products.map(product => (
+          <ListProduct key={product.id} {...product} />
+        ))}
+      </div>
     </div>
   );
 }
