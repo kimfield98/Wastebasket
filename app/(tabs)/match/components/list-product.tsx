@@ -29,7 +29,7 @@ export default function ListProduct({
       href={`/match/${id}`}
       className='flex gap-3 items-center border-4 rounded-md p-3'
     >
-      <div className='relative size-28 rounded-xl overflow-hidden'>
+      <div className='relative size-28 min-w-28 rounded-xl overflow-hidden'>
         <Image src={image} alt='커버 이미지' fill />
       </div>
       <div className='flex flex-col gap-0.5 text-white text-sm'>
@@ -37,9 +37,9 @@ export default function ListProduct({
           <p className='font-semibold text-lg'>{title}</p>
           <p className=''>{formatPriceKR(price)} 원</p>
         </div>
-        <div>{description}</div>
-        <div>{location}</div>
-        <div className='flex justify-between gap-2 max-w-48 text-nowrap overflow-hidden'>
+        <div className='h-10 overflow-y-clip'>{description}</div>
+        <div className='text-neutral-500'>{location}</div>
+        <div className='flex gap-2 max-w-48 text-neutral-500 text-nowrap overflow-hidden'>
           <p>{formatDate(updatedAt)}</p>
           <p>|</p>
           <p className='font-semibold'>{username}</p>
