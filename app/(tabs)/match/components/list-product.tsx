@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { formatDate, formatPriceKR } from '@/lib/utils';
 
 interface Props {
+  id: number;
   image: string;
   title: string;
   description: string;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function ListProduct({
+  id,
   image,
   title,
   description,
@@ -23,7 +25,6 @@ export default function ListProduct({
   updatedAt,
   user: { username },
 }: Props) {
-  const id = 1;
   return (
     <Link
       href={`/match/${id}`}
