@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDate, formatPriceKR } from '@/lib/utils';
+import { BuildingStorefrontIcon } from '@heroicons/react/24/outline';
 
 interface Props {
   id: number;
@@ -31,7 +32,11 @@ export default function ListProduct({
       className='flex gap-3 items-center border-4 rounded-md p-3'
     >
       <div className='relative size-28 min-w-28 rounded-xl overflow-hidden'>
-        <Image src={image} alt='커버 이미지' fill />
+        {image !== '' ? (
+          <Image src={image} alt='커버 이미지' fill />
+        ) : (
+          <BuildingStorefrontIcon className='flex items-center pr-2 text-gray-500' />
+        )}
       </div>
       <div className='flex flex-col gap-0.5 text-white text-sm'>
         <div className='flex gap-2 items-center text-yellow-500'>
