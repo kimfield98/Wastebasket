@@ -10,6 +10,6 @@
 
 @layer components {
   .primary-btn {
-    @apply w-full bg-yellow-500 text-white  font-medium  rounded-md text-center hover:bg-yellow-400 transition-colors;
+    @apply w-full bg-yellow-500 text-white font-medium rounded-md text-center hover:bg-yellow-400 transition-colors;
   }
 }
