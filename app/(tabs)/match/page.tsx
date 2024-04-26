@@ -1,5 +1,5 @@
 import db from '@/lib/db';
-import ProductList from './components/product-list';
+import ProductList from '../../../components/product-list';
 import { Prisma } from '@prisma/client';
 
 export type initialProducts = Prisma.PromiseReturnType<
