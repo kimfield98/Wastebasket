@@ -4,7 +4,7 @@ import ListProduct from './components/list-product';
 // todo: 데이터 캐싱
 // todo: 페이지네이션
 // todo: 무한 스크롤
-async function getProducts() {
+async function getInitialProducts() {
   const products = await db.product.findMany({
     select: {
       id: true,
@@ -20,6 +20,7 @@ async function getProducts() {
         },
       },
     },
+    take: 2,
     orderBy: {
       updatedAt: 'desc',
     },
@@ -28,12 +29,12 @@ async function getProducts() {
 }
 
 export default async function Match() {
-  const products = await getProducts();
+  const initialProducts = await getInitialProducts();
   return (
     <div>
       <div className='text-2xl font-bold mb-5 px-1'>Match</div>
       <div className='flex flex-col gap-5'>
-        {products.map(product => (
+        {initialProducts.map(product => (
           <ListProduct key={product.id} {...product} />
         ))}
       </div>
