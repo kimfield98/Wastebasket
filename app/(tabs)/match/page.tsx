@@ -1,5 +1,5 @@
 import db from '@/lib/db';
-import ListProduct from './components/list-product';
+import ProductCard from './components/product-card';
 
 // todo: 데이터 캐싱
 // todo: 페이지네이션
@@ -35,7 +35,7 @@ export default async function Match() {
       <div className='text-2xl font-bold mb-5 px-1'>Match</div>
       <div className='flex flex-col gap-5'>
         {initialProducts.map(product => (
-          <ListProduct key={product.id} {...product} />
+          <ProductCard key={product.id} {...product} />
         ))}
       </div>
     </div>

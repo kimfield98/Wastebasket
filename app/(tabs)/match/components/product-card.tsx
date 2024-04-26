@@ -16,7 +16,7 @@ interface Props {
   };
 }
 
-export default function ListProduct({
+export default function ProductCard({
   id,
   image,
   title,
