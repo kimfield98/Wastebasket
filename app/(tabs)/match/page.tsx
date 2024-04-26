@@ -1,9 +1,11 @@
 import db from '@/lib/db';
-import ProductCard from './components/product-card';
+import ProductList from './components/product-list';
+import { Prisma } from '@prisma/client';
 
-// todo: 데이터 캐싱
-// todo: 페이지네이션
-// todo: 무한 스크롤
+export type initialProducts = Prisma.PromiseReturnType<
+  typeof getInitialProducts
+>;
+
 async function getInitialProducts() {
   const products = await db.product.findMany({
     select: {
@@ -33,11 +35,7 @@ export default async function Match() {
   return (
     <div>
       <div className='text-2xl font-bold mb-5 px-1'>Match</div>
-      <div className='flex flex-col gap-5'>
-        {initialProducts.map(product => (
-          <ProductCard key={product.id} {...product} />
-        ))}
-      </div>
+      <ProductList initialProducts={initialProducts} />
     </div>
   );
 }
