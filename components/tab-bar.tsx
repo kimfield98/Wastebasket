@@ -20,7 +20,7 @@ import { usePathname } from 'next/navigation';
 export default function TabBar() {
   const pathname = usePathname();
   return (
-    <div className='fixed bottom-0 w-full max-w-screen-sm mx-auto grid grid-cols-3 border-neutral-600 border-t border-opacity-35 px-5 py-3 *:text-white bg-neutral-900'>
+    <div className='fixed bottom-0 w-full max-w-screen-sm mx-auto grid grid-cols-3 border-neutral-600 border-t border-opacity-35 px-5 py-3 *:text-white bg-neutral-800'>
       <Link href='/match' className='flex flex-col items-center gap-px'>
         {pathname === '/match' ? (
           <SolidHomeIcon className='w-7 h-7' />

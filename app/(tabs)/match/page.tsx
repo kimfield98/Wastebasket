@@ -22,7 +22,6 @@ async function getInitialProducts() {
         },
       },
     },
-    take: 2,
     orderBy: {
       updatedAt: 'desc',
     },

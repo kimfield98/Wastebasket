@@ -18,8 +18,8 @@ export default async function getMoreProducts(page: number) {
         },
       },
     },
-    take: 2,
-    skip: page * 2,
+    take: 6,
+    skip: page * 6,
     orderBy: {
       updatedAt: 'desc',
     },
