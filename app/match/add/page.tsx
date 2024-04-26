@@ -5,6 +5,11 @@ import Input from '@/components/input';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 
 export default function AddProduct() {
+  const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const file = e.target.files[0];
+    console.log(file);
+  };
   return (
     <div>
       <form className='p-5 flex flex-col gap-5'>
@@ -16,6 +21,7 @@ export default function AddProduct() {
           <div className='text-neutral-400 text-sm'>사진을 추가해주세요.</div>
         </label>
         <input
+          onChange={uploadImage}
           type='file'
           id='image'
           name='image'
