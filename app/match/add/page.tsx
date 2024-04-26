@@ -8,7 +8,8 @@ export default function AddProduct() {
   const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
-    console.log(file);
+    const url = URL.createObjectURL(file);
+    console.log(url);
   };
   return (
     <div>
