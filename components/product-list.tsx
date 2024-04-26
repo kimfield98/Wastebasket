@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import getMoreProducts from '../actions';
-import { initialProducts } from '../page';
 import ProductCard from './product-card';
+import getMoreProducts from '@/app/(tabs)/match/actions';
+import { initialProducts } from '@/app/(tabs)/match/page';
 
 export default function ProductList({
   initialProducts,
@@ -15,6 +15,7 @@ export default function ProductList({
   const [page, setPage] = useState(0);
   const [isLastPage, setIsLastPage] = useState(false);
   const trigger = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       async (
@@ -46,6 +47,7 @@ export default function ProductList({
       observer.disconnect();
     };
   }, [page]);
+
   return (
     <div className='flex flex-col gap-5'>
       {products.map(product => (
@@ -54,9 +56,9 @@ export default function ProductList({
       {!isLastPage ? (
         <span
           ref={trigger}
-          className='mb-96 text-sm font-semibold bg-yellow-500 w-fit mx-auto px-5 py-2 rounded-md hover:opacity-90 active:scale-95'
+          className='text-sm font-semibold bg-yellow-500 w-fit mx-auto px-5 py-2 rounded-md hover:opacity-90 active:scale-95'
         >
-          {isLoading ? '로딩 중' : 'Load more'}
+          {isLoading ? '로딩 중' : '더보기'}
         </span>
       ) : null}
     </div>
