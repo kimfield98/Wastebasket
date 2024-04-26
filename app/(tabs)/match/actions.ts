@@ -2,7 +2,7 @@
 
 import db from '@/lib/db';
 
-export default async function getMoreProducts() {
+export default async function getMoreProducts(page: number) {
   const products = await db.product.findMany({
     select: {
       id: true,
@@ -19,9 +19,10 @@ export default async function getMoreProducts() {
       },
     },
     take: 2,
-    skip: 2,
+    skip: page * 2,
     orderBy: {
       updatedAt: 'desc',
     },
   });
+  return products;
 }
