@@ -20,6 +20,9 @@ async function getProducts() {
         },
       },
     },
+    orderBy: {
+      updatedAt: 'desc',
+    },
   });
   return products;
 }
