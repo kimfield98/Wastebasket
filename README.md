@@ -1,13 +1,19 @@
-// object shorthand assignment
-
-let name = "kimfield"
-let age = 26
+// Destructuring
 
 let person = {
-	name: name,
-	age: age
+	name: "kimfield",
+	age: 26
 }
-// 키와 밸류가 같다면
-// name, age 라고만 표기할 수 있어요!
 
-console.log(person)
+let name = person.name
+let age = person['age']
+// let { name, age } = person
+// 위와 같이 표현도 가능해요! 구조 분해 할당
+
+console.log(name, age) // 'kimfield', 26
+
+let array = [1,2,3,4]
+let [a,b,...rest] = array
+
+console.log(a,b) // 1,2
+console.log(rest) // [3,4]
