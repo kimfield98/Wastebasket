@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const StCard = styled.div`
   display: flex;
@@ -9,8 +10,12 @@ const StCard = styled.div`
 `;
 
 function Card({handleDeleteButton,handleDoneButton,handleCancelButton,todo,isDone}) {
+  const navigate = useNavigate()
   return (
     <StCard key={todo.id}>
+      <button onClick={() => {
+        navigate(`/detail/${todo.id}`)
+      }}>more...</button>
       <div>{todo.title}</div>
       <div>{todo.content}</div>
       {isDone ? (
