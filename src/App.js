@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import Card from "./components/Card";
 
 const InputBox = styled.div`
   display: flex;
@@ -14,14 +15,6 @@ const ContentBox = styled.div`
   border: 1px solid #000;
   padding: 10px;
   margin-bottom: 10px;
-`;
-
-const Card = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  border: 1px solid #000;
-  padding: 10px;
 `;
 
 function App() {
@@ -89,27 +82,27 @@ function App() {
       <ContentBox>
         <div>Working.. 🔥</div>
         {todoList.map((todo)=>
-          <Card key={todo.id}>
-            <div>{todo.title}</div>
-            <div>{todo.content}</div>
-            <div>
-              <button onClick={() => handleDeleteButton(todo.id, false)}>Delete</button>
-              <button onClick={() => handleDoneButton(todo.id)}>Done</button>
-            </div>
-          </Card>
+          <Card
+            key={todo.id}
+            handleDeleteButton={handleDeleteButton}
+            handleDoneButton={handleDoneButton}
+            handleCancelButton={handleCancelButton}
+            todo={todo}
+            isDone={false}
+          />
         )}
       </ContentBox>
       <ContentBox>
         <div>Done..! 🎉</div>
         {doneList.map((todo)=>
-          <Card key={todo.id}>
-            <div>{todo.title}</div>
-            <div>{todo.content}</div>
-            <div>
-              <button onClick={() => handleDeleteButton(todo.id, true)}>Delete</button>
-              <button onClick={() => handleCancelButton(todo.id)}>Cancel</button>
-            </div>
-          </Card>
+          <Card
+            key={todo.id}
+            handleDeleteButton={handleDeleteButton}
+            handleDoneButton={handleDoneButton}
+            handleCancelButton={handleCancelButton}
+            todo={todo}
+            isDone={true}
+          />
         )}
       </ContentBox>
     </div>
