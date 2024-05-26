@@ -8,18 +8,20 @@ datasource db {
 }
 
 model User {
-  userId       String    @id
+  userId       String    @id @default(uuid())
   username     String    @unique
-  email        String?   @unique
-  password     String?
-  createdAt    DateTime  @default(now())
+  email        String    @unique
+  password     String
   rooms        RoomUser[]
 }
 
 model Record {
   recordId     Int       @id @default(autoincrement())
-  title        String
-  content      String
+  latitude     Float
+  longitude    Float
+  title        String?   
+  content      String?
+  photos       String?   @db.Text
   date         DateTime
   room         Room      @relation(fields: [roomId], references: [roomId])
   roomId       Int
@@ -28,7 +30,7 @@ model Record {
 model Room {
   roomId       Int       @id @default(autoincrement())
   roomName     String
-  users        RoomUser[]
+  roomUsers    RoomUser[]
   records      Record[]
 }
 
