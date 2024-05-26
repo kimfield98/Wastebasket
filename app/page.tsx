@@ -3,12 +3,6 @@ import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { useGeoLocation } from "./hooks/useGeoLocation";
 
-declare global {
-  interface Window {
-    naver: any;
-  }
-}
-
 // 객체는 사용자의 위치를 가져오는 데 사용되는 옵션 설정
 const geolocationOptions = {
   enableHighAccuracy: true, // 위치를 가능한 높은 정확도로 가져올지 여부
@@ -21,7 +15,7 @@ export default function Home() {
   const { location, error } = useGeoLocation(geolocationOptions)
   const [currentLocation, setCurrentLocation] = useState({latitude: 37.5665, longitude: 126.9780}) // 예시: 서울시청 위도, 경도
   const [naverMapsLoaded, setNaverMapsLoaded] = useState(false);
-  
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (window.naver && window.naver.maps) {
@@ -45,6 +39,13 @@ export default function Home() {
         zoomControl: false,
       };
       const map = new naver.maps.Map(mapElement.current, mapOptions);
+      naver.maps.Event.addListener(map, 'click', (e) => {
+        new naver.maps.Marker({
+          position: e.coord,
+          map: map,
+        });
+      }
+      );
       new naver.maps.Marker({
         position: locationCoords, // 마커 위치 설정
         map: map, // 마커를 추가할 지도
