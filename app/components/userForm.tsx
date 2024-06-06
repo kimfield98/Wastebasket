@@ -93,7 +93,7 @@ function LogInForm({close}:{close: () => void}) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="이메일을 입력하세요" {...field} />
+                        <Input type="password" placeholder="이메일을 입력하세요" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -106,7 +106,7 @@ function LogInForm({close}:{close: () => void}) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="비밀번호를 입력하세요" {...field} />
+                        <Input type="password" placeholder="비밀번호를 입력하세요" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -162,7 +162,7 @@ function LogInForm({close}:{close: () => void}) {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="비밀번호를 입력하세요" {...field} />
+                          <Input type="password" placeholder="비밀번호를 입력하세요" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
