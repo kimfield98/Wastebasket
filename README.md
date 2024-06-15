@@ -7,7 +7,7 @@
 
 |제목|기간|내용|
 |---|---|---|
-|위플래닛|2024.06 - 현재|[최근 게시글](https://kimfield.tistory.com/entry/%EC%8F%9F%EC%95%84%EC%A7%80%EB%8A%94-%ED%8E%98%EC%9D%B4%EC%A7%80%EB%93%A4-%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C%EC%97%90%EC%84%9C-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%84%A4%EA%B3%84%ED%95%98%EB%A9%B4-%EC%A2%8B%EC%9D%84%EA%B9%8C): React를 사용하여 웹 애플리케이션 개발|
+|위플래닛|2024.06 - 현재|[최근 게시글](https://kimfield.tistory.com/category/%EC%8A%AC%EA%B8%B0%EB%A1%9C%EC%9A%B4%20%ED%9A%8C%EC%82%AC%EC%83%9D%ED%99%9C): React를 사용하여 웹 애플리케이션 개발|
 |스파르타빌더스|2024.02 - 2024.04|Next.js를 사용하여 백오피스 개발 (외주 프로젝트)|
 
 ### 🖱️ Education
