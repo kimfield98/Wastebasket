@@ -10,3 +10,4 @@
 |BFS|2583|영역 구하기|https://www.acmicpc.net/problem/2583|240618|
 |BFS|2667|단지 번호 붙이기|https://acmicpc.net/problem/2667|240619|
 |BFS|1926|그림|https://www.acmicpc.net/problem/1926|240619|
+|BFS|1012|유기농 배추|https://www.acmicpc.net/problem/1012|240620|
