@@ -11,3 +11,4 @@
 |BFS|2667|단지 번호 붙이기|https://acmicpc.net/problem/2667|240619|
 |BFS|1926|그림|https://www.acmicpc.net/problem/1926|240619|
 |BFS|1012|유기농 배추|https://www.acmicpc.net/problem/1012|240620|
+|BFS|7562|나이트의 이동|https://www.acmicpc.net/problem/7562|240621|
