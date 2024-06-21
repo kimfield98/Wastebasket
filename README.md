@@ -1,3 +1,7 @@
+### Contact
+
+이메일 - kimfield98@gmail.com
+
 ### Introduce
 안녕하세요 초원입니다 👩🏻‍💻 <br />
  <br />
