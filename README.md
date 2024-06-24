@@ -12,3 +12,4 @@
 |BFS|1926|그림|https://www.acmicpc.net/problem/1926|240619|
 |BFS|1012|유기농 배추|https://www.acmicpc.net/problem/1012|240620|
 |BFS|7562|나이트의 이동|https://www.acmicpc.net/problem/7562|240624|
+|BFS|2468|안전 영역|https://www.acmicpc.net/problem/2468|240625|
