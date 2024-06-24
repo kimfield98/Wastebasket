@@ -7,7 +7,7 @@
 
 |제목|기간|내용|
 |---|---|---|
-|위플래닛|2024.06 - 현재|[TIL](https://github.com/kimfield98/kimfield98/blob/main/WEPLANET/20240603-20240624/README.md): React를 사용하여 웹 애플리케이션 개발|
+|위플래닛|2024.06 - 현재|[TIL](https://github.com/kimfield98/kimfield98/tree/main/WEPLANET): React를 사용하여 웹 애플리케이션 개발|
 |스파르타빌더스|2024.02 - 2024.04|Next.js를 사용하여 백오피스 개발 (외주 프로젝트)|
 
 ### 🖱️ Education
