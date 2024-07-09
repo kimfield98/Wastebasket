@@ -19,4 +19,5 @@
 
 <br />
 
-&nbsp; ⌨️ *[Welcome to Kimfield World](https://www.kimfield.world/)* ⌨️
+### ⌨️ Blog
+[Tistory](https://kimfield.tistory.com/) &nbsp; [Notion](https://www.kimfield.world/)
