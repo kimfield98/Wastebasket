@@ -18,5 +18,4 @@
 |KDT 멀티잇 2기|2023.01 - 2023.06|[최종 프로젝트](https://github.com/kimfield98/teampjt1-altudy): Altudy - 학습 관리 웹 애플리케이션|
 
 ### ⌨️ Blog
-- 티스토리: [100log.life](https://kimfield.tistory.com/)
-- 노션: [kimfield.world](https://www.kimfield.world/)
+티스토리: [100log.life](https://kimfield.tistory.com/)
