@@ -16,8 +16,8 @@ GitHub Actions에 워크플로우를 작성해 다음과 같이 배포가 진행
 
 ## 주요 링크
 
-- S3 버킷 웹사이트 엔드포인트: _________
-- CloudFrount 배포 도메인 이름: _________
+- [S3 버킷 웹사이트 엔드포인트](http://assignment-6-advanced.s3-website.ap-northeast-2.amazonaws.com/)
+- [CloudFrount 배포 도메인 이름](https://d16h0q0dfztggr.cloudfront.net/)
 
 ## 주요 개념
 
