@@ -13,14 +13,14 @@
 ### 🖱️ Education
 |제목|기간|내용|
 |---|---|---|
-|항해플러스 프론트엔드 2기|2024.06 - 현재|[5주차 과제](https://github.com/kimfield98/front_2nd/commits/main/): 디자인패턴|
+|항해플러스 프론트엔드 2기|2024.06 - 현재|[6주차 과제](https://github.com/kimfield98/front_2nd/commits/main/): CI/CD|
 |SW사관학교정글 7기|2023.08 - 2023.12|[최종 프로젝트](https://github.com/kimfield98/teampjt2-worldisaster): WorlDisaster - 재난지역 구독 알림 웹 애플리케이션|
 |KDT 멀티잇 2기|2023.01 - 2023.06|[최종 프로젝트](https://github.com/kimfield98/teampjt1-altudy): Altudy - 학습 관리 웹 애플리케이션|
 
 ### 🖨️ Study
 정글걸스 개발스터디 
 - 1주차(7/20): DocumentFragment로 렌더링 최적화하기 &nbsp;[자세히 보기](https://kimfield.tistory.com/entry/DOM-%EC%A1%B0%EC%9E%91%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EC%97%AC-%EC%84%B1%EB%8A%A5-%EC%B5%9C%EC%A0%81%ED%99%94%ED%95%98%EA%B8%B0-DocumentFragment)
-- 2주차: 리액트 Batching으로 렌더링 최적화하기
+- 2주차: github action으로 CI/CD 파이프라인 구축하기
 
 ### ⌨️ Blog
 - 티스토리: [100log.life](https://kimfield.tistory.com/)
