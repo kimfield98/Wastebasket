@@ -13,11 +13,13 @@
 ### 🖱️ Education
 |제목|기간|내용|
 |---|---|---|
-|항해플러스 프론트엔드 2기|2024.06 - 현재|[10주차 과제](https://github.com/kimfield98/front_2nd/commits/main/): 성능최적화 <a href="https://hhpluscertificateofcompletion.oopy.io/">
-  <img src="https://static.spartacodingclub.kr/hanghae99/plus/completion/badge_black.svg" />
-</a> |
+|항해플러스 프론트엔드 2기|2024.06 - 현재|[10주차 과제](https://github.com/kimfield98/front_2nd/commits/main/): 성능최적화 |
 |SW사관학교정글 7기|2023.08 - 2023.12|[최종 프로젝트](https://github.com/kimfield98/teampjt2-worldisaster): WorlDisaster - 재난지역 구독 알림 웹 애플리케이션|
 |KDT 멀티잇 2기|2023.01 - 2023.06|[최종 프로젝트](https://github.com/kimfield98/teampjt1-altudy): Altudy - 학습 관리 웹 애플리케이션|
+
+ <a href="https://hhpluscertificateofcompletion.oopy.io/">
+  <img src="https://static.spartacodingclub.kr/hanghae99/plus/completion/badge_black.svg" />
+</a>
 
 ### ⌨️ Blog
 티스토리: [100log.life](https://kimfield.tistory.com/)
