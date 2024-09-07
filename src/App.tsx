@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { BookOpen, CircleUserRound, House } from "lucide-react"
-import { Card } from "./components/ui/card"
-import { Input } from "./components/ui/input"
-import { Button } from './components/ui/button';
+import { Card } from './components/ui/card/card';
+import { Input } from './components/ui/input/input';
+import { Button } from './components/ui/button/button';
 
 function App() {
   const [bobLogs, setBobLogs] = useState<string[]>([]);
