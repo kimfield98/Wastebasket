@@ -61,7 +61,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <Sidebar />
-        <main className="ml-64 p-8">
+        <main className="ml-64 py-20 px-40">
           {children}
           <Analytics />
           <SpeedInsights />

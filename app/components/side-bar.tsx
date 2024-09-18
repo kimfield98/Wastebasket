@@ -17,7 +17,7 @@ export function Sidebar() {
     <aside className="w-64 h-screen fixed left-0 top-0 bg-white dark:bg-neutral-950 shadow-lg flex flex-col">
       <div className="flex-1 overflow-y-auto">
         <div className="p-6 space-y-6">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center pt-8">
             <div className="relative w-40 h-40 rounded-full overflow-hidden mb-4">
               <Image src='/김초원.jpeg' alt='김초원의 프로필 사진' layout="fill" objectFit="cover" />
             </div>

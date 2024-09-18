@@ -92,6 +92,7 @@ export default async function Blog({ params }) {
         </p>
         <ViewCount slug={post.slug} />
       </div>
+      <hr />
       <article className="prose">
         <CustomMDX source={post.content} />
       </article>
