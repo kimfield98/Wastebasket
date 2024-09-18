@@ -2,26 +2,84 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
-import React from 'react'
+import React, { ReactNode } from 'react';
 
-function Table({ data }) {
-  let headers = data.headers.map((header, index) => (
-    <th key={index}>{header}</th>
-  ))
-  let rows = data.rows.map((row, index) => (
-    <tr key={index}>
-      {row.map((cell, cellIndex) => (
-        <td key={cellIndex}>{cell}</td>
-      ))}
-    </tr>
-  ))
+interface TableProps {
+  data: {
+    headers: string[];
+    rows: (string | number)[][];
+  };
+  align?: ('left' | 'center' | 'right')[];
+}
+
+function Table({ data, align }: TableProps) {
+  const alignments = align || data.headers.map(() => 'left')
+
+  const renderCell = (content: string | number): ReactNode => {
+    if (typeof content !== 'string') {
+      return content;
+    }
+
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let lastIndex = 0;
+    let match;
+    const elements: ReactNode[] = [];
+
+    while ((match = linkRegex.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+        elements.push(content.slice(lastIndex, match.index));
+      }
+      
+      elements.push(
+        <a 
+          key={match.index} 
+          href={match[2]} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline decoration-blue-600 dark:decoration-blue-400 hover:decoration-blue-800 dark:hover:decoration-blue-300"
+        >
+          {match[1]}
+        </a>
+      );
+
+      lastIndex = linkRegex.lastIndex;
+    }
+
+    if (lastIndex < content.length) {
+      elements.push(content.slice(lastIndex));
+    }
+
+    return elements.length > 0 ? <>{elements}</> : content;
+  }
 
   return (
-    <table>
+    <table className="border-collapse w-full">
       <thead>
-        <tr>{headers}</tr>
+        <tr>
+          {data.headers.map((header, index) => (
+            <th 
+              key={index} 
+              className={`border-b border-gray-300 dark:border-gray-700 p-2 bg-gray-100 dark:bg-neutral-950 text-${alignments[index]}`}
+            >
+              {header}
+            </th>
+          ))}
+        </tr>
       </thead>
-      <tbody>{rows}</tbody>
+      <tbody>
+        {data.rows.map((row, rowIndex) => (
+          <tr key={rowIndex} className="border-b border-gray-200 dark:border-gray-700 dark:bg-neutral-950">
+            {row.map((cell, cellIndex) => (
+              <td 
+                key={cellIndex} 
+                className={`p-2 text-${alignments[cellIndex]}`}
+              >
+                {renderCell(cell)}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
     </table>
   )
 }
@@ -41,7 +99,12 @@ function CustomLink(props) {
     return <a {...props} />
   }
 
-  return <a target="_blank" rel="noopener noreferrer" {...props} />
+  return <a 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline decoration-blue-600 dark:decoration-blue-400 hover:decoration-blue-800 dark:hover:decoration-blue-300"
+    {...props} 
+  />
 }
 
 function RoundedImage(props) {
@@ -50,7 +113,11 @@ function RoundedImage(props) {
 
 function Code({ children, ...props }) {
   let codeHTML = highlight(children)
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
+  return <code 
+    dangerouslySetInnerHTML={{ __html: codeHTML }} 
+    className='text-sm font-mono bg-gray-100 p-1 rounded-md dark:bg-gray-900 dark:text-gray-100'
+    {...props} 
+  />
 }
 
 function slugify(str) {
