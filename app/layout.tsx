@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/footer'
 import { baseUrl } from './sitemap'
 import { themeEffect } from 'utils/themeEffect'
+import { Sidebar } from './components/side-bar'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -60,14 +61,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-          <Navbar />
+      <body className="antialiased">
+        <Sidebar />
+        <main className="ml-64 p-8">
           {children}
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
         </main>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
