@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 🗓️
+title: 🗓️ 기록
 permalink: /record/
 ---
 
