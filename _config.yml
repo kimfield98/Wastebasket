@@ -35,8 +35,8 @@ lang: ko
 # paginate: 5
 # paginate_path: "/blog/page:num/"
 
-# disqus:
-#   shortname: your-disqus-shortname
+disqus:
+  shortname: https-kimfield98-github-io-kimfield98
 
 # google_analytics: UA-XXXXXXXXX-X
 
