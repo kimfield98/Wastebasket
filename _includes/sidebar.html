@@ -1,7 +1,7 @@
 <div class="sidebar-header">
   <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
   <div class="profile-image">
-    <img src="/assets/images/profile.jpeg" alt="Profile Picture">
+    <img src="{% raw %}{{ '/assets/images/profile.jpeg' | relative_url }}{% endraw %}" alt="Profile Picture">
   </div>
   <p class="site-subtitle">{{- site.description | escape -}}</p>
 </div>
