@@ -1,5 +1,10 @@
 # KIMFIELD_LOG
 
+## 0 Note
+
+### 나의 생각들
+  - [그래서 나는 개발자가 되기로 결심했다](https://github.com/kimfield98/TIL/blob/main/00-Notes/2022_12.md)
+
 ## 1 Education
 #### 🍏 **KDT**
   - 간단한 설명
