@@ -218,12 +218,21 @@ pre {
 }
 
 .social-media-list {
+  li {
+    list-style: none;
+  }
   li + li {
     padding-top: 5px;
   }
 }
 
+.u-email {
+  color: $grey-color;
 
+  &:hover {
+    color: $brand-color;
+  }
+}
 
 /**
  * Tables

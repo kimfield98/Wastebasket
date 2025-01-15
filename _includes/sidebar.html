@@ -1,8 +1,8 @@
 <div class="sidebar-header">
-  <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
   <div class="profile-image">
-    <img src="{{ '/assets/images/profile.jpeg' | relative_url }}" alt="Profile Picture">
+    <img src="{{ '/assets/images/profile.jpg' | relative_url }}" alt="Profile Picture">
   </div>
+  <p class="site-title">{{ site.title | escape }}</p>
   <p class="site-subtitle">{{- site.description | escape -}}</p>
 </div>
 
@@ -18,11 +18,13 @@
     {%- endfor -%}
   {%- endif -%}
 </nav>
-<!-- <div class="social-links">
+
+<div class="social-links">
   {%- include social.html -%}
-</div> -->
-<!-- {%- if site.email -%}
+</div>
+
+{%- if site.email -%}
   <div class="email-link">
     <a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a>
   </div>
-{%- endif -%} -->
+{%- endif -%}

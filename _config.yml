@@ -18,15 +18,16 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: 100log
+title: 김초원
+description: |
+  안녕하세요 프론트엔드 개발자
+  초원입니다.
 email: kimfield98@gmail.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Hi! I'm Kimfield, a software engineer and writer. I'm passionate about technology, education, and the future of work. I write about these topics and more on my blog, 100log.
-baseurl: "/" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://kimfield98.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  kimfield98
 linkedin_username: chowon-kim
-# instagram_username: kimfield__
+instagram_username: kimfield__
 
 timezone: Asia/Seoul
 lang: ko
