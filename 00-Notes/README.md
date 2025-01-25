@@ -5,8 +5,8 @@
   <summary>&nbsp; &nbsp; <b>나의 생각들</b></summary>
   <div markdown="1">
     <ul>
-      <li>그래서 나는 개발자가 되기로 결심했다 <a href="https://github.com/kimfield98/TIL/blob/main/00-Notes/2022_12.md">링크</a></li>
-      <li>2024 상반기 회고 <a href="https://github.com/kimfield98/TIL/blob/main/00-Notes/2024_06.md">링크</a></li>
+      <li>그래서 나는 개발자가 되기로 결심했다 <a href="https://github.com/kimfield98/TIL/blob/main/00-Notes/2022_12.md" target="_blank"></a>링크</a></li>
+      <li>2024 상반기 회고 <a href="https://github.com/kimfield98/TIL/blob/main/00-Notes/2024_06.md" target="_blank">링크</a></li>
     </ul>
   </div>
 </details>
@@ -47,8 +47,8 @@ Red-Black tree, malloc, Web Proxy, PintOS 등을 직접 구현해보면서 <br /
   <summary>&nbsp; &nbsp; <b>후기</b></summary>
   <div markdown="1">
     <ul>
-      <li>1주차 후기 <a href="https://github.com/kimfield98/TIL/blob/main/01-Education/2406-2408-hanghae-plus/1%EC%A3%BC%EC%B0%A8.md">링크</a></li>
-      <li>2주차 후기 <a href="https://github.com/kimfield98/TIL/blob/main/01-Education/2406-2408-hanghae-plus/2%EC%A3%BC%EC%B0%A8.md">링크</a></li>
+      <li>1주차 후기 <a href="https://github.com/kimfield98/TIL/blob/main/01-Education/2406-2408-hanghae-plus/1%EC%A3%BC%EC%B0%A8.md" target="_blank"></a>링크</a></li>
+      <li>2주차 후기 <a href="https://github.com/kimfield98/TIL/blob/main/01-Education/2406-2408-hanghae-plus/2%EC%A3%BC%EC%B0%A8.md" target="_blank">링크</a></li>
     </ul>
   </div>
 </details>
@@ -88,23 +88,23 @@ Red-Black tree, malloc, Web Proxy, PintOS 등을 직접 구현해보면서 <br /
 ## 4 Projects
 #### 🥝 **개인 프로젝트**
 
-- 밥버디 [링크](https://github.com/kimfield98/BobBuddy)
-
+- 밥버디 <a href="https://github.com/kimfield98/BobBuddy" target="_blank">링크</a>
+  
   - 간단한 설명
 
 #### 🥝 **팀 프로젝트**
-- 알터디 [링크](https://github.com/kimfield98/ALTUDY)
+- 알터디 <a href="https://github.com/kimfield98/ALTUDY" target="_blank">링크</a>
   
   - 알고리즘 스터디 활동 관리 플랫폼 / Python, Django, HTML, CSS, JavaScript
 
-- 월디재스터 [링크](https://github.com/kimfield98/WorlDisaster)
+- 월디재스터 <a href="https://github.com/kimfield98/WorlDisaster" target="_blank">링크</a>
   
   - 세계 재난재해 구독지역 알림 서비스 / Next.js, TypeScript, Recoil, CesiumJS
 
 ## 5 Activities
 #### 🍒 **스태프**
 
-- 테오콘 [링크](https://www.linkedin.com/posts/chowon-kim_%EB%AA%A8%EB%91%90%EC%97%90%EA%B2%8C-%EC%97%B4%EB%A0%A4%EC%9E%88%EB%8A%94-%EC%BB%A8%ED%8D%BC%EB%9F%B0%EC%8A%A4-teoconf2024staff-field-ver-activity-7266842237857095680-ljjb?utm_source=share&utm_medium=member_desktop)
+- 테오콘 <a href="https://www.linkedin.com/posts/chowon-kim_%EB%AA%A8%EB%91%90%EC%97%90%EA%B2%8C-%EC%97%B4%EB%A0%A4%EC%9E%88%EB%8A%94-%EC%BB%A8%ED%8D%BC%EB%9F%B0%EC%8A%A4-teoconf2024staff-field-ver-activity-7266842237857095680-ljjb?utm_source=share&utm_medium=member_desktop" target="_blank">링크</a>
   
   - 간단한 설명
 
@@ -114,10 +114,10 @@ Red-Black tree, malloc, Web Proxy, PintOS 등을 직접 구현해보면서 <br /
 
   - 간단한 설명
 
-- 온보딩 매니저 [링크](https://www.linkedin.com/posts/chowon-kim_%EB%82%98%EB%A6%84-%EC%8B%AC%EA%B0%81%ED%95%9C-%EA%B3%A0%EB%AF%BC-3%EA%B0%9C%EC%9B%94-%EC%A0%84-cx-%EC%A7%81%EB%AC%B4%EA%B0%80-%EB%82%98%EC%99%80-%EB%8D%94-activity-7270784495186788352-H40G?utm_source=share&utm_medium=member_desktop)
+- 온보딩 매니저 <a href="https://www.linkedin.com/posts/chowon-kim_%EB%82%98%EB%A6%84-%EC%8B%AC%EA%B0%81%ED%95%9C-%EA%B3%A0%EB%AF%BC-3%EA%B0%9C%EC%9B%94-%EC%A0%84-cx-%EC%A7%81%EB%AC%B4%EA%B0%80-%EB%82%98%EC%99%80-%EB%8D%94-activity-7270784495186788352-H40G?utm_source=share&utm_medium=member_desktop" target="_blank">링크</a>
   
   - 간단한 설명
 
-- 커뮤니티 매니저 [링크](https://www.linkedin.com/posts/chowon-kim_%EB%82%98%EB%A6%84-%EC%8B%AC%EA%B0%81%ED%95%9C-%EA%B3%A0%EB%AF%BC-3%EA%B0%9C%EC%9B%94-%EC%A0%84-cx-%EC%A7%81%EB%AC%B4%EA%B0%80-%EB%82%98%EC%99%80-%EB%8D%94-activity-7270784495186788352-H40G?utm_source=share&utm_medium=member_desktop)
+- 커뮤니티 매니저 <a href="https://www.linkedin.com/posts/chowon-kim_%EB%82%98%EB%A6%84-%EC%8B%AC%EA%B0%81%ED%95%9C-%EA%B3%A0%EB%AF%BC-3%EA%B0%9C%EC%9B%94-%EC%A0%84-cx-%EC%A7%81%EB%AC%B4%EA%B0%80-%EB%82%98%EC%99%80-%EB%8D%94-activity-7270784495186788352-H40G?utm_source=share&utm_medium=member_desktop" target="_blank">링크</a>
   
   - 간단한 설명

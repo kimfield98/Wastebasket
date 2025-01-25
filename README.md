@@ -16,6 +16,6 @@
 |위플래닛|2024.06 - 2024.01 (8개월)|React를 사용하여 웹 애플리케이션 개발|
 |스파르타빌더스|2024.02 - 2024.04 (3개월)|Next.js를 사용하여 백오피스 개발 (외주 프로젝트)|
 
-###  Blog 
-[Velog](https://velog.io/@kimfield/posts) 📝 <br />
-[kimfield-log](https://github.com/kimfield98/kimfield-log/blob/main/00-Notes/README.md) 📝
+###  Blog  
+<a href="https://velog.io/@kimfield/posts" target="_blank">Velog 📝</a> <br />
+<a href="https://github.com/kimfield98/kimfield-log/blob/main/00-Notes/README.md" target="_blank">kimfield-log 📝</a>
