@@ -17,4 +17,5 @@
 |스파르타빌더스|2024.02 - 2024.04|Next.js를 사용하여 백오피스 개발 (외주 프로젝트)|
 
 ###  Blog 
-[Velog](https://velog.io/@kimfield/posts) 📝
+[Velog](https://velog.io/@kimfield/posts) 📝 <br />
+[kimfield-log](https://github.com/kimfield98/kimfield-log/blob/main/00-Notes/README.md) 📝
