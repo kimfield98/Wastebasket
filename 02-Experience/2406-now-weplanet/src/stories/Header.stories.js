@@ -1,5 +1,5 @@
-import { Header } from './Header';
-import { fn } from '@storybook/test';
+import { Header } from './Header'
+import { fn } from '@storybook/test'
 
 export default {
   title: 'Example/Header',
@@ -15,7 +15,7 @@ export default {
     onLogout: fn(),
     onCreateAccount: fn(),
   },
-};
+}
 
 export const LoggedIn = {
   args: {
@@ -23,6 +23,6 @@ export const LoggedIn = {
       name: 'Jane Doe',
     },
   },
-};
+}
 
-export const LoggedOut = {};
+export const LoggedOut = {}

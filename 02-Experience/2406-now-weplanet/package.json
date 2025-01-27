@@ -6,7 +6,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chromaui/intro-storybook-react-template"
+    "url": "git+https://github.com/chromaui/intro-storybook-react-template.git"
   },
   "bugs": {
     "url": "https://github.com/chromaui/intro-storybook-react-template/issues"
@@ -23,7 +23,8 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "init-msw": "msw init public/"
+    "init-msw": "msw init public/",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.3.2",
@@ -43,11 +44,15 @@
     "eslint-plugin-storybook": "^0.8.0",
     "msw": "^2.3.0",
     "msw-storybook-addon": "^2.0.3",
+    "prettier": "^3.4.2",
     "prop-types": "^15.8.1",
     "storybook": "^8.3.2",
     "vite": "^5.2.0"
   },
   "resolutions": {
     "jackspeak": "2.1.1"
-  }
+  },
+  "main": "vite.config.js",
+  "keywords": [],
+  "homepage": "https://github.com/chromaui/intro-storybook-react-template#readme"
 }
