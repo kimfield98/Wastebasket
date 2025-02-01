@@ -16,6 +16,9 @@
 |위플래닛|2024.06 - 2024.01 (8개월)|React를 사용하여 웹 애플리케이션 개발|
 |스파르타빌더스|2024.02 - 2024.04 (3개월)|Next.js를 사용하여 백오피스 개발 (외주 프로젝트)|
 
-###  Blog  
-<a href="https://velog.io/@kimfield/posts" target="_blank">Velog 📝</a> <br />
-<a href="https://github.com/kimfield98/kimfield-log/blob/main/00-Notes/README.md" target="_blank">kimfield-log 📝</a>
+###  Now
+|역할|기간|내용|
+|---|---|---|
+|영어학원|2025.02~|1:1 학습관리|
+|온보딩 매니저|2024.10~|항해플러스 프론트엔드 4기, 5기 온보딩 콜, OT, 사전스터디 진행|
+|커뮤니티 매니저|2024.12~|항해99 커뮤니티 사이트 관리|
